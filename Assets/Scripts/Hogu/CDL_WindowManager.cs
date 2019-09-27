@@ -19,6 +19,9 @@ public class CDL_WindowManager : MonoBehaviour
     [SerializeField, Range(0, 10)] float minChangeWindowTime = 1; 
     [SerializeField, Range(0, 10)] float maxChangeWindowTime = 5;
 
+    [SerializeField] int maxWindowsOpened = 2;
+    int currentOpenedWindows { get { return allWindows.Where(w => w.CurrentWindowType != WindowType.None && w.CurrentWindowType != WindowType.Delivery).ToList().Count; } }
+
 
     #region DeliveryWindow
     [SerializeField] float deliveryWindowOpenTime = 5;
@@ -38,16 +41,19 @@ public class CDL_WindowManager : MonoBehaviour
 
     private void Start()
     {
-        for (int i = 0; i < allWindows.Count; i++)
-        {
-            StartWindow(allWindows[i]);
-        }
+        //for (int i = 0; i < allWindows.Count; i++)
+        //{
+        //    StartWindow(allWindows[i]);
+        //}
     }
 
     private void Update()
     {
         //      DEBUG
         if (Input.GetKeyDown(KeyCode.Space)) SwitchDelivery(hasObjectKey);
+        //
+
+        if (currentOpenedWindows < maxWindowsOpened) ChooseWindow();
     }
 
     public void SwitchDelivery(bool _state)
@@ -69,7 +75,7 @@ public class CDL_WindowManager : MonoBehaviour
             if (deliveryWindowDesignated) return;
             List<CDL_Window> _freeWindows = allWindows.Where(w => w.CurrentWindowType == WindowType.None).ToList();
             int _rnd = Random.Range(0, _freeWindows.Count);
-            deliveryWindowDesignated = allWindows[_rnd];
+            deliveryWindowDesignated = _freeWindows[_rnd];
             if (deliveryWindowDesignated) deliveryWindowDesignated.ChangeWindow(WindowType.Delivery);
         }
         else
@@ -97,34 +103,38 @@ public class CDL_WindowManager : MonoBehaviour
         CancelInvoke("Flash");
     }
 
-    public void StartWindow(CDL_Window _window)
+
+    void SetWindow(CDL_Window _window)
     {
-        float _t = Random.Range(minChangeWindowTime, maxChangeWindowTime);
-        WindowType _type = _window.CurrentWindowType;
-        if (_type == WindowType.None) _type = (WindowType)Random.Range(0, Enum.GetNames(typeof(WindowType)).Length);
-        if (_type == WindowType.Delivery)
+        float _time = Random.Range(minChangeWindowTime, maxChangeWindowTime);
+        WindowType _type = (WindowType)Random.Range(2, Enum.GetNames(typeof(WindowType)).Length);
+        CDL_Window _tpWindow = null;
+        if (_type == WindowType.TP)
         {
-            if (hasObjectKey)
+            List<CDL_Window> _freeWindows = allWindows.Where(w => w.CurrentWindowType == WindowType.None && w != _window).ToList();
+            int _rnd = Random.Range(0, _freeWindows.Count);
+            _tpWindow = _freeWindows[_rnd];
+            if (_tpWindow)
             {
-                if (deliveryOpen) _type = WindowType.None;
-                deliveryOpen = true;
+                _tpWindow.ChangeWindow(_type, _window);
+                StartCoroutine(DelayChooseWindow(_time, _tpWindow));
             }
-            else _type = WindowType.None;
         }
-        if (_window) _window.ChangeWindow(_type);
-        if (_type == WindowType.Presents) _window.PresentsBehaviour();
-        if (_type != WindowType.Delivery && _type != WindowType.Presents) StartCoroutine(ChangeWindow(_t, _window));
+        _window.ChangeWindow(_type, _tpWindow);
+        if(_type != WindowType.Presents) StartCoroutine(DelayChooseWindow(_time, _window));
     }
 
+    void ChooseWindow()
+    {
+        List<CDL_Window> _freeWindows = allWindows.Where(w => w.CurrentWindowType == WindowType.None).ToList();
+        int _rnd = Random.Range(0, _freeWindows.Count);
+        if (_freeWindows.Count > _rnd) SetWindow(_freeWindows[_rnd]);
+    }
 
-    IEnumerator ChangeWindow(float _t, CDL_Window _window)
+    IEnumerator DelayChooseWindow(float _t, CDL_Window _window)
     {
         yield return new WaitForSeconds(_t);
-        //if (_window.CurrentWindowType == WindowType.TP) tpAlreadyUp = false;
         _window.ChangeWindow(WindowType.None);
-        yield return new WaitForSeconds(_t);
-        StartWindow(_window);
     }
-
 
 }

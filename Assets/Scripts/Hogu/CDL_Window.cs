@@ -134,6 +134,7 @@ public class CDL_Window : MonoBehaviour
                 if (!_linkedWindow) return;
                 windowDetectionCollider.radius = tpRange / 2f;
                 windowRend.material.color = Color.magenta;
+                linkedWindow = _linkedWindow;
                 break;
             case WindowType.Boost:
                 windowDetectionCollider.radius = boostRange / 2f;
@@ -145,6 +146,7 @@ public class CDL_Window : MonoBehaviour
                 return;
             case WindowType.Presents:
                 windowRend.material.color = Color.green;
+                PresentsBehaviour();
                 return;
         }
     }
@@ -173,7 +175,6 @@ public class CDL_Window : MonoBehaviour
         Instantiate(presentFart, transform.position + Vector3.up, transform.rotation);
         yield return new WaitForSeconds(2);
         ChangeWindow(WindowType.None);
-        CDL_WindowManager.I.StartWindow(this);
     }
 
     void TPBehaviour(Test_Player _pl)

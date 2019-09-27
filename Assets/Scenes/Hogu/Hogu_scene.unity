@@ -161,6 +161,7 @@ MonoBehaviour:
   globalStunTime: 2
   minChangeWindowTime: 1
   maxChangeWindowTime: 5
+  maxWindowsOpened: 2
   deliveryWindowOpenTime: 5
   deliveryWindowDesignated: {fileID: 0}
   hasObjectKey: 0
@@ -283,7 +284,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dea6c44740f5994ba55a6a18990f9b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentWindowType: 0
+  CurrentWindowType: 1
   windowDetectionCollider: {fileID: 118008030}
   windowRend: {fileID: 118008031}
   slapRange: 2
@@ -403,7 +404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dea6c44740f5994ba55a6a18990f9b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentWindowType: 0
+  CurrentWindowType: 1
   windowDetectionCollider: {fileID: 241800918}
   windowRend: {fileID: 241800919}
   slapRange: 2
@@ -697,7 +698,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dea6c44740f5994ba55a6a18990f9b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentWindowType: 0
+  CurrentWindowType: 1
   windowDetectionCollider: {fileID: 1376636560}
   windowRend: {fileID: 1376636561}
   slapRange: 2
@@ -941,7 +942,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dea6c44740f5994ba55a6a18990f9b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentWindowType: 0
+  CurrentWindowType: 1
   windowDetectionCollider: {fileID: 1405676206}
   windowRend: {fileID: 1405676207}
   slapRange: 2
@@ -1061,7 +1062,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dea6c44740f5994ba55a6a18990f9b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentWindowType: 0
+  CurrentWindowType: 1
   windowDetectionCollider: {fileID: 1553859376}
   windowRend: {fileID: 1553859377}
   slapRange: 2
@@ -1274,7 +1275,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dea6c44740f5994ba55a6a18990f9b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentWindowType: 0
+  CurrentWindowType: 1
   windowDetectionCollider: {fileID: 1880848769}
   windowRend: {fileID: 1880848770}
   slapRange: 2

@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class Test_Player : MonoBehaviour
+public class CDL_Player : MonoBehaviour
 {
+    [SerializeField] bool isPlayerOne = true;
+
+
     [SerializeField] Renderer playerRenderer = null;
     [SerializeField] bool stunned = false;
 
@@ -14,13 +17,18 @@ public class Test_Player : MonoBehaviour
     void Update()
     {
         Move();
-        if (Input.GetKeyDown(KeyCode.Z)) GrabItem();
-        
+        if (Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button3 : KeyCode.Joystick2Button3)) GrabItem();
+        if (Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button2 : KeyCode.Joystick2Button2)) PunchThrow();
     }
 
     void Move()
     {
-        if(!stunned) transform.position += (new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"))) * .1f;
+        if (!stunned)
+        {
+            Vector3 _pos = transform.position;
+            transform.position += (new Vector3(Input.GetAxis(isPlayerOne ? "Horizontal1" : "Horizontal2"), 0, Input.GetAxis(isPlayerOne ? "Vertical1" : "Vertical2"))) * .1f;
+            if(_pos != transform.position) transform.rotation = Quaternion.LookRotation(transform.position - _pos);
+        }
     }
 
 
@@ -37,14 +45,28 @@ public class Test_Player : MonoBehaviour
             if (nearbyItems.Count < 1) return;
             grabbedItem = nearbyItems.Where(i => i.CurrentItemType == CDL_Monster.I.WantedItemType).FirstOrDefault();
             if (!grabbedItem) grabbedItem = nearbyItems[Random.Range(0, nearbyItems.Count)];
-            else CDL_WindowManager.I.SwitchDelivery(true);
-            //grabbedItem.SetGrabbed(true, this);
+            CDL_WindowManager.I.SwitchDelivery(true);
+            grabbedItem.SetGrabbed(true, this);
         }
         else
         {
             grabbedItem.SetGrabbed(false);
-            if (grabbedItem.CurrentItemType == CDL_Monster.I.WantedItemType) CDL_WindowManager.I.SwitchDelivery(false);
+            CDL_WindowManager.I.SwitchDelivery(false);
             grabbedItem = null;
+        }
+    }
+
+    void PunchThrow()
+    {
+        if(grabbedItem)
+        {
+            grabbedItem.Throw();
+            CDL_WindowManager.I.SwitchDelivery(false);
+            grabbedItem = null;
+        }
+        else
+        {
+            // do punch
         }
     }
 
@@ -54,7 +76,7 @@ public class Test_Player : MonoBehaviour
         StartCoroutine(StunFlashTimer(_stunTime));
         InvokeRepeating("Flash", 0, .1f);
     }
-    
+
     void Flash()
     {
         playerRenderer.enabled = !playerRenderer.enabled;
@@ -68,5 +90,4 @@ public class Test_Player : MonoBehaviour
         playerRenderer.enabled = true;
         stunned = false;
     }
-    
 }

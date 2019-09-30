@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using System;
-using Random = UnityEngine.Random;
 
 public class CDL_WindowManager : MonoBehaviour
 {
@@ -107,7 +105,7 @@ public class CDL_WindowManager : MonoBehaviour
     void SetWindow(CDL_Window _window)
     {
         float _time = Random.Range(minChangeWindowTime, maxChangeWindowTime);
-        WindowType _type = (WindowType)Random.Range(2, Enum.GetNames(typeof(WindowType)).Length);
+        WindowType _type = (WindowType)Random.Range(2, System.Enum.GetNames(typeof(WindowType)).Length);
         CDL_Window _tpWindow = null;
         if (_type == WindowType.TP)
         {

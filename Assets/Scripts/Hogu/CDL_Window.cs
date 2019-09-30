@@ -42,7 +42,7 @@ public class CDL_Window : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!IsReady) return;
-        Test_Player _pl = other.GetComponent<Test_Player>();
+        CDL_Player _pl = other.GetComponent<CDL_Player>();
         if (_pl)
         {
             switch (CurrentWindowType)
@@ -151,13 +151,13 @@ public class CDL_Window : MonoBehaviour
         }
     }
 
-    void TentacleSlapBehaviour(Test_Player _pl)
+    void TentacleSlapBehaviour(CDL_Player _pl)
     {
         if (!IsReady) return;
         _pl.GetStunnedFam(slapStunTime);
     }
 
-    void VoidBehaviour(Test_Player _pl)
+    void VoidBehaviour(CDL_Player _pl)
     {
         if (!IsReady) return;
         _pl.GetStunnedFam(voidStunTime);
@@ -177,7 +177,7 @@ public class CDL_Window : MonoBehaviour
         ChangeWindow(WindowType.None);
     }
 
-    void TPBehaviour(Test_Player _pl)
+    void TPBehaviour(CDL_Player _pl)
     {
         if (!IsReady) return;
         _pl.transform.position = new Vector3(linkedWindow.transform.position.x, _pl.transform.position.y, linkedWindow.transform.position.z);
@@ -185,13 +185,13 @@ public class CDL_Window : MonoBehaviour
         ChangeWindow(WindowType.None);
     }
 
-    void BoostBehaviour(Test_Player _pl)
+    void BoostBehaviour(CDL_Player _pl)
     {
         if (!IsReady) return;
 
     }
 
-    void DeliveryBehaviour(Test_Player _pl)
+    void DeliveryBehaviour(CDL_Player _pl)
     {
         if (!IsReady) return;
 

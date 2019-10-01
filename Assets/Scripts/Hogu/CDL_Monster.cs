@@ -13,8 +13,8 @@ public class CDL_Monster : MonoBehaviour
     [SerializeField] Renderer ouaisVoilaMaSuperVariableOuJaiPasLeNomDuCoupJeFaisUnTrucHyperLongEtInutileMaisOSEFLaulParceQueJeMenSersQueEnDebug = null;
     //
 
-
-
+    
+    
     private void Awake()
     {
         I = this;

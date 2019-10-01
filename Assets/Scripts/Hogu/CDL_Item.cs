@@ -11,6 +11,8 @@ public class CDL_Item : MonoBehaviour
     [SerializeField] Collider spawnZone = null;
     [SerializeField] CDL_Player playerGrabbing = null;
     [SerializeField] bool canStun = false;
+    [SerializeField, Range(0, 5)] float stunTime = .5f;
+    Coroutine delayHitCoroutine = null;
 
     public bool IsReady => colliderTrigger && itemPhysics && spawnZone;
 
@@ -31,7 +33,17 @@ public class CDL_Item : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         CDL_Player _pl = other.GetComponent<CDL_Player>();
-        if (_pl) _pl.SetItemNearby(this, true);
+        if (_pl && !canStun) _pl.SetItemNearby(this, true);
+        else if (_pl && canStun)
+        {
+            _pl.Stun(stunTime);
+            if (delayHitCoroutine != null)
+            {
+                StopCoroutine(delayHitCoroutine);
+                delayHitCoroutine = null;
+            }
+            canStun = false;
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -77,7 +89,7 @@ public class CDL_Item : MonoBehaviour
         itemPhysics.velocity = Vector3.zero;
         playerGrabbing = null;
         itemPhysics.AddForce(transform.forward * 2000);
-        StartCoroutine(DelayHit());
+        delayHitCoroutine = StartCoroutine(DelayHit());
     }
 
     IEnumerator DelayHit()

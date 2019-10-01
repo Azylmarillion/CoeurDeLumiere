@@ -59,9 +59,9 @@ public class CDL_Window : MonoBehaviour
                 case WindowType.Boost:
                     BoostBehaviour(_pl);
                     break;
-                case WindowType.Delivery:
-                    DeliveryBehaviour(_pl);
-                    break;
+                //case WindowType.Delivery:
+                //    DeliveryBehaviour(_pl);
+                    //break;
                 default:
                     break;
             }
@@ -78,10 +78,10 @@ public class CDL_Window : MonoBehaviour
     {
         switch (CurrentWindowType)
         {
-            case WindowType.Delivery:
-                Gizmos.color = Color.blue;
-                Gizmos.DrawSphere(transform.position, .25f);
-                break;
+            //case WindowType.Delivery:
+            //    Gizmos.color = Color.blue;
+            //    Gizmos.DrawSphere(transform.position, .25f);
+            //    break;
             case WindowType.None:
                 Gizmos.color = Color.white;
                 Gizmos.DrawSphere(transform.position, .25f);
@@ -140,10 +140,10 @@ public class CDL_Window : MonoBehaviour
                 windowDetectionCollider.radius = boostRange / 2f;
                 windowRend.material.color = Color.yellow;
                 break;
-            case WindowType.Delivery:
-                windowDetectionCollider.radius = deliveryRange / 2f;
-                windowRend.material.color = Color.blue;
-                return;
+            //case WindowType.Delivery:
+            //    windowDetectionCollider.radius = deliveryRange / 2f;
+            //    windowRend.material.color = Color.blue;
+            //    return;
             case WindowType.Presents:
                 windowRend.material.color = Color.green;
                 PresentsBehaviour();
@@ -154,13 +154,13 @@ public class CDL_Window : MonoBehaviour
     void TentacleSlapBehaviour(CDL_Player _pl)
     {
         if (!IsReady) return;
-        _pl.GetStunnedFam(slapStunTime);
+        _pl.Stun(slapStunTime);
     }
 
     void VoidBehaviour(CDL_Player _pl)
     {
         if (!IsReady) return;
-        _pl.GetStunnedFam(voidStunTime);
+        _pl.Stun(voidStunTime);
     }
 
     public void PresentsBehaviour()
@@ -203,7 +203,7 @@ public class CDL_Window : MonoBehaviour
 
 public enum WindowType
 {
-    Delivery,
+    //Delivery,
     None,
     TentacleSlap,
     Void,

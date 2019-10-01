@@ -18,7 +18,7 @@ public class CDL_WindowManager : MonoBehaviour
     [SerializeField, Range(0, 10)] float maxChangeWindowTime = 5;
 
     [SerializeField] int maxWindowsOpened = 2;
-    int currentOpenedWindows { get { return allWindows.Where(w => w.CurrentWindowType != WindowType.None && w.CurrentWindowType != WindowType.Delivery).ToList().Count; } }
+    int currentOpenedWindows { get { return allWindows.Where(w => w.CurrentWindowType != WindowType.None /*&& w.CurrentWindowType != WindowType.Delivery*/).ToList().Count; } }
 
 
     #region DeliveryWindow
@@ -48,40 +48,40 @@ public class CDL_WindowManager : MonoBehaviour
     private void Update()
     {
         //      DEBUG
-        if (Input.GetKeyDown(KeyCode.Space)) SwitchDelivery(hasObjectKey);
+        //if (Input.GetKeyDown(KeyCode.Space)) SwitchDelivery(hasObjectKey);
         //
 
         if (currentOpenedWindows < maxWindowsOpened) ChooseWindow();
     }
 
-    public void SwitchDelivery(bool _state)
-    {
-        // DEBUG
-        hasObjectKey = !hasObjectKey;
-        _state = hasObjectKey;
-        //
+    //public void SwitchDelivery(bool _state)
+    //{
+    //    // DEBUG
+    //    hasObjectKey = !hasObjectKey;
+    //    _state = hasObjectKey;
+    //    //
 
-        if(_state)
-        {
-            if (deliveryLooseCoroutine != null)
-            {
-                StopCoroutine(deliveryLooseCoroutine);
-                CancelInvoke("Flash");
-                deliveryLooseCoroutine = null;
-                deliveryWindowDesignated.GetComponent<Renderer>().material.color = Color.blue;
-            }
-            if (deliveryWindowDesignated) return;
-            List<CDL_Window> _freeWindows = allWindows.Where(w => w.CurrentWindowType == WindowType.None).ToList();
-            int _rnd = Random.Range(0, _freeWindows.Count);
-            deliveryWindowDesignated = _freeWindows[_rnd];
-            if (deliveryWindowDesignated) deliveryWindowDesignated.ChangeWindow(WindowType.Delivery);
-        }
-        else
-        {
-            deliveryLooseCoroutine = StartCoroutine(FlashDeliveryWindow());
-            InvokeRepeating("Flash", 0, .1f);
-        }
-    }
+    //    if(_state)
+    //    {
+    //        if (deliveryLooseCoroutine != null)
+    //        {
+    //            StopCoroutine(deliveryLooseCoroutine);
+    //            CancelInvoke("Flash");
+    //            deliveryLooseCoroutine = null;
+    //            deliveryWindowDesignated.GetComponent<Renderer>().material.color = Color.blue;
+    //        }
+    //        if (deliveryWindowDesignated) return;
+    //        List<CDL_Window> _freeWindows = allWindows.Where(w => w.CurrentWindowType == WindowType.None).ToList();
+    //        int _rnd = Random.Range(0, _freeWindows.Count);
+    //        deliveryWindowDesignated = _freeWindows[_rnd];
+    //        if (deliveryWindowDesignated) deliveryWindowDesignated.ChangeWindow(WindowType.Delivery);
+    //    }
+    //    else
+    //    {
+    //        deliveryLooseCoroutine = StartCoroutine(FlashDeliveryWindow());
+    //        InvokeRepeating("Flash", 0, .1f);
+    //    }
+    //}
 
     void Flash()
     {
@@ -105,7 +105,7 @@ public class CDL_WindowManager : MonoBehaviour
     void SetWindow(CDL_Window _window)
     {
         float _time = Random.Range(minChangeWindowTime, maxChangeWindowTime);
-        WindowType _type = (WindowType)Random.Range(2, System.Enum.GetNames(typeof(WindowType)).Length);
+        WindowType _type = (WindowType)Random.Range(0, System.Enum.GetNames(typeof(WindowType)).Length);
         CDL_Window _tpWindow = null;
         if (_type == WindowType.TP)
         {

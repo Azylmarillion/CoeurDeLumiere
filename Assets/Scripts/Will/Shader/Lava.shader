@@ -9,11 +9,11 @@
         //Maps
         _FlowMap ("FlowMap", 2D) = ""{}
         //Colors
-        _BaseColor ("Base Color", Color) = (1,1,1,1)
-        _FlowColor ("Flow Color", Color) = (1,1,1,1)
+        _BaseColor ("Cold Lava Color", Color) = (1,1,1,1)
+        _FlowColor ("Lava Color", Color) = (1,1,1,1)
         //
         _DistorScale ("Distortion Scale", float) = 0
-        _Emission ("Flow Emission", Range(0,2)) = 0
+        _Emission ("Lava Emission", Range(0,2)) = 0
         _RevealSize ("Flow Reveal Size", Range(-1,1)) = 1
         _RevealPow ("Reveal Pow", Range(1,128)) = 1
         _Strength ("Noise strenght", Range(0,1)) = 0

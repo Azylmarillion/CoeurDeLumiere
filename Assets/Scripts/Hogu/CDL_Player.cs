@@ -8,17 +8,21 @@ public class CDL_Player : MonoBehaviour
     [SerializeField] bool isPlayerOne = true;
         public bool IsPlayerOne { get { return isPlayerOne; } }
 
+    [SerializeField] Collider moveArea = null;
 
     [SerializeField] Renderer playerRenderer = null;
     [SerializeField] bool stunned = false;
 
     [SerializeField] List<CDL_Item> nearbyItems = new List<CDL_Item>();
     [SerializeField] CDL_Item grabbedItem = null;
+        public CDL_Item GrabbedItem { get { return grabbedItem; } }
 
     [SerializeField] int dashCurrentCharges = 1;
     [SerializeField] int dashMaxCharges = 1;
     [SerializeField] float dashReloadtime = 5;
     float dashReloadTimer = 0;
+
+    [SerializeField] LayerMask wallLayer = 0;
 
     [SerializeField] CDL_Punch playerPunch = null;
 
@@ -39,8 +43,13 @@ public class CDL_Player : MonoBehaviour
         if (!stunned)
         {
             Vector3 _pos = transform.position;
-            transform.position += (new Vector3(Input.GetAxis(isPlayerOne ? "Horizontal1" : "Horizontal2"), 0, Input.GetAxis(isPlayerOne ? "Vertical1" : "Vertical2"))) * .1f;
-            if(_pos != transform.position) transform.rotation = Quaternion.LookRotation(transform.position - _pos);
+            Vector3 _dir = new Vector3(Input.GetAxis(isPlayerOne ? "Horizontal1" : "Horizontal2"), 0, Input.GetAxis(isPlayerOne ? "Vertical1" : "Vertical2")) *.1f;
+            Vector3 _nextPos = _pos + _dir;
+            if (moveArea.bounds.Contains(_nextPos) && !Physics.Raycast(transform.position, transform.forward, 1.5f, wallLayer))
+            {
+                transform.position += _dir;
+            }
+            if(_dir != Vector3.zero) transform.rotation = Quaternion.LookRotation(_dir);
         }
     }
 
@@ -50,7 +59,7 @@ public class CDL_Player : MonoBehaviour
         else if (!_isClose && nearbyItems.Contains(_item)) nearbyItems.Remove(_item);
     }
 
-    void GrabItem()
+    public void GrabItem()
     {
         if (!grabbedItem)
         {
@@ -108,18 +117,19 @@ public class CDL_Player : MonoBehaviour
     {
         dashCurrentCharges--;
         stunned = true;
-        InvokeRepeating("RepeatDash", 0, .05f);
+        InvokeRepeating("RepeatDash", 0, .02f);
         StartCoroutine(DelayDash());
     }
 
     void RepeatDash()
     {
-        transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, Time.deltaTime * 100);
+        Vector3 _nextPos = transform.position + transform.forward;
+        if (moveArea.bounds.Contains(_nextPos) && !Physics.Raycast(transform.position, transform.forward, 1.5f, wallLayer)) transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, Time.deltaTime * 100);
     }
 
     IEnumerator DelayDash()
     {
-        yield return new WaitForSeconds(.1f);
+        yield return new WaitForSeconds(.075f);
         CancelInvoke("RepeatDash");
         stunned = false;
     }

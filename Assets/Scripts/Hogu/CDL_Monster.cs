@@ -10,7 +10,7 @@ public class CDL_Monster : MonoBehaviour
     public ItemType WantedItemType { get { return wantedItemType; } }
 
     // DEBUG
-    [SerializeField] Renderer ouaisVoilaMaSuperVariableOuJaiPasLeNomDuCoupJeFaisUnTrucHyperLongEtInutileMaisOSEFLaulParceQueJeMenSersQueEnDebug = null;
+    [SerializeField] Renderer[] heads = new Renderer[4];
     //
 
     
@@ -27,36 +27,43 @@ public class CDL_Monster : MonoBehaviour
 
     public void GetItem()
     {
-        wantedItemType = (ItemType)Random.Range(0, System.Enum.GetNames(typeof(ItemType)).Length);
+        wantedItemType = (ItemType)Random.Range(1, System.Enum.GetNames(typeof(ItemType)).Length);
         // DEBUG
+        int _rnd = Random.Range(0, 4);
+        Color _color = new Color();
         switch (wantedItemType)
         {
             case ItemType.Fish:
-                ouaisVoilaMaSuperVariableOuJaiPasLeNomDuCoupJeFaisUnTrucHyperLongEtInutileMaisOSEFLaulParceQueJeMenSersQueEnDebug.material.color = Color.cyan;
+                _color = Color.cyan;
                 break;
             case ItemType.Bone:
-                ouaisVoilaMaSuperVariableOuJaiPasLeNomDuCoupJeFaisUnTrucHyperLongEtInutileMaisOSEFLaulParceQueJeMenSersQueEnDebug.material.color = Color.white;
+                _color = Color.white;
                 break;
             case ItemType.Nem:
-                ouaisVoilaMaSuperVariableOuJaiPasLeNomDuCoupJeFaisUnTrucHyperLongEtInutileMaisOSEFLaulParceQueJeMenSersQueEnDebug.material.color = Color.green;
+                _color = Color.green;
                 break;
             case ItemType.Sushi:
-                ouaisVoilaMaSuperVariableOuJaiPasLeNomDuCoupJeFaisUnTrucHyperLongEtInutileMaisOSEFLaulParceQueJeMenSersQueEnDebug.material.color = Color.black;
+                _color = Color.black;
                 break;
             case ItemType.Ramen:
-                ouaisVoilaMaSuperVariableOuJaiPasLeNomDuCoupJeFaisUnTrucHyperLongEtInutileMaisOSEFLaulParceQueJeMenSersQueEnDebug.material.color = Color.yellow;
+                _color = Color.yellow;
                 break;
             case ItemType.Chicken:
-                ouaisVoilaMaSuperVariableOuJaiPasLeNomDuCoupJeFaisUnTrucHyperLongEtInutileMaisOSEFLaulParceQueJeMenSersQueEnDebug.material.color = new Color(255, 192, 203);
+                _color = new Color(1, .75f, .79f);
                 break;
             case ItemType.Cake:
-                ouaisVoilaMaSuperVariableOuJaiPasLeNomDuCoupJeFaisUnTrucHyperLongEtInutileMaisOSEFLaulParceQueJeMenSersQueEnDebug.material.color = Color.magenta;
+                _color = Color.magenta;
                 break;
             case ItemType.Cookie:
-                ouaisVoilaMaSuperVariableOuJaiPasLeNomDuCoupJeFaisUnTrucHyperLongEtInutileMaisOSEFLaulParceQueJeMenSersQueEnDebug.material.color = new Color(139, 69, 16);
+                _color = new Color(.54f, .27f, .06f);
                 break;
             default:
                 break;
+        }
+        heads[_rnd].GetComponent<CDL_MonsterHead>().SetDelivery(true, wantedItemType, _color);
+        for (int i = 0; i < heads.Length; i++)
+        {
+            if(i != _rnd) heads[i].GetComponent<CDL_MonsterHead>().SetDelivery(false, ItemType.None, Color.grey);
         }
         //
     }

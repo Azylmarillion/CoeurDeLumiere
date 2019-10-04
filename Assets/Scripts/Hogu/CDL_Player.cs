@@ -25,6 +25,20 @@ public class CDL_Player : MonoBehaviour
     [SerializeField] LayerMask wallLayer = 0;
 
     [SerializeField] CDL_Punch playerPunch = null;
+    [SerializeField] bool isDash = false;
+        public bool IsDash { get { return isDash; } }
+
+    //DEBUG
+    private void Start()
+    {
+        for (int i = 0; i < playerRenderer.materials.Count(); i++)
+        {
+            playerRenderer.materials[i].color = isPlayerOne ? Color.blue : Color.red;
+        }
+    }
+    //
+
+
 
     void Update()
     {
@@ -34,8 +48,12 @@ public class CDL_Player : MonoBehaviour
         if(!stunned && dashCurrentCharges > 0) if (Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button4 : KeyCode.Joystick2Button4) || Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button5 : KeyCode.Joystick2Button5)) Dash();
         if (dashCurrentCharges < dashMaxCharges) ReloadDash();
     }
-    
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        CDL_Player _pl = collision.gameObject.GetComponent<CDL_Player>();
+        if (_pl && isDash) _pl.Stun(.5f);
+    }
 
 
     void Move()
@@ -94,6 +112,7 @@ public class CDL_Player : MonoBehaviour
     public void Stun(float _stunTime)
     {
         if (!playerRenderer) return;
+        if (grabbedItem) GrabItem();
         StartCoroutine(StunFlashTimer(_stunTime));
         InvokeRepeating("Flash", 0, .1f);
     }
@@ -129,9 +148,11 @@ public class CDL_Player : MonoBehaviour
 
     IEnumerator DelayDash()
     {
+        isDash = true;
         yield return new WaitForSeconds(.075f);
         CancelInvoke("RepeatDash");
         stunned = false;
+        isDash = false;
     }
 
     void ReloadDash()

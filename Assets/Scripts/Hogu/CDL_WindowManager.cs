@@ -83,23 +83,23 @@ public class CDL_WindowManager : MonoBehaviour
     //    }
     //}
 
-    void Flash()
-    {
-        if (!deliveryWindowDesignated) return;
-        deliveryWindowDesignated.GetComponent<Renderer>().material.color = deliveryWindowDesignated.GetComponent<Renderer>().material.color == Color.blue ? Color.red : Color.blue;
-    }
+    //void Flash()
+    //{
+    //    if (!deliveryWindowDesignated) return;
+    //    deliveryWindowDesignated.GetComponent<Renderer>().material.color = deliveryWindowDesignated.GetComponent<Renderer>().material.color == Color.blue ? Color.red : Color.blue;
+    //}
     
-    IEnumerator FlashDeliveryWindow()
-    {
-        yield return new WaitForSeconds(deliveryWindowOpenTime);
-        if (deliveryWindowDesignated)
-        {
-            deliveryWindowDesignated.ChangeWindow(WindowType.None);
-            deliveryWindowDesignated = null;
-        }
-        if (deliveryLooseCoroutine != null) deliveryLooseCoroutine = null;
-        CancelInvoke("Flash");
-    }
+    //IEnumerator FlashDeliveryWindow()
+    //{
+    //    yield return new WaitForSeconds(deliveryWindowOpenTime);
+    //    if (deliveryWindowDesignated)
+    //    {
+    //        deliveryWindowDesignated.CloseWindow();
+    //        deliveryWindowDesignated = null;
+    //    }
+    //    if (deliveryLooseCoroutine != null) deliveryLooseCoroutine = null;
+    //    CancelInvoke("Flash");
+    //}
 
 
     void SetWindow(CDL_Window _window)
@@ -114,11 +114,11 @@ public class CDL_WindowManager : MonoBehaviour
             _tpWindow = _freeWindows[_rnd];
             if (_tpWindow)
             {
-                _tpWindow.ChangeWindow(_type, _window);
+                _tpWindow.ChangeWindow(_type, _time, _window);
                 StartCoroutine(DelayChooseWindow(_time, _tpWindow));
             }
         }
-        _window.ChangeWindow(_type, _tpWindow);
+        _window.ChangeWindow(_type, _time, _tpWindow);
         if(_type != WindowType.Presents) StartCoroutine(DelayChooseWindow(_time, _window));
     }
 
@@ -132,7 +132,7 @@ public class CDL_WindowManager : MonoBehaviour
     IEnumerator DelayChooseWindow(float _t, CDL_Window _window)
     {
         yield return new WaitForSeconds(_t);
-        _window.ChangeWindow(WindowType.None);
+        _window.CloseWindow();
     }
 
 }

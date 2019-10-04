@@ -16,8 +16,8 @@ TagManager:
   - 
   - Wall
   - Character
-  - 
-  - 
+  - WallObject
+  - Object
   - 
   - 
   - 

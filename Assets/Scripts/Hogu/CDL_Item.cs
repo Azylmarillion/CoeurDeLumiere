@@ -16,6 +16,8 @@ public class CDL_Item : MonoBehaviour
     [SerializeField] LayerMask characterLayer = 0;
     [SerializeField] Collider moveArea = null;
 
+    [SerializeField] Vector3 velocity = Vector3.zero;
+
     public bool IsReady => colliderTrigger && itemPhysics;
 
     private void Start()
@@ -30,6 +32,7 @@ public class CDL_Item : MonoBehaviour
             transform.position = playerGrabbing.transform.position;
             transform.rotation = playerGrabbing.transform.rotation;
         }
+        if (!canStun && velocity != Vector3.zero) Move();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -49,14 +52,21 @@ public class CDL_Item : MonoBehaviour
         if (collision.gameObject.tag == "Ground")
         {
             canStun = false;
+            if(velocity == Vector3.zero) velocity = new Vector3(Random.Range(-1f,1f), 0, Random.Range(-1f,1f));
         }
+    }
+
+    void Move()
+    {
+        Vector3 _nextPos = transform.position + velocity;
+        if (moveArea.bounds.Contains(_nextPos)) transform.position = Vector3.MoveTowards(transform.position, transform.position + velocity, Time.deltaTime * 1);
+        velocity = Vector3.Lerp(velocity, Vector3.zero, Time.deltaTime * 2f);
     }
 
     public void Init()
     {
         if (!IsReady) return;
         int _rnd = Random.Range(0, spawnZone.Length);
-
         Vector3 _origin = spawnZone[_rnd].transform.position;
         Vector3 _range = spawnZone[_rnd].transform.localScale;
         Vector3 _randomRange = new Vector3(Random.Range(-_range.x, _range.x), transform.position.y, Random.Range(-_range.z, _range.z));
@@ -97,6 +107,7 @@ public class CDL_Item : MonoBehaviour
                 if (_pl) _pl.Stun(stunTime);
             }
             canStun = false;
+            if (velocity == Vector3.zero) velocity = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
             CancelInvoke("Thrown");
         }
         Vector3 _nextPos = transform.position + transform.forward;

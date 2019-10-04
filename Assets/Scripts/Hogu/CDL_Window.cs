@@ -8,6 +8,7 @@ public class CDL_Window : MonoBehaviour
     public WindowType CurrentWindowType = WindowType.None;
     [SerializeField] SphereCollider windowDetectionCollider = null;
     [SerializeField] Renderer windowRend = null;
+    Coroutine closeWindowCoroutine = null;
     #region WindowType
     [Header("Tentacle Slap")]
     [SerializeField, Range(0, 10)] float slapRange = 2;
@@ -67,12 +68,7 @@ public class CDL_Window : MonoBehaviour
             }
         }
     }
-
-    private void Update()
-    {
-
-    }
-
+    
 
     private void OnDrawGizmos()
     {
@@ -113,7 +109,7 @@ public class CDL_Window : MonoBehaviour
         Gizmos.color = Color.white;
     }
 
-    public void ChangeWindow(WindowType _type, CDL_Window _linkedWindow = null)
+    public void ChangeWindow(WindowType _type, float _time, CDL_Window _linkedWindow = null)
     {
         if (!IsReady) return;
         CurrentWindowType = _type;
@@ -149,40 +145,60 @@ public class CDL_Window : MonoBehaviour
                 PresentsBehaviour();
                 return;
         }
+        closeWindowCoroutine = StartCoroutine(DelayCloseWindow(_time));
+    }
+
+    IEnumerator DelayCloseWindow(float _t)
+    {
+        yield return new WaitForSeconds(_t);
+        CloseWindow();
+    }
+
+    public void CloseWindow()
+    {
+        if (closeWindowCoroutine != null)
+        {
+            StopCoroutine(closeWindowCoroutine);
+            closeWindowCoroutine = null;
+        }
+        CurrentWindowType = WindowType.None;
+        windowRend.material.color = Color.gray;
     }
 
     void TentacleSlapBehaviour(CDL_Player _pl)
     {
         if (!IsReady) return;
         _pl.Stun(slapStunTime);
+        CloseWindow();
     }
 
     void VoidBehaviour(CDL_Player _pl)
     {
         if (!IsReady) return;
         _pl.Stun(voidStunTime);
+        CloseWindow();
     }
 
     public void PresentsBehaviour()
     {
         if (!IsReady) return;
-        StartCoroutine(DelayCloseDoor());
+        StartCoroutine(DelayClosePresent());
     }
 
-    IEnumerator DelayCloseDoor()
+    IEnumerator DelayClosePresent()
     {
         yield return new WaitForSeconds(2);
         Instantiate(presentFart, transform.position + Vector3.up, transform.rotation);
         yield return new WaitForSeconds(2);
-        ChangeWindow(WindowType.None);
+        CloseWindow();
     }
 
     void TPBehaviour(CDL_Player _pl)
     {
         if (!IsReady) return;
         _pl.transform.position = new Vector3(linkedWindow.transform.position.x, _pl.transform.position.y, linkedWindow.transform.position.z);
-        linkedWindow.ChangeWindow(WindowType.None);
-        ChangeWindow(WindowType.None);
+        linkedWindow.CloseWindow();
+        CloseWindow();
     }
 
     void BoostBehaviour(CDL_Player _pl)

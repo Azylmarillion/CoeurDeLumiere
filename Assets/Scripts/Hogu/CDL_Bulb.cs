@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CDL_Window : MonoBehaviour
+public class CDL_Bulb : MonoBehaviour
 {
 
-    
-    
+    public void Hit()
+    {
 
+    }
 }

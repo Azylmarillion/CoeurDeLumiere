@@ -1,4 +1,4 @@
-﻿Shader "Roystan/Toon/Water"
+﻿Shader "Custom/PAF_SHA_CartoonWater"
 {
     Properties
     {	

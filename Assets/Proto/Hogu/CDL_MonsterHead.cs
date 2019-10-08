@@ -11,16 +11,10 @@ public class CDL_MonsterHead : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        CDL_Player _pl = other.GetComponent<CDL_Player>();
-        if(_pl)
+        CDL_Item _it = other.GetComponent<CDL_Item>();
+        if(_it)
         {
-            if(_pl.GrabbedItem && _pl.GrabbedItem.CurrentItemType == wantedItem)
-            {
-                CDL_Monster.I.GetItem();
-                _pl.GrabbedItem.Init();
-                _pl.GrabItem();
-                //CDL_GameManager.I.Win(_pl);
-            }
+            // _it.FaireQuelqueChoseGenreUneMethodeQuiSappeleraisEatParExemple();
         }
     }
 

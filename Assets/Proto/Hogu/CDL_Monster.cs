@@ -7,7 +7,7 @@ public class CDL_Monster : MonoBehaviour
     public static CDL_Monster I { get; private set; }
 
     [SerializeField] ItemType wantedItemType;
-    public ItemType WantedItemType { get { return wantedItemType; } }
+        public ItemType WantedItemType { get { return wantedItemType; } }
 
     // DEBUG
     [SerializeField] Renderer[] heads = new Renderer[4];

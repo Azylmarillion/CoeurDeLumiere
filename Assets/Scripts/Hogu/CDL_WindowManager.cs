@@ -19,7 +19,7 @@ public class CDL_WindowManager : MonoBehaviour
         I = this;
     }
 
-    void SetWindow(CDL_Window _window, bool _opened)
+    public void SetWindow(CDL_Window _window, bool _opened)
     {
 
     }

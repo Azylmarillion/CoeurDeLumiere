@@ -12,6 +12,8 @@ public class CDL_Player : MonoBehaviour
     bool isInvulnerable = false;
     [SerializeField, Range(0, 5)] float invulnerableTime = .5f;
     [SerializeField, Range(0, 5)] float stunTime = .5f;
+    [SerializeField, Range(0, 5)] float playerSpeed = 1.5f;
+
     [Header("Sight")]
     [SerializeField, Range(2, 180)] int sightAngle = 45;
     [SerializeField, Range(0, 5)] float sightRange = 1.5f;
@@ -55,7 +57,7 @@ public class CDL_Player : MonoBehaviour
         for (int i = -(sightAngle / 2); i < sightAngle / 2; i+=10)
         {
             Gizmos.color = Color.magenta;
-            Gizmos.DrawRay(transform.position, ((Quaternion.Euler(0, i, 0) * transform.forward).normalized) * sightRange);
+            Gizmos.DrawRay(transform.position, (Quaternion.Euler(0, i, 0) * transform.forward).normalized * sightRange);
         }
     }
 
@@ -65,7 +67,7 @@ public class CDL_Player : MonoBehaviour
         if (!stunned)
         {
             Vector3 _pos = transform.position;
-            Vector3 _dir = new Vector3(Input.GetAxis(isPlayerOne ? "Horizontal1" : "Horizontal2"), 0, Input.GetAxis(isPlayerOne ? "Vertical1" : "Vertical2")) *.1f;
+            Vector3 _dir = new Vector3(Input.GetAxis(isPlayerOne ? "Horizontal1" : "Horizontal2"), 0, Input.GetAxis(isPlayerOne ? "Vertical1" : "Vertical2")) * (playerSpeed / 10);
             Vector3 _nextPos = _pos + _dir;
             if (moveArea.bounds.Contains(_nextPos) && !Physics.Raycast(transform.position, transform.forward, 1.5f, wallLayer))
             {
@@ -80,14 +82,28 @@ public class CDL_Player : MonoBehaviour
         for (int i = -(sightAngle / 2); i < sightAngle / 2; i+=10)
         {
             RaycastHit[] _hitItems = Physics.RaycastAll(transform.position, (Quaternion.Euler(0, i, 0) * transform.forward).normalized, sightRange, itemLayer);
-            RaycastHit _hitPlayer;
-            if(Physics.Raycast(transform.position, transform.forward + transform.TransformDirection(new Vector3(i, 0, 0)), out _hitPlayer, sightRange, playerLayer)) if(_hitPlayer.transform.GetComponent<CDL_Player>())  _hitPlayer.transform.GetComponent<CDL_Player>().Stun();
-            RaycastHit _hitBulb;
-            if(Physics.Raycast(transform.position, transform.forward + transform.TransformDirection(new Vector3(i, 0, 0)), out _hitBulb, sightRange, bulbLayer)) if (_hitPlayer.transform.GetComponent<CDL_Bulb>()) _hitPlayer.transform.GetComponent<CDL_Bulb>().Hit();
             foreach (RaycastHit _hit in _hitItems)
             {
                 CDL_Item _item = _hit.transform.GetComponent<CDL_Item>();
                 if (_item) _item.Kick();
+            }
+        }
+        for (int i = -(sightAngle / 2); i < sightAngle / 2; i+=10)
+        {
+            RaycastHit _hitPlayer;
+            if (Physics.Raycast(transform.position, (Quaternion.Euler(0, i, 0) * transform.forward).normalized, out _hitPlayer, sightRange, playerLayer))
+            {
+                if (_hitPlayer.transform.GetComponent<CDL_Player>()) _hitPlayer.transform.GetComponent<CDL_Player>().Stun();
+                break;
+            }
+        }
+        for (int i = -(sightAngle / 2); i < sightAngle / 2; i+=10)
+        {
+            RaycastHit _hitBulb;
+            if (Physics.Raycast(transform.position, (Quaternion.Euler(0, i, 0) * transform.forward).normalized, out _hitBulb, sightRange, bulbLayer))
+            {
+                if (_hitBulb.transform.GetComponent<CDL_Bulb>()) _hitBulb.transform.GetComponent<CDL_Bulb>().Hit();
+                break;
             }
         }
     }

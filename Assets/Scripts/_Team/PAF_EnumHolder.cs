@@ -9,3 +9,13 @@ public enum UIState
     InGame,
     Pause
 }
+
+/// <summary>
+/// 
+/// </summary>
+public enum FlowerState
+{
+    Searching, 
+    Following, 
+    Eating
+}

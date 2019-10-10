@@ -89,7 +89,7 @@ public class PAF_Flower : MonoBehaviour
         {
             yield return null;
             Debug.Log("Search");
-            PAF_Fruit[] _fruits = PAF_Fruit.fruits.ToList().Where(f => Vector3.Distance(transform.position, f.transform.position) <= m_detectionRange
+            PAF_Fruit[] _fruits = PAF_Fruit.ArenaFruits.ToList().Where(f => Vector3.Distance(transform.position, f.transform.position) <= m_detectionRange
                                               && Vector3.Angle(transform.forward, m_followedFruit.transform.position - transform.position) > (m_fieldOfView / 2)).ToArray();
             if (_fruits.Length == 0) continue;
             m_followedFruit = _fruits.OrderBy(f => Vector3.Distance(transform.position, f.transform.position)).FirstOrDefault(); 

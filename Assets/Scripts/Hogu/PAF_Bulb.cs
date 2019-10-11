@@ -8,7 +8,7 @@ public class PAF_Bulb : MonoBehaviour
 {
     #region Object
     [SerializeField] Animator bulbAnimator = null;
-    // [SerializeField] GameObject item = null;
+    [SerializeField] GameObject item = null;
     #endregion
 
     #region Fields
@@ -20,31 +20,36 @@ public class PAF_Bulb : MonoBehaviour
     [SerializeField, Header("Bulb stats"), Range(0, 10)] int minItemsInBulb = 1;
     [SerializeField, Range(1, 20)] int maxItemsInBulb = 10;
 
+    Coroutine delayHitCoroutine = null;
+
     int hits = 0;
-    bool canHit = true;
+    [SerializeField] bool canHit = false;
     #endregion
 
 
     private void Start()
     {
+        transform.localScale = Vector3.zero;
         if (maxItemsInBigBulb <= minItemsInBigBulb) maxItemsInBigBulb = minItemsInBigBulb + 1;
         if (maxItemsInBulb <= minItemsInBulb) maxItemsInBulb = minItemsInBulb + 1;
+        delayHitCoroutine = StartCoroutine(DelayHitBulb(bulbAnimator.runtimeAnimatorController.animationClips[0].averageDuration));
     }
-
 
 
     public void SetBigBulb()
     {
         if (!bulbAnimator) return;
+        if (delayHitCoroutine != null) StopCoroutine(delayHitCoroutine);
+        bulbAnimator.SetBool("bigbulb", true);
         isBigBulb = true;
         bulbAnimator.enabled = true;
-        StartCoroutine(DelayHitBigBulb());
+        StartCoroutine(DelayHitBulb(bulbAnimator.runtimeAnimatorController.animationClips[1].averageDuration));
     }
     
-    IEnumerator DelayHitBigBulb()
+    IEnumerator DelayHitBulb(float _time)
     {
         canHit = false;
-        yield return new WaitForSeconds(bulbAnimator.runtimeAnimatorController.animationClips[0].averageDuration);
+        yield return new WaitForSeconds(_time);
         canHit = true;
     }
 
@@ -68,12 +73,12 @@ public class PAF_Bulb : MonoBehaviour
 
     void Explode(int _itemsToSpawn)
     {
-        // if(!item) return;
+        if (!item) return;
         for (int i = 0; i < _itemsToSpawn; i++)
         {
-            // PAF_Item _item = Instantiate(item).GetComponent<PAF_Item>();
-            // Vector3 _force = new Vector3(Random.Range(), 0, Random.Range());
-            // if(_item) _item.AddForce(_force);
+            PAF_Fruit _fruit = Instantiate(item).GetComponent<PAF_Fruit>();
+            Vector3 _force = new Vector3(Random.Range(0,1f), 0, Random.Range(0,1f));
+            if (_fruit) _fruit.AddForce(_force);
         }
         Destroy(this.gameObject);
     }

@@ -40,6 +40,16 @@ public class PAF_Fruit : MonoBehaviour
     /// </summary>
     public float Weight { get { return weight; } }
 
+    /// <summary>
+    /// Layer mask of what the fruits should collide on.
+    /// </summary>
+    [SerializeField] private LayerMask whatCollide = new LayerMask();
+
+    /// <summary>
+    /// Velocity without y axis.
+    /// </summary>
+    private Vector3 flatVelocity { get { return new Vector3(velocity.x, 0, velocity.z); } }
+
     /// <summary>Backing field for <see cref="Velocity"/>.</summary>
     [SerializeField] private Vector3 velocity = new Vector3();
 
@@ -52,7 +62,7 @@ public class PAF_Fruit : MonoBehaviour
         set
         {
             velocity = value;
-            if ((velocity != Vector3.zero) && (applyForceCoroutine != null))
+            if ((value != Vector3.zero) && (applyForceCoroutine == null))
             {
                 applyForceCoroutine = StartCoroutine(ApplyForce());
             }
@@ -76,11 +86,7 @@ public class PAF_Fruit : MonoBehaviour
     /// Adds a force to the fruit, making it go in this direction.
     /// </summary>
     /// <param name="_force">Force to apply.</param>
-    public void AddForce(Vector3 _force)
-    {
-        velocity += _force;
-        applyForceCoroutine = StartCoroutine(ApplyForce());
-    }
+    public void AddForce(Vector3 _force) => Velocity += _force;
 
     /// <summary>
     /// Apply a force to the fruit.
@@ -88,37 +94,85 @@ public class PAF_Fruit : MonoBehaviour
     /// <returns></returns>
     private IEnumerator ApplyForce()
     {
-        Vector3 _normal = new Vector3(velocity.z, velocity.y, -velocity.x);
-        Vector3 _raycastPos;
-        RaycastHit _hit;
+        Vector3 _flatVelocity;
+        Vector3 _normal;
+        Vector3[] _raycastPos = new Vector3[3];
+        RaycastHit[] _hits = new RaycastHit[3];
+        RaycastHit _finalHit = new RaycastHit();
+        int _nearestHitIndex = 0;
 
-        while (velocity != Vector3.zero)
+        while ((_flatVelocity = flatVelocity) != Vector3.zero)
         {
-            // Take closest
-            if (RaycastVelocityMovement(_raycastPos = collider.bounds.center, out _hit) ||
-                RaycastVelocityMovement(_raycastPos += _normal * collider.radius, out _hit) ||
-                RaycastVelocityMovement(_raycastPos -= _normal * collider.radius * 2, out _hit))
+            // Calculate normal & raycasts position
+            _normal = new Vector3(velocity.z, 0, -velocity.x);
+            _raycastPos = new Vector3[] { collider.bounds.center + (_flatVelocity * collider.radius), collider.bounds.center + (_normal * collider.radius), collider.bounds.center - (_normal * collider.radius) };
+
+            // Raycast from side extrem points and front center, and get closest touched object if one
+            _nearestHitIndex = 0;
+            Physics.Raycast(_raycastPos[0], _flatVelocity, out _hits[0], _flatVelocity.magnitude, whatCollide);
+
+            for (int _i = 1; _i < 3; _i++)
             {
-                transform.position = transform.position + (velocity * _hit.distance);
+                if (Physics.Raycast(_raycastPos[_i], _flatVelocity, out _hits[_i], _flatVelocity.magnitude, whatCollide)
+                    && (_hits[_i].distance < _hits[_i - 1].distance))
+                {
+                    _nearestHitIndex = _i;
+                }
+            }
 
-                // Set velocity after collision
-                velocity = new Vector3(Mathf.Abs(velocity.x) * Mathf.Sign(_hit.normal.x) * .5f, Mathf.Abs(velocity.y) * Mathf.Sign(_hit.normal.y) * .5f, Mathf.Abs(velocity.z) * Mathf.Sign(_hit.normal.z) * .5f);
+            // If hit something, bounce on it and recalculate trajectory
+            if (_hits[_nearestHitIndex].collider)
+            {
+                // Bounce on a Sphere collider
+                if (_hits[_nearestHitIndex].collider is SphereCollider _sphere)
+                {
+                    Vector3 _edge;
+                    if (_nearestHitIndex == 0)
+                    {
+                        _edge = _sphere.bounds.center;
+                    }
+                    else
+                    {
+                        _edge = _sphere.bounds.center + (_normal * (_nearestHitIndex == 1 ? -1 : 1) * _sphere.radius);
+                    }
 
-                // Push the touched fruit if one
-                PAF_Fruit _fruit = _hit.collider.GetComponent<PAF_Fruit>();
-                
-                //if (_fruit) _fruit.AddForce(???);
+                    Vector3 _intersection = _sphere.bounds.center + (Mathf.Cos(Vector3.Angle(_edge, _hits[_nearestHitIndex].point) * Mathf.Deg2Rad) * _normal);
+                    Vector3 _rayPos = _edge - ((_edge - _intersection) / 2);
+
+                    if (!Physics.Raycast(_rayPos, -_flatVelocity, out _finalHit, _flatVelocity.magnitude + _sphere.radius + 1, whatCollide) || !Physics.Raycast(_finalHit.point, _flatVelocity, out _finalHit, _flatVelocity.magnitude, whatCollide)) continue;
+                }
+                // Bounce on a Box Collider
+                else
+                {
+                    if (!Physics.Raycast(new Vector3(collider.bounds.center.x + (_hits[_nearestHitIndex].normal.z * collider.radius), collider.bounds.center.y, collider.bounds.center.z + (-_hits[_nearestHitIndex].normal.x * collider.radius)), _flatVelocity, out _finalHit, _flatVelocity.magnitude, whatCollide)) continue;
+                }
+
+                // Push the touched fruit if one, or stun a player if hit one
+                PAF_Fruit _fruit = _finalHit.collider.GetComponent<PAF_Fruit>();
+                if (_fruit) _fruit.AddForce(_flatVelocity);
+                else
+                {
+                    PAF_Player _player = _finalHit.collider.GetComponent<PAF_Player>();
+                    if (_player) _player.Stun();
+                }
+
+                // Set new position & velocity
+                transform.position += _flatVelocity * _finalHit.distance;
+
+                _flatVelocity = new Vector3(velocity.x + _finalHit.normal.x, 0, velocity.z + _finalHit.normal.z).normalized * _flatVelocity.magnitude * 1.1f;
+                velocity = new Vector3(_flatVelocity.x, velocity.y, _flatVelocity.z);
+            }
+            else
+            {
+                transform.position += velocity;
+
+                velocity = new Vector3(velocity.x * .9875f, velocity.y - (Physics.gravity.magnitude * (weight / 10) * Time.fixedDeltaTime), velocity.z * .9875f);
             }
 
             yield return new WaitForFixedUpdate();
         }
 
         applyForceCoroutine = null;
-    }
-
-    private bool RaycastVelocityMovement(Vector3 _raycastPos, out RaycastHit _hit)
-    {
-        return Physics.Raycast(_raycastPos, velocity, out _hit, (collider.bounds.center + velocity).magnitude);
     }
     #endregion
 

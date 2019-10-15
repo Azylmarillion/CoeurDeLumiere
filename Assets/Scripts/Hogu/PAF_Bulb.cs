@@ -12,7 +12,7 @@ public class PAF_Bulb : MonoBehaviour
     #endregion
 
     #region Fields
-    bool isBigBulb = false;
+    [SerializeField] bool isBigBulb = false;
     [SerializeField, Header("Big bulb stats")] int bigBulbHitNeeded = 10;
     [SerializeField, Range(0, 10)] int minItemsInBigBulb = 1;
     [SerializeField, Range(1, 50)] int maxItemsInBigBulb = 10;
@@ -24,6 +24,12 @@ public class PAF_Bulb : MonoBehaviour
 
     int hits = 0;
     [SerializeField] bool canHit = false;
+
+    [Header("Hit force")]
+    [SerializeField, Range(0, 100)] float minHitForce = 10; 
+    [SerializeField, Range(1, 100)] float maxHitForce = 50; 
+    [SerializeField, Range(0, 100)] float minHeightForce = 10; 
+    [SerializeField, Range(1, 100)] float maxHeightForce = 50; 
     #endregion
 
 
@@ -32,7 +38,10 @@ public class PAF_Bulb : MonoBehaviour
         transform.localScale = Vector3.zero;
         if (maxItemsInBigBulb <= minItemsInBigBulb) maxItemsInBigBulb = minItemsInBigBulb + 1;
         if (maxItemsInBulb <= minItemsInBulb) maxItemsInBulb = minItemsInBulb + 1;
-        delayHitCoroutine = StartCoroutine(DelayHitBulb(bulbAnimator.runtimeAnimatorController.animationClips[0].averageDuration));
+        if (maxHitForce <= minHitForce) maxHitForce = minHitForce + 1;
+        if (maxHeightForce <= minHeightForce) maxHeightForce = minHeightForce + 1;
+        delayHitCoroutine = StartCoroutine(PAF_Player.InvertBoolDelay((state) => { canHit = state; }, bulbAnimator.runtimeAnimatorController.animationClips[0].averageDuration));
+        if (isBigBulb) SetBigBulb();
     }
 
 
@@ -43,20 +52,14 @@ public class PAF_Bulb : MonoBehaviour
         bulbAnimator.SetBool("bigbulb", true);
         isBigBulb = true;
         bulbAnimator.enabled = true;
-        StartCoroutine(DelayHitBulb(bulbAnimator.runtimeAnimatorController.animationClips[1].averageDuration));
+        StartCoroutine(PAF_Player.InvertBoolDelay((state) => { canHit = state; }, bulbAnimator.runtimeAnimatorController.animationClips[1].averageDuration));
     }
     
-    IEnumerator DelayHitBulb(float _time)
-    {
-        canHit = false;
-        yield return new WaitForSeconds(_time);
-        canHit = true;
-    }
-
     public void Hit()
     {
         if (isBigBulb && canHit)
         {
+            PAF_SoundManager.I.PlayHitBulb(transform.position);
             hits++;
             if (hits >= bigBulbHitNeeded)
             {
@@ -64,8 +67,9 @@ public class PAF_Bulb : MonoBehaviour
                 Explode(_rnd);
             }
         }
-        else
+        else if (canHit)
         {
+            PAF_SoundManager.I.PlayHitBulb(transform.position);
             int _rnd = Random.Range(minItemsInBulb, maxItemsInBulb);
             Explode(_rnd);
         }
@@ -77,10 +81,16 @@ public class PAF_Bulb : MonoBehaviour
         for (int i = 0; i < _itemsToSpawn; i++)
         {
             PAF_Fruit _fruit = Instantiate(item).GetComponent<PAF_Fruit>();
-            Vector3 _force = new Vector3(Random.Range(0,1f), 0, Random.Range(0,1f));
+            Vector3 _force = new Vector3(Random.Range(minHitForce, maxHitForce), Random.Range(minHeightForce, maxHeightForce), Random.Range(minHitForce, maxHitForce));
             if (_fruit) _fruit.AddForce(_force);
         }
-        Destroy(this.gameObject);
+        bulbAnimator.SetBool("explode", true);
+        StartCoroutine(DelayDestroy());
     }
 
+    IEnumerator DelayDestroy()
+    {
+        yield return new WaitForSeconds(bulbAnimator.runtimeAnimatorController.animationClips[2].averageDuration);
+        Destroy(this.gameObject);
+    }
 }

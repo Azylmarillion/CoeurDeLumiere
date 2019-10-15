@@ -14,6 +14,13 @@ public class PAF_Fruit : MonoBehaviour
 
     #region Static & Constants
     /// <summary>
+    /// Event called when a fruit is eaten, with as parameters :
+    /// • Boolean indicating player increasing score, true if it's the player #1, false if #2 ;
+    /// • Int of the fruit points value, by how many the player score is increased.
+    /// </summary>
+    public static event Action<bool, int> OnFruitEaten = null;
+
+    /// <summary>
     /// Reference list of all fruits currently on the arena.
     /// </summary>
     private static List<PAF_Fruit> arenaFruits = new List<PAF_Fruit>();
@@ -41,9 +48,19 @@ public class PAF_Fruit : MonoBehaviour
     public float Weight { get { return weight; } }
 
     /// <summary>
+    /// Score value of the fruit, determining by how many a players score is increased when this fruit is eaten.
+    /// </summary>
+    [SerializeField] private int fruitScore = 100;
+
+    /// <summary>
     /// Layer mask of what the fruits should collide on.
     /// </summary>
     [SerializeField] private LayerMask whatCollide = new LayerMask();
+
+    /// <summary>
+    /// Indicates to which player this fruit should increases score points when ate.
+    /// </summary>
+    [SerializeField] private PAF_Player pointsOwner = null;
 
     /// <summary>
     /// Velocity without y axis.
@@ -76,6 +93,18 @@ public class PAF_Fruit : MonoBehaviour
     /// </summary>
     private Coroutine applyForceCoroutine = null;
     #endregion
+
+    #if UNITY_EDITOR
+    /// <summary>
+    /// Color used to draw gizmos on this script.
+    /// </summary>
+    [SerializeField] private Color gizmosColor = Color.cyan;
+
+    /// <summary>
+    /// All positions where the fruit hit something to bounce on it.
+    /// </summary>
+    private List<Vector3> collisionPos = new List<Vector3>();
+    #endif
 
     #endregion
 
@@ -174,6 +203,15 @@ public class PAF_Fruit : MonoBehaviour
 
         applyForceCoroutine = null;
     }
+
+    /// <summary>
+    /// Makes the fruit be eaten.
+    /// </summary>
+    public void Eat()
+    {
+        if (pointsOwner) OnFruitEaten?.Invoke(pointsOwner.IsPlayerOne, fruitScore);
+        Destroy(gameObject);
+    }
     #endregion
 
     #region Unity Methods
@@ -191,6 +229,16 @@ public class PAF_Fruit : MonoBehaviour
 
         // Add this fruit to the arena list on start !
         arenaFruits.Add(this);
+    }
+
+    // Implement OnDrawGizmos if you want to draw gizmos that are also pickable and always drawn
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = gizmosColor;
+        foreach (var item in collisionPos)
+        {
+
+        }
     }
 
     private void OnDestroy()

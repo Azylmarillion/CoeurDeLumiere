@@ -32,12 +32,12 @@ public class PAF_UIManager : MonoBehaviour
     /// <summary>
     /// Text used to display first player's score.
     /// </summary>
-    [SerializeField] private TextMeshProUGUI playerOneScore = null;
+    [SerializeField] private TextMeshPro playerOneScore = null;
 
     /// <summary>
     /// Text used to display second player's score.
     /// </summary>
-    [SerializeField] private TextMeshProUGUI playerTwoScore = null;
+    [SerializeField] private TextMeshPro playerTwoScore = null;
     #endregion
 
     #region Singleton

@@ -99,15 +99,10 @@ public class PAF_Fruit : MonoBehaviour
     [SerializeField] private Color gizmosColor = Color.cyan;
 
     /// <summary>
-    /// Sizz used to draw this fruit gizmos.
-    /// </summary>
-    [SerializeField] private float gizmosSize = .25f;
-
-    /// <summary>
     /// All positions where the fruit hit something to bounce on it.
     /// </summary>
-    private List<Vector3> collisionPos = new List<Vector3>();
-#endif
+    [SerializeField] private List<Vector3> collisionPos = new List<Vector3>();
+    #endif
     #endregion
 
     #endregion
@@ -121,8 +116,9 @@ public class PAF_Fruit : MonoBehaviour
     /// </summary>
     private void AddCollisionPoint()
     {
+        Physics.SyncTransforms();
         if (collisionPos.Count > 15) collisionPos.RemoveAt(0);
-        collisionPos.Add(transform.position);
+        collisionPos.Add(collider.bounds.center);
     }
     #endif
 
@@ -145,23 +141,40 @@ public class PAF_Fruit : MonoBehaviour
         RaycastHit[] _hits = new RaycastHit[3];
         RaycastHit _finalHit = new RaycastHit();
         int _nearestHitIndex = 0;
+        float _raycastLength = 0;
 
         while ((_flatVelocity = flatVelocity) != Vector3.zero)
         {
             yield return new WaitForFixedUpdate();
-
+            
             // Calculate normal & raycasts position
             _nFlatVelocity = _flatVelocity.normalized;
             _normal = new Vector3(_nFlatVelocity.z, 0, -_nFlatVelocity.x);
-            _raycastPos = new Vector3[] { collider.bounds.center + (_nFlatVelocity * collider.bounds.extents.x), collider.bounds.center + (_normal * collider.bounds.extents.x), collider.bounds.center - (_normal * collider.bounds.extents.x) };
+            _raycastPos = new Vector3[] { collider.bounds.center + (_nFlatVelocity * (collider.bounds.extents.x - .01f)), collider.bounds.center + (_normal * (collider.bounds.extents.x - .01f)), collider.bounds.center - (_normal * (collider.bounds.extents.x - .01f)) };
+            Debug.Log("Magntiude => " + flatVelocity.magnitude + " Radius => " + collider.bounds.extents.x);
+            // If movement magnitude is smaller than sphere radius, make an overlap at the future position, and if hit something else, make a longer raycast
+            if (_flatVelocity.magnitude < (collider.bounds.extents.x * 2))
+            {
+                if (Physics.OverlapSphere(collider.bounds.center + _flatVelocity, collider.bounds.extents.x, whatCollide).Length > 1)
+                {
+                    Debug.Log("Overlap HIT");
+                    _raycastLength = (collider.bounds.extents.x + .01f);
+                }
+                else
+                {
+                    _MoveToVelocity();
+                    continue;
+                }
+            }
+            else _raycastLength = _flatVelocity.magnitude + .01f;
 
             // Raycast from side extrem points and front center, and get closest touched object if one
             _nearestHitIndex = 0;
-            Physics.Raycast(_raycastPos[0], _flatVelocity, out _hits[0], _flatVelocity.magnitude, whatCollide);
+            Physics.Raycast(_raycastPos[0], _flatVelocity, out _hits[0], _raycastLength, whatCollide);
 
             for (int _i = 1; _i < 3; _i++)
             {
-                if (Physics.Raycast(_raycastPos[_i], _flatVelocity, out _hits[_i], _flatVelocity.magnitude, whatCollide)
+                if (Physics.Raycast(_raycastPos[_i], _flatVelocity, out _hits[_i], _raycastLength, whatCollide)
                     && (_hits[_i].distance < _hits[_i - 1].distance))
                 {
                     _nearestHitIndex = _i;
@@ -171,6 +184,8 @@ public class PAF_Fruit : MonoBehaviour
             // If hit something, bounce on it and recalculate trajectory
             if (_hits[_nearestHitIndex].collider)
             {
+                Debug.Log("Hit => " + _hits[_nearestHitIndex].transform.name + " | From => " + (_nearestHitIndex == 0 ? "Center" : _nearestHitIndex == 1 ? "Right" : "Left"));
+
                 // Bounce on a Sphere collider
                 if (_hits[_nearestHitIndex].collider is SphereCollider _sphere)
                 {
@@ -187,15 +202,22 @@ public class PAF_Fruit : MonoBehaviour
                     Vector3 _intersection = _sphere.bounds.center + (Mathf.Cos(Vector3.Angle(_edge, _hits[_nearestHitIndex].point) * Mathf.Deg2Rad) * _normal);
                     Vector3 _rayPos = _edge - ((_edge - _intersection) / 2);
 
-                    if (!Physics.Raycast(_rayPos, -_flatVelocity, out _finalHit, _flatVelocity.magnitude + _sphere.bounds.extents.x + 1, whatCollide) || !Physics.Raycast(_finalHit.point, _flatVelocity, out _finalHit, _flatVelocity.magnitude, whatCollide)) continue;
+                    if (!Physics.Raycast(_rayPos, -_flatVelocity, out _finalHit, _flatVelocity.magnitude + _sphere.bounds.extents.x + 1, whatCollide) || !Physics.Raycast(_finalHit.point, _flatVelocity, out _finalHit, _flatVelocity.magnitude, whatCollide))
+                    {
+                        _MoveToVelocity();
+                        continue;
+                    }
                 }
                 // Bounce on a Box Collider
                 else
                 {
-                    // Make an overlap of the future positon
-                    // If touched something, do triple raycast of length radius
-                    Debug.Log("Hit => " + _nearestHitIndex + "Normal => " + _hits[_nearestHitIndex].normal);
-                    if (!Physics.Raycast(new Vector3(collider.bounds.center.x - (_hits[_nearestHitIndex].normal.normalized.x * collider.bounds.extents.x), collider.bounds.center.y, collider.bounds.center.z - (_hits[_nearestHitIndex].normal.normalized.z * collider.bounds.extents.x)), _flatVelocity, out _finalHit, _flatVelocity.magnitude, whatCollide)) continue;
+                    // Raycast from the point that should hit other collider to get distance between
+                    if (!Physics.Raycast(new Vector3(collider.bounds.center.x - (_hits[_nearestHitIndex].normal.normalized.x * collider.bounds.extents.x), collider.bounds.center.y, collider.bounds.center.z - (_hits[_nearestHitIndex].normal.normalized.z * collider.bounds.extents.x)) - (_hits[_nearestHitIndex].normal.normalized * .01f), _flatVelocity, out _finalHit, _flatVelocity.magnitude + .01f, whatCollide))
+                    {
+                        Debug.Log("Lost");
+                        _MoveToVelocity();
+                        continue;
+                    }
                 }
 
                 // Push the touched fruit if one, or stun a player if hit one
@@ -208,10 +230,9 @@ public class PAF_Fruit : MonoBehaviour
                 }
 
                 // Set new position & velocity
-                transform.position += _nFlatVelocity * _finalHit.distance;
+                transform.position += _nFlatVelocity * (_finalHit.distance - .01f);
 
-                //_flatVelocity = Vector3.Cross(_flatVelocity, _finalHit.normal) * 1.1f;
-                _flatVelocity = new Vector3(velocity.x + _finalHit.normal.x, 0, velocity.z + _finalHit.normal.z).normalized * _flatVelocity.magnitude * 1.1f;
+                _flatVelocity = Vector3.Reflect(_flatVelocity, _finalHit.normal);
                 velocity = new Vector3(_flatVelocity.x, velocity.y, _flatVelocity.z);
 
                 #if UNITY_EDITOR
@@ -220,13 +241,19 @@ public class PAF_Fruit : MonoBehaviour
             }
             else
             {
-                transform.position += velocity;
-
-                velocity = new Vector3(velocity.x * .9875f, velocity.y/* - (Physics.gravity.magnitude * (weight / 10) * Time.fixedDeltaTime)*/, velocity.z * .9875f);
+                _MoveToVelocity();
             }
         }
 
         applyForceCoroutine = null;
+        
+        // Makes the fruit moves like if no obstacle is in its way
+        void _MoveToVelocity()
+        {
+            transform.position += velocity;
+
+            velocity = new Vector3(velocity.x * .9875f, velocity.y/* - (Physics.gravity.magnitude * (weight / 10) * Time.fixedDeltaTime)*/, velocity.z * .9875f);
+        }
     }
 
     /// <summary>
@@ -256,41 +283,48 @@ public class PAF_Fruit : MonoBehaviour
         arenaFruits.Add(this);
 
         #if UNITY_EDITOR
-        collisionPos.Add(transform.position);
+        collisionPos.Add(collider.bounds.center);
         #endif
     }
 
     // Implement OnDrawGizmos if you want to draw gizmos that are also pickable and always drawn
     private void OnDrawGizmos()
     {
+        Physics.SyncTransforms();
         Gizmos.color = gizmosColor;
 
         // Draw gizmos tracking the fruit collisions path
         if (collisionPos.Count > 0)
         {
-            Gizmos.DrawSphere(collisionPos[0], gizmosSize);
+            Gizmos.DrawSphere(collisionPos[0], collider.bounds.extents.x);
 
             for (int _i = 1; _i < collisionPos.Count; _i++)
             {
-                Gizmos.DrawSphere(collisionPos[_i], gizmosSize);
+                Gizmos.DrawSphere(collisionPos[_i], collider.bounds.extents.x);
                 Gizmos.DrawLine(collisionPos[_i - 1], collisionPos[_i]);
             }
+
+            Gizmos.color = new Color(1 - gizmosColor.r, 1 - gizmosColor.g, 1 - gizmosColor.b);
+            Gizmos.DrawLine(collisionPos[collisionPos.Count - 1], collider.bounds.center);
         }
 
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x), .1f);
-        Gizmos.DrawSphere(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), .1f);
-        Gizmos.DrawSphere(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), .1f);
+        if (collider)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x), .1f);
+            Gizmos.DrawSphere(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), .1f);
+            Gizmos.DrawSphere(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), .1f);
 
-        Gizmos.color = Color.blue;
-        Gizmos.DrawSphere(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x * 5), .1f);
-        Gizmos.DrawLine(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x), collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x * 5));
+            Gizmos.color = Color.blue;
+            Gizmos.DrawSphere(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x) + flatVelocity, .1f);
+            Gizmos.DrawLine(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x), collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x) + flatVelocity);
 
-        Gizmos.DrawSphere(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity.normalized * collider.bounds.extents.x * 5), .1f);
-        Gizmos.DrawLine(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity.normalized * collider.bounds.extents.x * 5));
+            Gizmos.DrawSphere(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity, .1f);
+            Gizmos.DrawLine(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity);
 
-        Gizmos.DrawSphere(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity.normalized * collider.bounds.extents.x * 5), .1f);
-        Gizmos.DrawLine(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity.normalized * collider.bounds.extents.x * 5));
+            Gizmos.DrawSphere(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity, .1f);
+            Gizmos.DrawLine(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity);
+        }
     }
 
     // Destroying the attached Behaviour will result in the game or Scene receiving OnDestroy

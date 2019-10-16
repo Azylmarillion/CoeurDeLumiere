@@ -16,10 +16,10 @@ TagManager:
   - 
   - Wall
   - Character
-  - WallObject
+  - Ground
   - Object
   - Bulb
-  - Ground
+  - 
   - 
   - 
   - 

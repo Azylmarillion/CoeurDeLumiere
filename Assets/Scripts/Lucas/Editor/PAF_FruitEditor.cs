@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,8 +14,8 @@ public class PAF_FruitEditor : Editor
     /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="Color"/>.</summary>
     SerializedProperty gizmosColor = null;
 
-    /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="float"/>.</summary>
-    SerializedProperty gizmosSize = null;
+    /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="List{T}"/> of <see cref="Vector3"/>.</summary>
+    SerializedProperty collisionPos = null;
     #endregion
 
     #region Parameters
@@ -113,7 +114,6 @@ public class PAF_FruitEditor : Editor
         EditorGUILayout.LabelField("Editor", EditorStyles.boldLabel);
 
         EditorGUILayout.PropertyField(gizmosColor, new GUIContent("Gizmos Color", "Color used to draw this fruit gizmos"));
-        EditorGUILayout.PropertyField(gizmosSize, new GUIContent("Gizmos Size", "Size used to draw this fruit gizmos"));
     }
 
     /// <summary>
@@ -139,12 +139,22 @@ public class PAF_FruitEditor : Editor
         EditorGUILayout.PropertyField(weight, new GUIContent("Weight", "weight of the object, influencing its movements."));
 
         GUILayout.Space(5);
-        GUI.enabled = false;
+        
+        if (EditorGUILayout.PropertyField(velocity, new GUIContent("Velocity", "Current velocity of the fruit.")))
+        {
+            serializedObject.targetObjects.ToList().ForEach(f => ((PAF_Fruit)f).Velocity = velocity.vector3Value);
+        }
 
-        EditorGUILayout.PropertyField(velocity, new GUIContent("Velocity", "Current velocity of the fruit."));
-
-        GUI.enabled = true;
         GUILayout.Space(5);
+
+        if (Application.isPlaying && (collisionPos.arraySize > 1))
+        {
+            GUI.color = new Color(.9f, .25f, .25f);
+            if (GUILayout.Button(new GUIContent("Clear Gizmos", "Remove all drawn gizmos of past positions."), GUILayout.Width(250)))
+            {
+                collisionPos.arraySize = 0;
+            }
+        }
     }
     #endregion
 
@@ -154,7 +164,7 @@ public class PAF_FruitEditor : Editor
     {
         // Get required properties
         gizmosColor = serializedObject.FindProperty("gizmosColor");
-        gizmosSize = serializedObject.FindProperty("gizmosSize");
+        collisionPos = serializedObject.FindProperty("collisionPos");
 
         collider = serializedObject.FindProperty("collider");
         weight = serializedObject.FindProperty("weight");

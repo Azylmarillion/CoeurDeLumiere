@@ -937,6 +937,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcbfcf0f8cade5a41a2d38eb58d3acf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  optionPPProfile: {fileID: 11400000, guid: 65319a1011626944eab0364e73ccdb01, type: 2}
+  ContrastIntensity: 1
+  ExposureIntensity: 1
+  SaturationIntensity: 1
 --- !u!114 &794656251957838694
 MonoBehaviour:
   m_ObjectHideFlags: 0

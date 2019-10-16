@@ -8,16 +8,20 @@ public class PAF_SoundManager : MonoBehaviour
 
     #region AudioClips
     [Space, Header("AudioClips")]
-    [SerializeField] AudioClip steps = null;
-    [SerializeField] AudioClip hitPlayer1 = null;
-    [SerializeField] AudioClip hitPlayer2 = null;
+    [SerializeField] AudioClip[] hitPlayer1 = null;
+    [SerializeField] AudioClip[] hitPlayer2 = null;
+    [SerializeField] AudioClip[] player1Attack = null;
+    [SerializeField] AudioClip[] player2Attack = null;
+    [SerializeField] AudioClip[] score = null;
+    [SerializeField] AudioClip[] steps = null;
     [SerializeField] AudioClip fallPlayer1 = null;
     [SerializeField] AudioClip fallPlayer2 = null;
     [SerializeField] AudioClip hitBulb = null;
     [SerializeField] AudioClip hitFruit = null;
-    [SerializeField] AudioClip player1Attack = null;
-    [SerializeField] AudioClip player2Attack = null;
-    [SerializeField] AudioClip[] score = null;
+    [SerializeField] AudioClip hitNone = null;
+    [SerializeField] AudioClip hitWall = null;
+    [SerializeField] AudioClip fruitBounce = null;
+    [SerializeField] AudioClip bulbExplode = null;
     #endregion
 
     #region AudioSources
@@ -28,10 +32,9 @@ public class PAF_SoundManager : MonoBehaviour
     [SerializeField] AudioSource cameraCoordonates = null;
     [SerializeField] AudioSource music = null;
     #endregion
+    
 
-    GameObject musicObject = null;
-
-    public bool IsReady => music && steps && hitPlayer1 && hitPlayer2 && player2Attack && hitBulb && hitFruit && player1Attack && score.Length > 0 && plantCoordonates && player1CrowdCoordonates && player2CrowdCoordonates && cameraCoordonates;
+    public bool IsReady => music && steps.Length > 0 && hitPlayer1.Length > 0 && hitPlayer2.Length > 0 && player2Attack.Length > 0 && hitBulb && hitFruit && fruitBounce && player1Attack.Length > 0 && score.Length > 0 && plantCoordonates && player1CrowdCoordonates && player2CrowdCoordonates && cameraCoordonates && hitNone && hitWall && bulbExplode;
 
 
 
@@ -63,13 +66,14 @@ public class PAF_SoundManager : MonoBehaviour
     public void PlaySteps(Vector3 _pos)
     {
         if (!IsReady) return;
-        AudioSource.PlayClipAtPoint(steps, _pos);
+        int _rnd = Random.Range(0, steps.Length);
+        AudioSource.PlayClipAtPoint(steps[_rnd], _pos);
     }
 
     public void PlayHitPlayer(Vector3 _pos, bool _isPlayer1)
     {
         if (!IsReady) return;
-        AudioSource.PlayClipAtPoint(_isPlayer1 ? hitPlayer1 : hitPlayer2, _pos);
+        StartCoroutine(PlayClips(_isPlayer1 ? hitPlayer2 : hitPlayer1, _pos));
     }
 
     public void PlayFallSound(Vector3 _pos, bool _isPlayer1)
@@ -78,22 +82,43 @@ public class PAF_SoundManager : MonoBehaviour
         AudioSource.PlayClipAtPoint(_isPlayer1 ? fallPlayer1 : fallPlayer2, _pos);
     }
 
-    public void PlayHitBulb(Vector3 _pos)
+    public void PlayFruitBounce(Vector3 _pos)
     {
         if (!IsReady) return;
-        AudioSource.PlayClipAtPoint(hitBulb, _pos);
+        AudioSource.PlayClipAtPoint(fruitBounce, _pos);
     }
 
-    public void PlayHitFruit(Vector3 _pos)
+    public void PlayPlayerAttack(Vector3 _pos, AttackType _touched, bool _isPlayer1)
     {
         if (!IsReady) return;
-        AudioSource.PlayClipAtPoint(hitFruit, _pos);
+        AudioClip _clip = null;
+        switch (_touched)
+        {
+            case AttackType.Fruit:
+                _clip = hitFruit;
+                break;
+            case AttackType.Player:
+                StartCoroutine(PlayClips(_isPlayer1 ? hitPlayer2 : hitPlayer1, _pos));
+                break;
+            case AttackType.Bulb:
+                _clip = hitBulb;
+                break;
+            case AttackType.None:
+                _clip = hitNone;
+                break;
+            case AttackType.Wall:
+                _clip = hitWall;
+                break;
+            default:
+                break;
+        }
+        if(_clip) AudioSource.PlayClipAtPoint(_clip, _pos);
     }
 
-    public void PlayPlayerAttack(Vector3 _pos, bool _isPlayer1)
+    public void PlayBulbExplode(Vector3 _pos)
     {
         if (!IsReady) return;
-        AudioSource.PlayClipAtPoint(_isPlayer1 ? player1Attack : player2Attack, _pos);
+        AudioSource.PlayClipAtPoint(bulbExplode, _pos);
     }
 
     public void PlayPlantEat()
@@ -106,10 +131,25 @@ public class PAF_SoundManager : MonoBehaviour
     public void PlayScore(bool _isPlayer1)
     {
         if (!IsReady) return;
-        foreach (AudioClip _audio in score)
+        StartCoroutine(PlayClips(score, transform.position));
+    }
+
+    IEnumerator PlayClips(AudioClip[] _clips, Vector3 _pos)
+    {
+        for (int i = 0; i < _clips.Length; i++)
         {
-            if (_isPlayer1) player1CrowdCoordonates.PlayOneShot(_audio);
-            else player2CrowdCoordonates.PlayOneShot(_audio);
+            AudioSource.PlayClipAtPoint(_clips[i], _pos);
+            yield return new WaitForSeconds(_clips[i].length);
         }
     }
+
+}
+
+public enum AttackType
+{
+    Fruit,
+    Player,
+    Bulb,
+    None,
+    Wall
 }

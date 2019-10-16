@@ -32,10 +32,11 @@ public class PAF_Player : MonoBehaviour
     #region Layers
     [Space, Header("Layers")]
     [SerializeField] LayerMask wallLayer = 0;
-    [SerializeField] LayerMask itemLayer = 0;
+    [SerializeField] LayerMask fruitLayer = 0;
     [SerializeField] LayerMask playerLayer = 0;
     [SerializeField] LayerMask bulbLayer = 0;
     [SerializeField] LayerMask groundLayer = 0;
+    [SerializeField] LayerMask obstacleLayer = 0;
     #endregion
 
     private void Start()
@@ -72,7 +73,7 @@ public class PAF_Player : MonoBehaviour
             if (idle = _dir.magnitude < .1f) return;
             Vector3 _nextPos = transform.position + _dir;
             _nextPos.y = moveArea.bounds.center.y;
-            if (moveArea.bounds.Contains(_nextPos) && !Physics.Raycast(transform.position, transform.forward, 1.5f, wallLayer))
+            if (moveArea.bounds.Contains(_nextPos) && !Physics.Raycast(transform.position, transform.forward, 1.5f, obstacleLayer))
             {
                 _nextPos.y = transform.position.y;
                 transform.position = Vector3.MoveTowards(transform.position, _nextPos, Time.deltaTime * (playerSpeed * 3));
@@ -97,37 +98,64 @@ public class PAF_Player : MonoBehaviour
     void Interact()
     {
         if (!canAttack) return;
-        for (int i = -(sightAngle / 2); i < sightAngle / 2; i += 10)
+        int _angle = sightAngle / 2;
+        bool _hasHit = false;
+        for (int i = -_angle; i < _angle; i ++)
         {
-            RaycastHit[] _hitItems = Physics.RaycastAll(transform.position, (Quaternion.Euler(0, i, 0) * transform.forward).normalized, sightRange, itemLayer);
+            if (Physics.Raycast(transform.position, (Quaternion.Euler(0, i, 0) * transform.forward).normalized, sightRange, wallLayer))
+            {
+                _angle = i;
+                PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Wall, IsPlayerOne);
+                _hasHit = true;
+                break;
+            }
+        }
+        for (int i = -_angle; i < _angle; i ++)
+        {
+            RaycastHit[] _hitItems = Physics.RaycastAll(transform.position, (Quaternion.Euler(0, i, 0) * transform.forward).normalized, sightRange, fruitLayer);
             foreach (RaycastHit _hit in _hitItems)
             {
                 PAF_Fruit _item = _hit.transform.GetComponent<PAF_Fruit>();
-                if (_item) _item.AddForce(new Vector3(Random.Range(0, 100), Random.Range(0, 100), Random.Range(0, 100)));
+                if (_item)
+                {
+                    _item.AddForce(new Vector3(Random.Range(0, 100), Random.Range(0, 100), Random.Range(0, 100)));
+                    PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Fruit, IsPlayerOne);
+                    _hasHit = true;
+                }
             }
         }
-        for (int i = -(sightAngle / 2); i < sightAngle / 2; i += 10)
+        for (int i = -_angle; i < _angle; i ++)
         {
             RaycastHit _hitPlayer;
             if (Physics.Raycast(transform.position, (Quaternion.Euler(0, i, 0) * transform.forward).normalized, out _hitPlayer, sightRange, playerLayer))
             {
                 PAF_Player _player = _hitPlayer.transform.GetComponent<PAF_Player>();
                 Debug.Log(_player.name);
-                if (_player) _player.Stun();
+                if (_player)
+                {
+                    _player.Stun();
+                    PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Player, IsPlayerOne);
+                    _hasHit = true;
+                }
                 break;
             }
         }
-        for (int i = -(sightAngle / 2); i < sightAngle / 2; i += 10)
+        for (int i = -_angle; i < _angle; i ++)
         {
             RaycastHit _hitBulb;
             if (Physics.Raycast(transform.position, (Quaternion.Euler(0, i, 0) * transform.forward).normalized, out _hitBulb, sightRange, bulbLayer))
             {
                 PAF_Bulb _bulb = _hitBulb.transform.GetComponent<PAF_Bulb>();
-                if (_bulb) _bulb.Hit();
+                if (_bulb)
+                {
+                    _bulb.Hit();
+                    PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Bulb, IsPlayerOne);
+                    _hasHit = true;
+                }
                 break;
             }
         }
-        PAF_SoundManager.I.PlayPlayerAttack(transform.position, IsPlayerOne);
+        if (!_hasHit) PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.None, IsPlayerOne);
         playerAnimator.SetAttack();
         StartCoroutine(InvertBoolDelay((state) => { canAttack = state; }, attackDelay));
     }

@@ -90,6 +90,14 @@ public class PAF_BulbManagerEditor : Editor
         EditorGUILayout.EndVertical(); 
 
     }
+
+    private void DrawMethods()
+    {
+        if (GUILayout.Button("Destroy all Bulbs", GUILayout.MinHeight(30)))
+        {
+            PAF_BulbManager.Instance?.DestroyAllBulbs();
+        }
+    }
     #endregion
 
     #region Unity Methods
@@ -107,6 +115,11 @@ public class PAF_BulbManagerEditor : Editor
         serializedObject.Update(); 
 
         DrawEditor();
+
+        if(Application.isPlaying)
+        {
+            DrawMethods();
+        }
 
         serializedObject.ApplyModifiedProperties(); 
     }

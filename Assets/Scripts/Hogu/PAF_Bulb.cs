@@ -75,7 +75,7 @@ public class PAF_Bulb : MonoBehaviour
 
     public void Explode(int _itemsToSpawn)
     {
-        if (!item) return;
+        if (!item && _itemsToSpawn > 0) return;
         for (int i = 0; i < _itemsToSpawn; i++)
         {
             PAF_Fruit _fruit = Instantiate(item).GetComponent<PAF_Fruit>();

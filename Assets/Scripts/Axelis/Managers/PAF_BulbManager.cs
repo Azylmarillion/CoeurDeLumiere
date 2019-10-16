@@ -76,7 +76,8 @@ public class PAF_BulbManager : MonoBehaviour
         for (int i = 0; i < m_usedBulbsPosition.Length; i++)
         {
             _bulb = Instantiate(m_bulbPrefab, m_usedBulbsPosition[i], Quaternion.identity).GetComponent<PAF_Bulb>();
-            m_spawnedBulbs.Add(_bulb); 
+            m_spawnedBulbs.Add(_bulb);
+            yield return new WaitForSeconds(Random.Range(.1f, .5f)); 
         }
         while (m_spawnedBulbs.Any(b => b != null))
         {
@@ -92,8 +93,8 @@ public class PAF_BulbManager : MonoBehaviour
     #region void
     public void CallBigBulb()
     {
-        m_spawnedBulbs.Where(b => b.transform.position == m_centerPosition).FirstOrDefault()?.Explode(0); 
-
+        m_spawnedBulbs.Where(b => b.transform.position == m_centerPosition).FirstOrDefault()?.Explode(0);
+        Instantiate(m_bulbPrefab, m_centerPosition, Quaternion.identity).GetComponent<PAF_Bulb>().SetBigBulb(); 
     }
 
     public void SelectFirstBulb()
@@ -105,6 +106,7 @@ public class PAF_BulbManager : MonoBehaviour
 
     private void SelectNewBulbs()
     {
+        m_usedBulbsPosition = GetRandomBulbs(); 
 
         if(m_checkBulbsCoroutine != null)
         {
@@ -114,7 +116,37 @@ public class PAF_BulbManager : MonoBehaviour
         m_checkBulbsCoroutine = StartCoroutine(WaitBulbsDestruction());
 
     }
-    #endregion 
+
+    public void DestroyAllBulbs() => m_spawnedBulbs.ForEach(b => b.Explode(0)); 
+    #endregion
+
+    #region Vector3
+    private Vector3[] GetRandomBulbs()
+    {
+        List<Vector3> _availablesPositions = m_bulbsPositions.ToList();
+        for (int i = 0; i < _availablesPositions.Count; i++)
+        {
+            if (m_usedBulbsPosition.ToList().Any(b => b == _availablesPositions[i]))
+            {
+                _availablesPositions.RemoveAt(i);
+                i--;
+            }
+        }
+        int _index = 0;
+        List<Vector3> _positions = new List<Vector3>();
+        if(_availablesPositions.Count < m_bulbLimit)
+        {
+            m_bulbLimit = _availablesPositions.Count; 
+        }
+        for (int i = 0; i < m_bulbLimit; i++)
+        {
+            _index = (int)Random.Range((int)0, (int)_availablesPositions.Count);
+            _positions.Add(_availablesPositions[_index]);
+            _availablesPositions.RemoveAt(_index);
+        }
+        return _positions.ToArray();
+    }
+    #endregion
 
     #endregion
 

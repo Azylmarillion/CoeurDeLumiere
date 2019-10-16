@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using TMPro;
 
 public class PAF_UIManager : MonoBehaviour
 {
@@ -20,14 +19,57 @@ public class PAF_UIManager : MonoBehaviour
 
     #region Fields / Properties
     /// <summary>
-    /// UI animator, making all different menus and sub-menus transitions.
+    /// Screen UI animator, making all different menus and sub-menus transitions.
     /// </summary>
-    [SerializeField] private Animator animator = null;
+    [SerializeField] private Animator screenAnimator = null;
+
+    /// <summary>
+    /// World UI animator, playing animations for score & timer in world space.
+    /// </summary>
+    [SerializeField] private Animator worldAnimator = null;
+
+
+    /// <summary>
+    /// Text used to display first player's score.
+    /// </summary>
+    [SerializeField] private TextMeshPro playerOneScore = null;
+
+    /// <summary>
+    /// Text used to display second player's score.
+    /// </summary>
+    [SerializeField] private TextMeshPro playerTwoScore = null;
+    #endregion
+
+    #region Singleton
+    /// <summary>
+    /// Singleton instance of this script.
+    /// </summary>
+    public static PAF_UIManager Instance = null;
     #endregion
 
     #region Methods
 
     #region Original Methods
+    /// <summary>
+    /// Updates the score of a player.
+    /// </summary>
+    /// <param name="_score">New player score.</param>
+    /// <param name="_isPlayerOne">Is it the score of the first or second player ?</param>
+    public void SetPlayerScore(int _score, bool _isPlayerOne)
+    {
+        if (_isPlayerOne)
+        {
+            playerOneScore.text = _score.ToString();
+            worldAnimator.SetTrigger("Score P1");
+        }
+        else
+        {
+            playerTwoScore.text = _score.ToString();
+            worldAnimator.SetTrigger("Score P2");
+        }
+    }
+
+
     /// <summary>
     /// Set game UI for a given state.
     /// </summary>
@@ -43,19 +85,20 @@ public class PAF_UIManager : MonoBehaviour
     /// <param name="_state">New UI state.</param>
     public void SetUIState(int _state)
     {
-        animator.SetInteger("State", _state);
+        screenAnimator.SetInteger("State", _state);
     }
     #endregion
 
     #region Unity Methods
-    // Start is called before the first frame update
-    void Start()
+    // Awake is called when the script instance is being loaded
+    private void Awake()
     {
-        
+        if (!Instance) Instance = this;
+        else Destroy(this);
     }
 
-    // Update is called once per frame
-    void Update()
+    // Start is called before the first frame update
+    void Start()
     {
         
     }

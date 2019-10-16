@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class PAF_Fruit : MonoBehaviour
 {
     #region Events
-
+    /// <summary>
+    /// Event called when a fruit is eaten, with as parameters :
+    /// • Boolean indicating player increasing score, true if it's the player #1, false if #2 ;
+    /// • Int of the fruit points value, by how many the player score is increased.
+    /// </summary>
+    public static event Action<bool, int> OnFruitEaten = null;
     #endregion
 
     #region Fields / Properties
@@ -40,6 +44,26 @@ public class PAF_Fruit : MonoBehaviour
     /// </summary>
     public float Weight { get { return weight; } }
 
+    /// <summary>
+    /// Score value of the fruit, determining by how many a players score is increased when this fruit is eaten.
+    /// </summary>
+    [SerializeField] private int fruitScore = 100;
+
+    /// <summary>
+    /// Layer mask of what the fruits should collide on.
+    /// </summary>
+    [SerializeField] private LayerMask whatCollide = new LayerMask();
+
+    /// <summary>
+    /// Indicates to which player this fruit should increases score points when ate.
+    /// </summary>
+    [SerializeField] private PAF_Player pointsOwner = null;
+
+    /// <summary>
+    /// Velocity without y axis.
+    /// </summary>
+    private Vector3 flatVelocity { get { return new Vector3(velocity.x, 0, velocity.z); } }
+
     /// <summary>Backing field for <see cref="Velocity"/>.</summary>
     [SerializeField] private Vector3 velocity = new Vector3();
 
@@ -52,7 +76,7 @@ public class PAF_Fruit : MonoBehaviour
         set
         {
             velocity = value;
-            if ((velocity != Vector3.zero) && (applyForceCoroutine != null))
+            if ((value != Vector3.zero) && (applyForceCoroutine == null))
             {
                 applyForceCoroutine = StartCoroutine(ApplyForce());
             }
@@ -67,20 +91,46 @@ public class PAF_Fruit : MonoBehaviour
     private Coroutine applyForceCoroutine = null;
     #endregion
 
+    #region Editor
+    #if UNITY_EDITOR
+    /// <summary>
+    /// Color used to draw gizmos on this script.
+    /// </summary>
+    [SerializeField] private Color gizmosColor = Color.cyan;
+
+    /// <summary>
+    /// Sizz used to draw this fruit gizmos.
+    /// </summary>
+    [SerializeField] private float gizmosSize = .25f;
+
+    /// <summary>
+    /// All positions where the fruit hit something to bounce on it.
+    /// </summary>
+    private List<Vector3> collisionPos = new List<Vector3>();
+#endif
+    #endregion
+
     #endregion
 
     #region Methods
 
     #region Original Methods
+    #if UNITY_EDITOR
+    /// <summary>
+    /// Adds a new collision point for debug & gizmos purpose.
+    /// </summary>
+    private void AddCollisionPoint()
+    {
+        if (collisionPos.Count > 15) collisionPos.RemoveAt(0);
+        collisionPos.Add(transform.position);
+    }
+    #endif
+
     /// <summary>
     /// Adds a force to the fruit, making it go in this direction.
     /// </summary>
     /// <param name="_force">Force to apply.</param>
-    public void AddForce(Vector3 _force)
-    {
-        velocity += _force;
-        applyForceCoroutine = StartCoroutine(ApplyForce());
-    }
+    public void AddForce(Vector3 _force) => Velocity += _force;
 
     /// <summary>
     /// Apply a force to the fruit.
@@ -88,37 +138,104 @@ public class PAF_Fruit : MonoBehaviour
     /// <returns></returns>
     private IEnumerator ApplyForce()
     {
-        Vector3 _normal = new Vector3(velocity.z, velocity.y, -velocity.x);
-        Vector3 _raycastPos;
-        RaycastHit _hit;
+        Vector3 _flatVelocity;
+        Vector3 _normal;
+        Vector3 _nFlatVelocity;
+        Vector3[] _raycastPos = new Vector3[3];
+        RaycastHit[] _hits = new RaycastHit[3];
+        RaycastHit _finalHit = new RaycastHit();
+        int _nearestHitIndex = 0;
 
-        while (velocity != Vector3.zero)
+        while ((_flatVelocity = flatVelocity) != Vector3.zero)
         {
-            // Take closest
-            if (RaycastVelocityMovement(_raycastPos = collider.bounds.center, out _hit) ||
-                RaycastVelocityMovement(_raycastPos += _normal * collider.radius, out _hit) ||
-                RaycastVelocityMovement(_raycastPos -= _normal * collider.radius * 2, out _hit))
+            yield return new WaitForFixedUpdate();
+
+            // Calculate normal & raycasts position
+            _nFlatVelocity = _flatVelocity.normalized;
+            _normal = new Vector3(_nFlatVelocity.z, 0, -_nFlatVelocity.x);
+            _raycastPos = new Vector3[] { collider.bounds.center + (_nFlatVelocity * collider.bounds.extents.x), collider.bounds.center + (_normal * collider.bounds.extents.x), collider.bounds.center - (_normal * collider.bounds.extents.x) };
+
+            // Raycast from side extrem points and front center, and get closest touched object if one
+            _nearestHitIndex = 0;
+            Physics.Raycast(_raycastPos[0], _flatVelocity, out _hits[0], _flatVelocity.magnitude, whatCollide);
+
+            for (int _i = 1; _i < 3; _i++)
             {
-                transform.position = transform.position + (velocity * _hit.distance);
-
-                // Set velocity after collision
-                velocity = new Vector3(Mathf.Abs(velocity.x) * Mathf.Sign(_hit.normal.x) * .5f, Mathf.Abs(velocity.y) * Mathf.Sign(_hit.normal.y) * .5f, Mathf.Abs(velocity.z) * Mathf.Sign(_hit.normal.z) * .5f);
-
-                // Push the touched fruit if one
-                PAF_Fruit _fruit = _hit.collider.GetComponent<PAF_Fruit>();
-                
-                //if (_fruit) _fruit.AddForce(???);
+                if (Physics.Raycast(_raycastPos[_i], _flatVelocity, out _hits[_i], _flatVelocity.magnitude, whatCollide)
+                    && (_hits[_i].distance < _hits[_i - 1].distance))
+                {
+                    _nearestHitIndex = _i;
+                }
             }
 
-            yield return new WaitForFixedUpdate();
+            // If hit something, bounce on it and recalculate trajectory
+            if (_hits[_nearestHitIndex].collider)
+            {
+                // Bounce on a Sphere collider
+                if (_hits[_nearestHitIndex].collider is SphereCollider _sphere)
+                {
+                    Vector3 _edge;
+                    if (_nearestHitIndex == 0)
+                    {
+                        _edge = _sphere.bounds.center;
+                    }
+                    else
+                    {
+                        _edge = _sphere.bounds.center + (_normal * (_nearestHitIndex == 1 ? -1 : 1) * _sphere.bounds.extents.x);
+                    }
+
+                    Vector3 _intersection = _sphere.bounds.center + (Mathf.Cos(Vector3.Angle(_edge, _hits[_nearestHitIndex].point) * Mathf.Deg2Rad) * _normal);
+                    Vector3 _rayPos = _edge - ((_edge - _intersection) / 2);
+
+                    if (!Physics.Raycast(_rayPos, -_flatVelocity, out _finalHit, _flatVelocity.magnitude + _sphere.bounds.extents.x + 1, whatCollide) || !Physics.Raycast(_finalHit.point, _flatVelocity, out _finalHit, _flatVelocity.magnitude, whatCollide)) continue;
+                }
+                // Bounce on a Box Collider
+                else
+                {
+                    // Make an overlap of the future positon
+                    // If touched something, do triple raycast of length radius
+                    Debug.Log("Hit => " + _nearestHitIndex + "Normal => " + _hits[_nearestHitIndex].normal);
+                    if (!Physics.Raycast(new Vector3(collider.bounds.center.x - (_hits[_nearestHitIndex].normal.normalized.x * collider.bounds.extents.x), collider.bounds.center.y, collider.bounds.center.z - (_hits[_nearestHitIndex].normal.normalized.z * collider.bounds.extents.x)), _flatVelocity, out _finalHit, _flatVelocity.magnitude, whatCollide)) continue;
+                }
+
+                // Push the touched fruit if one, or stun a player if hit one
+                PAF_Fruit _fruit = _finalHit.collider.GetComponent<PAF_Fruit>();
+                if (_fruit) _fruit.AddForce(_flatVelocity);
+                else if (velocity.magnitude > .1f)
+                {
+                    PAF_Player _player = _finalHit.collider.GetComponent<PAF_Player>();
+                    if (_player) _player.Stun();
+                }
+
+                // Set new position & velocity
+                transform.position += _nFlatVelocity * _finalHit.distance;
+
+                //_flatVelocity = Vector3.Cross(_flatVelocity, _finalHit.normal) * 1.1f;
+                _flatVelocity = new Vector3(velocity.x + _finalHit.normal.x, 0, velocity.z + _finalHit.normal.z).normalized * _flatVelocity.magnitude * 1.1f;
+                velocity = new Vector3(_flatVelocity.x, velocity.y, _flatVelocity.z);
+
+                #if UNITY_EDITOR
+                AddCollisionPoint();
+                #endif
+            }
+            else
+            {
+                transform.position += velocity;
+
+                velocity = new Vector3(velocity.x * .9875f, velocity.y/* - (Physics.gravity.magnitude * (weight / 10) * Time.fixedDeltaTime)*/, velocity.z * .9875f);
+            }
         }
 
         applyForceCoroutine = null;
     }
 
-    private bool RaycastVelocityMovement(Vector3 _raycastPos, out RaycastHit _hit)
+    /// <summary>
+    /// Makes the fruit be eaten.
+    /// </summary>
+    public void Eat()
     {
-        return Physics.Raycast(_raycastPos, velocity, out _hit, (collider.bounds.center + velocity).magnitude);
+        if (pointsOwner) OnFruitEaten?.Invoke(pointsOwner.IsPlayerOne, fruitScore);
+        Destroy(gameObject);
     }
     #endregion
 
@@ -137,8 +254,46 @@ public class PAF_Fruit : MonoBehaviour
 
         // Add this fruit to the arena list on start !
         arenaFruits.Add(this);
+
+        #if UNITY_EDITOR
+        collisionPos.Add(transform.position);
+        #endif
     }
 
+    // Implement OnDrawGizmos if you want to draw gizmos that are also pickable and always drawn
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = gizmosColor;
+
+        // Draw gizmos tracking the fruit collisions path
+        if (collisionPos.Count > 0)
+        {
+            Gizmos.DrawSphere(collisionPos[0], gizmosSize);
+
+            for (int _i = 1; _i < collisionPos.Count; _i++)
+            {
+                Gizmos.DrawSphere(collisionPos[_i], gizmosSize);
+                Gizmos.DrawLine(collisionPos[_i - 1], collisionPos[_i]);
+            }
+        }
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x), .1f);
+        Gizmos.DrawSphere(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), .1f);
+        Gizmos.DrawSphere(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), .1f);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawSphere(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x * 5), .1f);
+        Gizmos.DrawLine(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x), collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x * 5));
+
+        Gizmos.DrawSphere(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity.normalized * collider.bounds.extents.x * 5), .1f);
+        Gizmos.DrawLine(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity.normalized * collider.bounds.extents.x * 5));
+
+        Gizmos.DrawSphere(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity.normalized * collider.bounds.extents.x * 5), .1f);
+        Gizmos.DrawLine(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity.normalized * collider.bounds.extents.x * 5));
+    }
+
+    // Destroying the attached Behaviour will result in the game or Scene receiving OnDestroy
     private void OnDestroy()
     {
         // Remove this fruit from the arena list when destroyed

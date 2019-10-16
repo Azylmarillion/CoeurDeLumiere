@@ -40,15 +40,19 @@ public class PAF_Flower : MonoBehaviour
     [SerializeField] private Transform m_IKTransform = null;
     [SerializeField] private Animator m_animator = null; 
 
-    [SerializeField] private float m_eatingRange = 1f;
-    [SerializeField] private float m_detectionRange = 2f;
+    [SerializeField, Range(.1f, 5.0f)]
+    private float m_eatingRange = 1.0f;
+    [SerializeField, Range(5.0f, 50.0f)]
+    private float m_detectionRange = 2.0f;
 
-    [SerializeField] private int m_fieldOfView = 60;
+    [SerializeField, Range(1, 360)]
+    private int m_fieldOfView = 60;
 
-    [SerializeField] private float m_speed = 2f; 
+    [SerializeField, Range(.1f, 5.0f)]
+    private float m_speed = 2.0f; 
 
     private FlowerState m_currentState = FlowerState.Searching; 
-    [SerializeField] private PAF_Fruit m_followedFruit = null;
+    private PAF_Fruit m_followedFruit = null;
     #endregion
 
     #region Methods
@@ -71,16 +75,17 @@ public class PAF_Flower : MonoBehaviour
 
             if(Vector3.Distance(transform.position, m_followedFruit.transform.position) <= m_eatingRange)
             {
-                m_currentState = FlowerState.Searching;
+                m_currentState = FlowerState.Eating;
                 m_animator.SetInteger("BehaviourState", (int)m_currentState);
                 yield break;
             }
-            _targetedPosition = m_followedFruit.transform.position; 
+            _targetedPosition = transform.position + (m_followedFruit.transform.position - transform.position).normalized * m_eatingRange; 
             m_IKTransform.position = Vector3.MoveTowards(m_IKTransform.position, _targetedPosition, Time.deltaTime * m_speed); 
             yield return null; 
         }
-
-
+        m_currentState = FlowerState.Searching;
+        m_animator.SetInteger("BehaviourState", (int)m_currentState);
+        yield break;
     }
 
     public IEnumerator GetClosestFruit()
@@ -88,8 +93,9 @@ public class PAF_Flower : MonoBehaviour
         while (m_followedFruit == null)
         {
             yield return null;
+            if (PAF_Fruit.ArenaFruits.Length == 0) continue;
             PAF_Fruit[] _fruits = PAF_Fruit.ArenaFruits.ToList().Where(f => Vector3.Distance(transform.position, f.transform.position) <= m_detectionRange
-                                              && Vector3.Angle(transform.forward, m_followedFruit.transform.position - transform.position) > (m_fieldOfView / 2)).ToArray();
+                                                                         && Vector3.Angle(transform.forward, f.transform.position - transform.position) < (m_fieldOfView / 2)).ToArray();
             if (_fruits.Length == 0) continue;
             m_followedFruit = _fruits.OrderBy(f => Vector3.Distance(transform.position, f.transform.position)).FirstOrDefault(); 
             if(Vector3.Distance(transform.position, m_followedFruit.transform.position) <= m_eatingRange)
@@ -98,31 +104,35 @@ public class PAF_Flower : MonoBehaviour
                 m_animator.SetInteger("BehaviourState", (int)m_currentState);
                 yield break; 
             }
-
         }
         m_currentState = FlowerState.Following;
         m_animator.SetInteger("BehaviourState", (int)m_currentState);
     }
-
-    public void EatFruit()
-    {
-        if (!m_followedFruit) return;
-        // EAT THE FRUIT
-        Destroy(m_followedFruit.gameObject);
-        m_currentState = FlowerState.Searching;
-        m_animator.SetInteger("BehaviourState", (int)m_currentState); 
-    }
     #endregion
 
     #region Void
+    public void EatFruit()
+    {
+        if (m_followedFruit)
+        {
+            // EAT THE FRUIT
+            m_followedFruit.Eat(); 
+            // CALL VFX AND SOUND HERE
 
+        }
+        //RESET THE STATE
+        m_currentState = FlowerState.Searching;
+        m_animator.SetInteger("BehaviourState", (int)m_currentState);
+    }
     #endregion
 
     #endregion
 
     #region Unity Methods
-    private void Start()
+    private void OnDrawGizmos()
     {
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawSphere(m_IKTransform.position, .25f); 
     }
     #endregion
 

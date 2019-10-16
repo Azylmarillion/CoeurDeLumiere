@@ -23,7 +23,7 @@ public class PAF_Bulb : MonoBehaviour
     Coroutine delayHitCoroutine = null;
 
     int hits = 0;
-    [SerializeField] bool canHit = false;
+    bool canHit = false;
 
     [Header("Hit force")]
     [SerializeField, Range(0, 100)] float minHitForce = 10; 
@@ -59,7 +59,6 @@ public class PAF_Bulb : MonoBehaviour
     {
         if (isBigBulb && canHit)
         {
-            PAF_SoundManager.I.PlayHitBulb(transform.position);
             hits++;
             if (hits >= bigBulbHitNeeded)
             {
@@ -69,15 +68,14 @@ public class PAF_Bulb : MonoBehaviour
         }
         else if (canHit)
         {
-            PAF_SoundManager.I.PlayHitBulb(transform.position);
             int _rnd = Random.Range(minItemsInBulb, maxItemsInBulb);
             Explode(_rnd);
         }
     }
 
-    void Explode(int _itemsToSpawn)
+    public void Explode(int _itemsToSpawn)
     {
-        if (!item) return;
+        if (!item && _itemsToSpawn > 0) return;
         for (int i = 0; i < _itemsToSpawn; i++)
         {
             PAF_Fruit _fruit = Instantiate(item).GetComponent<PAF_Fruit>();

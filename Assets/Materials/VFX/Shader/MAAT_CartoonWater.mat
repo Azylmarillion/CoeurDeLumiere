@@ -76,7 +76,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _AntiAliasingValue: 5.54
+    - _AntiAliasingValue: 13.86
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DepthMaxDistance: 1
@@ -100,8 +100,8 @@ Material:
     - _SpecularHighlights: 1
     - _Speed: 0.5
     - _SrcBlend: 1
-    - _SurfaceDistortionAmount: 0.362
-    - _SurfaceNoiseCutoff: 0.865
+    - _SurfaceDistortionAmount: 0.122
+    - _SurfaceNoiseCutoff: 1
     - _Tiling: 20
     - _UJump: 0.25
     - _UVSec: 0

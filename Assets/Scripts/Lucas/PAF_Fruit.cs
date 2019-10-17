@@ -94,6 +94,16 @@ public class PAF_Fruit : MonoBehaviour
     #region Editor
     #if UNITY_EDITOR
     /// <summary>
+    /// Indicates if drawing the last shortest raycast hitting something or not.
+    /// </summary>
+    [SerializeField] private bool doDrawLastRaycastHit = true;
+
+    /// <summary>
+    /// Indicates if drawing raycasts points and direction or not.
+    /// </summary>
+    [SerializeField] private bool doDrawRaycasts = true;
+
+    /// <summary>
     /// Color used to draw gizmos on this script.
     /// </summary>
     [SerializeField] private Color gizmosColor = Color.cyan;
@@ -102,6 +112,11 @@ public class PAF_Fruit : MonoBehaviour
     /// All positions where the fruit hit something to bounce on it.
     /// </summary>
     [SerializeField] private List<Vector3> collisionPos = new List<Vector3>();
+
+    /// <summary>
+    /// Array of last hitting ray positions, start at index, and hit point at 1.
+    /// </summary>
+    [SerializeField] private Vector3[] lastHitRay = new Vector3[2];
     #endif
     #endregion
 
@@ -141,7 +156,6 @@ public class PAF_Fruit : MonoBehaviour
         RaycastHit[] _hits = new RaycastHit[3];
         RaycastHit _finalHit = new RaycastHit();
         int _nearestHitIndex = 0;
-        float _raycastLength = 0;
 
         while ((_flatVelocity = flatVelocity) != Vector3.zero)
         {
@@ -151,33 +165,24 @@ public class PAF_Fruit : MonoBehaviour
             _nFlatVelocity = _flatVelocity.normalized;
             _normal = new Vector3(_nFlatVelocity.z, 0, -_nFlatVelocity.x);
             _raycastPos = new Vector3[] { collider.bounds.center + (_nFlatVelocity * (collider.bounds.extents.x - .01f)), collider.bounds.center + (_normal * (collider.bounds.extents.x - .01f)), collider.bounds.center - (_normal * (collider.bounds.extents.x - .01f)) };
-            Debug.Log("Magntiude => " + flatVelocity.magnitude + " Radius => " + collider.bounds.extents.x);
-            // If movement magnitude is smaller than sphere radius, make an overlap at the future position, and if hit something else, make a longer raycast
-            if (_flatVelocity.magnitude < (collider.bounds.extents.x * 2))
-            {
-                if (Physics.OverlapSphere(collider.bounds.center + _flatVelocity, collider.bounds.extents.x, whatCollide).Length > 1)
-                {
-                    Debug.Log("Overlap HIT");
-                    _raycastLength = (collider.bounds.extents.x + .01f);
-                }
-                else
-                {
-                    _MoveToVelocity();
-                    continue;
-                }
-            }
-            else _raycastLength = _flatVelocity.magnitude + .01f;
 
             // Raycast from side extrem points and front center, and get closest touched object if one
             _nearestHitIndex = 0;
-            Physics.Raycast(_raycastPos[0], _flatVelocity, out _hits[0], _raycastLength, whatCollide);
+            if (!Physics.Raycast(_raycastPos[0], _nFlatVelocity, out _hits[0], _flatVelocity.magnitude + .01f, whatCollide))
+            {
+                _hits[0].distance = _flatVelocity.magnitude + collider.bounds.extents.x + .01f;
+            }
 
             for (int _i = 1; _i < 3; _i++)
             {
-                if (Physics.Raycast(_raycastPos[_i], _flatVelocity, out _hits[_i], _raycastLength, whatCollide)
-                    && (_hits[_i].distance < _hits[_i - 1].distance))
+                if (Physics.Raycast(_raycastPos[_i], _nFlatVelocity, out _hits[_i], _flatVelocity.magnitude + collider.bounds.extents.x + .01f, whatCollide))
                 {
-                    _nearestHitIndex = _i;
+                    Debug.Log("HIIIIT => Distance : " + _hits[_i].distance + " | 0 : " + _hits[0].distance);
+                    if (_hits[_i].distance < _hits[_nearestHitIndex].distance)
+                    {
+                        Debug.Log("Good");
+                        _nearestHitIndex = _i;
+                    }
                 }
             }
 
@@ -202,7 +207,7 @@ public class PAF_Fruit : MonoBehaviour
                     Vector3 _intersection = _sphere.bounds.center + (Mathf.Cos(Vector3.Angle(_edge, _hits[_nearestHitIndex].point) * Mathf.Deg2Rad) * _normal);
                     Vector3 _rayPos = _edge - ((_edge - _intersection) / 2);
 
-                    if (!Physics.Raycast(_rayPos, -_flatVelocity, out _finalHit, _flatVelocity.magnitude + _sphere.bounds.extents.x + 1, whatCollide) || !Physics.Raycast(_finalHit.point, _flatVelocity, out _finalHit, _flatVelocity.magnitude, whatCollide))
+                    if (!Physics.Raycast(_rayPos, -_nFlatVelocity, out _finalHit, _hits[_nearestHitIndex].distance, whatCollide) || !Physics.Raycast(_finalHit.point, _nFlatVelocity, out _finalHit, _hits[_nearestHitIndex].distance, whatCollide))
                     {
                         _MoveToVelocity();
                         continue;
@@ -212,7 +217,7 @@ public class PAF_Fruit : MonoBehaviour
                 else
                 {
                     // Raycast from the point that should hit other collider to get distance between
-                    if (!Physics.Raycast(new Vector3(collider.bounds.center.x - (_hits[_nearestHitIndex].normal.normalized.x * collider.bounds.extents.x), collider.bounds.center.y, collider.bounds.center.z - (_hits[_nearestHitIndex].normal.normalized.z * collider.bounds.extents.x)) - (_hits[_nearestHitIndex].normal.normalized * .01f), _flatVelocity, out _finalHit, _flatVelocity.magnitude + .01f, whatCollide))
+                    if (!Physics.Raycast(new Vector3(collider.bounds.center.x - (_hits[_nearestHitIndex].normal.normalized.x * (collider.bounds.extents.x - .05f)), collider.bounds.center.y, collider.bounds.center.z - (_hits[_nearestHitIndex].normal.normalized.z * (collider.bounds.extents.x - .05f))), _nFlatVelocity, out _finalHit, collider.bounds.extents.x + _flatVelocity.magnitude + .05f, whatCollide))
                     {
                         Debug.Log("Lost");
                         _MoveToVelocity();
@@ -229,14 +234,21 @@ public class PAF_Fruit : MonoBehaviour
                     if (_player) _player.Stun();
                 }
 
+                yield return new WaitForFixedUpdate();
+
                 // Set new position & velocity
-                transform.position += _nFlatVelocity * (_finalHit.distance - .01f);
+                transform.position += _nFlatVelocity * (Mathf.Min(_finalHit.distance, _flatVelocity.magnitude) - .01f);
 
                 _flatVelocity = Vector3.Reflect(_flatVelocity, _finalHit.normal);
                 velocity = new Vector3(_flatVelocity.x, velocity.y, _flatVelocity.z);
 
                 #if UNITY_EDITOR
                 AddCollisionPoint();
+
+                Physics.SyncTransforms();
+                lastHitRay[0] = _raycastPos[_nearestHitIndex];
+                lastHitRay[1] = _raycastPos[_nearestHitIndex] + (_nFlatVelocity * _hits[_nearestHitIndex].distance);
+                //yield return new WaitForFixedUpdate();
                 #endif
             }
             else
@@ -308,6 +320,18 @@ public class PAF_Fruit : MonoBehaviour
             Gizmos.DrawLine(collisionPos[collisionPos.Count - 1], collider.bounds.center);
         }
 
+        if (lastHitRay[0] != Vector3.zero)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawSphere(lastHitRay[0], .1f);
+
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawLine(lastHitRay[0], lastHitRay[1]);
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(lastHitRay[1], .1f);
+        }
+
         if (collider)
         {
             Gizmos.color = Color.red;
@@ -319,11 +343,11 @@ public class PAF_Fruit : MonoBehaviour
             Gizmos.DrawSphere(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x) + flatVelocity, .1f);
             Gizmos.DrawLine(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x), collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x) + flatVelocity);
 
-            Gizmos.DrawSphere(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity, .1f);
-            Gizmos.DrawLine(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity);
+            Gizmos.DrawSphere(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity + (flatVelocity.normalized * collider.bounds.extents.x), .1f);
+            Gizmos.DrawLine(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity + (flatVelocity.normalized * collider.bounds.extents.x));
 
-            Gizmos.DrawSphere(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity, .1f);
-            Gizmos.DrawLine(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity);
+            Gizmos.DrawSphere(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity + (flatVelocity.normalized * collider.bounds.extents.x), .1f);
+            Gizmos.DrawLine(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity + (flatVelocity.normalized * collider.bounds.extents.x));
         }
     }
 

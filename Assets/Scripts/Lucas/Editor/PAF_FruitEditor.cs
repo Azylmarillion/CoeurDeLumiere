@@ -11,6 +11,12 @@ public class PAF_FruitEditor : Editor
     #region Serialized Properties
 
     #region Editor
+    /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="bool"/>.</summary>
+    SerializedProperty doDrawLastRaycastHit = null;
+
+    /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="bool"/>.</summary>
+    SerializedProperty doDrawRaycasts = null;
+
     /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="Color"/>.</summary>
     SerializedProperty gizmosColor = null;
 
@@ -60,6 +66,17 @@ public class PAF_FruitEditor : Editor
         if (!Application.isPlaying) return;
 
         GUILayout.Space(15);
+
+        if (collisionPos.arraySize > 1)
+        {
+            GUI.color = new Color(.9f, .25f, .25f);
+            if (GUILayout.Button(new GUIContent("Clear Gizmos", "Remove all drawn gizmos of past positions."), GUILayout.Width(250)))
+            {
+                collisionPos.arraySize = 0;
+            }
+        }
+
+        GUILayout.Space(5);
         EditorGUILayout.BeginHorizontal();
         Color _originalColor = GUI.color;
         GUILayout.Space(75);
@@ -113,7 +130,13 @@ public class PAF_FruitEditor : Editor
     {
         EditorGUILayout.LabelField("Editor", EditorStyles.boldLabel);
 
-        EditorGUILayout.PropertyField(gizmosColor, new GUIContent("Gizmos Color", "Color used to draw this fruit gizmos"));
+        EditorGUILayout.PropertyField(doDrawLastRaycastHit, new GUIContent("Draw Last Raycast Hit", "Draws or not last shortest raycast hitting something."));
+
+        GUILayout.Space(5);
+
+        EditorGUILayout.PropertyField(doDrawRaycasts, new GUIContent("Draw Raycasts", "Draws or not raycasts from velocity."));
+        EditorGUILayout.PropertyField(gizmosColor, new GUIContent("Gizmos Color", "Color used to draw this fruit gizmos."));
+
     }
 
     /// <summary>
@@ -144,17 +167,6 @@ public class PAF_FruitEditor : Editor
         {
             serializedObject.targetObjects.ToList().ForEach(f => ((PAF_Fruit)f).Velocity = velocity.vector3Value);
         }
-
-        GUILayout.Space(5);
-
-        if (Application.isPlaying && (collisionPos.arraySize > 1))
-        {
-            GUI.color = new Color(.9f, .25f, .25f);
-            if (GUILayout.Button(new GUIContent("Clear Gizmos", "Remove all drawn gizmos of past positions."), GUILayout.Width(250)))
-            {
-                collisionPos.arraySize = 0;
-            }
-        }
     }
     #endregion
 
@@ -163,6 +175,8 @@ public class PAF_FruitEditor : Editor
     private void OnEnable()
     {
         // Get required properties
+        doDrawLastRaycastHit = serializedObject.FindProperty("doDrawLastRaycastHit");
+        doDrawRaycasts = serializedObject.FindProperty("doDrawRaycasts");
         gizmosColor = serializedObject.FindProperty("gizmosColor");
         collisionPos = serializedObject.FindProperty("collisionPos");
 

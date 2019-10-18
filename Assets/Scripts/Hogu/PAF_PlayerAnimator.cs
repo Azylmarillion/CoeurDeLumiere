@@ -10,7 +10,7 @@ public class PAF_PlayerAnimator : MonoBehaviour
     public void SetMoving(bool _state)
     {
         if (!playerAnimator) return;
-        playerAnimator.SetBool("move", _state);
+        playerAnimator.SetBool("move", !_state);
     }
 
     public void SetStunned()

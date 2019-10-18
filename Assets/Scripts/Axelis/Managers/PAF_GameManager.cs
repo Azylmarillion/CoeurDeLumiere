@@ -40,6 +40,11 @@ public class PAF_GameManager : MonoBehaviour
     /// </summary>
     public static event Action OnGameStart = null;
     /// <summary>
+    /// Event called during every second between the start and the end of the game.
+    /// The <see cref="int"/> argument is the remaining Time. 
+    /// </summary>
+    public static event Action<int> OnNextSecond = null; 
+    /// <summary>
     /// Event called when the game Ends
     /// </summary>
     public static event Action OnGameEnd = null; 
@@ -82,14 +87,15 @@ public class PAF_GameManager : MonoBehaviour
         PAF_Event[] _events = null; 
         while (m_currentGameTime < m_gameDuration)
         {
+            OnNextSecond?.Invoke(m_gameDuration - m_currentGameTime);
             _events = null;
-            yield return new WaitForSeconds(1.0f) ;
             _events = m_gameEvents.ToList().Where(e => e.CallingTime <= m_currentGameTime && !e.HasBeenCalled).ToArray(); 
             if(_events != null && _events.Length > 0)
             {
                 _events.ToList().ForEach(e => e.CallEvent()); 
             }
-            m_currentGameTime ++; 
+            yield return new WaitForSeconds(1.0f);
+            m_currentGameTime++;
         }
         OnGameEnd?.Invoke(); 
     }

@@ -11,12 +11,13 @@ public class PAF_Player : MonoBehaviour
     [SerializeField] bool canAttack = true;
     [SerializeField] bool isInvulnerable = false;
     bool idle = false;
+    bool falling = false;
     [SerializeField, Range(0, 5)] float attackDelay = .25f;
     [SerializeField, Range(0, 5)] float invulnerableTime = .5f;
     [SerializeField, Range(0, 5)] float stunTime = .5f;
     [SerializeField, Range(0, 5)] float fallTime = .5f;
 
-    [SerializeField, Range(0, 5)] float playerSpeed = 1.5f;
+    [SerializeField, Range(0, 10)] float playerSpeed = 1.5f;
 
     [Header("Sight")]
     [SerializeField, Range(2, 180)] int sightAngle = 45;
@@ -28,6 +29,8 @@ public class PAF_Player : MonoBehaviour
     [SerializeField] Renderer playerRenderer = null;
     [SerializeField] PAF_PlayerAnimator playerAnimator = null;
     #endregion
+
+    public bool IsReady => moveArea && playerRenderer && playerAnimator;
 
     #region Layers
     [Space, Header("Layers")]
@@ -67,27 +70,35 @@ public class PAF_Player : MonoBehaviour
 
     void Move()
     {
+        if (!IsReady) return;
         if (!stunned)
         {
             Vector3 _dir = new Vector3(Input.GetAxisRaw(isPlayerOne ? "Horizontal1" : "Horizontal2"), 0, Input.GetAxisRaw(isPlayerOne ? "Vertical1" : "Vertical2"));
-            if (idle = _dir.magnitude < .1f) return;
+            if (idle = _dir.magnitude < .1f)
+            {
+                playerAnimator.SetMoving(idle);
+                return;
+            }
             Vector3 _nextPos = transform.position + _dir;
             _nextPos.y = moveArea.bounds.center.y;
-            if (moveArea.bounds.Contains(_nextPos) && !Physics.Raycast(transform.position, transform.forward, 1.5f, obstacleLayer))
+            if (moveArea.bounds.Contains(_nextPos) && !Physics.Raycast(transform.position, transform.forward, 1.5f, obstacleLayer) && !falling)
             {
                 _nextPos.y = transform.position.y;
                 transform.position = Vector3.MoveTowards(transform.position, _nextPos, Time.deltaTime * (playerSpeed * 3));
             }
-            if (!Physics.Raycast(transform.position, Vector3.down, 2, groundLayer))
+            if (!Physics.Raycast(transform.position, Vector3.down, 2, groundLayer) && !falling)
             {
-                StartCoroutine(InvertBoolDelay((state) => { stunned = state; }, fallTime));
+                falling = true;
                 PAF_SoundManager.I.PlayFallSound(transform.position, isPlayerOne);
                 playerAnimator.SetFalling();
+                playerAnimator.SetMoving(false);
+                transform.rotation = Quaternion.LookRotation(_dir);
+                return;
             }
             transform.rotation = Quaternion.LookRotation(_dir);
         }
         else idle = true;
-        playerAnimator.SetMoving(idle);
+        if(!falling) playerAnimator.SetMoving(idle);
     }
 
     void StepSounds()
@@ -97,7 +108,7 @@ public class PAF_Player : MonoBehaviour
      
     void Interact()
     {
-        if (!canAttack) return;
+        if (!canAttack || !IsReady) return;
         int _angle = sightAngle / 2;
         bool _hasHit = false;
         for (int i = -_angle; i < _angle; i ++)
@@ -162,17 +173,14 @@ public class PAF_Player : MonoBehaviour
 
     public void Stun()
     {
+        if (!IsReady) return;
         StartCoroutine(StunFlashTimer());
         InvokeRepeating("Flash", 0, .1f);
         PAF_SoundManager.I.PlayHitPlayer(transform.position, IsPlayerOne);
         playerAnimator.SetStunned();
     }
 
-    void Flash()
-    {
-        if (!playerRenderer) return;
-        playerRenderer.enabled = !playerRenderer.enabled;
-    }
+    void Flash() => playerRenderer.enabled = !playerRenderer.enabled;
 
     IEnumerator StunFlashTimer()
     {
@@ -194,4 +202,12 @@ public class PAF_Player : MonoBehaviour
         _callBack(_state);
     }
 
+    public void Respawn()
+    {
+        if (!falling) return;
+        BoxCollider _dalle = PAF_DalleManager.I.AllUpDalles[Random.Range(0, PAF_DalleManager.I.AllUpDalles.Count)].GetComponent<BoxCollider>();
+        Vector3 _spawnPos = new Vector3(Random.Range(_dalle.bounds.min.x, _dalle.bounds.max.x), 0, Random.Range(_dalle.bounds.min.z, _dalle.bounds.max.z));
+        transform.position = _spawnPos;
+        falling = false;
+    }
 }

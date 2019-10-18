@@ -8,7 +8,7 @@ public class PAF_Bulb : MonoBehaviour
 {
     #region Object
     [SerializeField] Animator bulbAnimator = null;
-    [SerializeField] GameObject item = null;
+    [SerializeField] GameObject[] item = null;
     #endregion
 
     #region Fields
@@ -29,9 +29,9 @@ public class PAF_Bulb : MonoBehaviour
     [SerializeField, Range(0, 100)] float minHitForce = 10; 
     [SerializeField, Range(1, 100)] float maxHitForce = 50; 
     [SerializeField, Range(0, 100)] float minHeightForce = 10; 
-    [SerializeField, Range(1, 100)] float maxHeightForce = 50; 
+    [SerializeField, Range(1, 100)] float maxHeightForce = 50;
     #endregion
-
+    
 
     private void Start()
     {
@@ -40,7 +40,7 @@ public class PAF_Bulb : MonoBehaviour
         if (maxItemsInBulb <= minItemsInBulb) maxItemsInBulb = minItemsInBulb + 1;
         if (maxHitForce <= minHitForce) maxHitForce = minHitForce + 1;
         if (maxHeightForce <= minHeightForce) maxHeightForce = minHeightForce + 1;
-        delayHitCoroutine = StartCoroutine(PAF_Player.InvertBoolDelay((state) => { canHit = state; }, bulbAnimator.runtimeAnimatorController.animationClips[0].averageDuration));
+        if(bulbAnimator) delayHitCoroutine = StartCoroutine(PAF_Player.InvertBoolDelay((state) => { canHit = state; }, bulbAnimator.runtimeAnimatorController.animationClips[0].averageDuration));
         if (isBigBulb) SetBigBulb();
     }
 
@@ -75,10 +75,10 @@ public class PAF_Bulb : MonoBehaviour
 
     public void Explode(int _itemsToSpawn)
     {
-        if (!item && _itemsToSpawn > 0) return;
+        if (item.Length < 0 || !bulbAnimator) return;
         for (int i = 0; i < _itemsToSpawn; i++)
         {
-            PAF_Fruit _fruit = Instantiate(item).GetComponent<PAF_Fruit>();
+            PAF_Fruit _fruit = Instantiate(item[Random.Range(0, item.Length)]).GetComponent<PAF_Fruit>();
             Vector3 _force = new Vector3(Random.Range(minHitForce, maxHitForce), Random.Range(minHeightForce, maxHeightForce), Random.Range(minHitForce, maxHitForce));
             if (_fruit) _fruit.AddForce(_force);
         }

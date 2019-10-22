@@ -89,6 +89,7 @@ public class PAF_Bulb : MonoBehaviour
     IEnumerator DelayDestroy()
     {
         yield return new WaitForSeconds(bulbAnimator.runtimeAnimatorController.animationClips[2].averageDuration);
+        //PAF_SoundManager.I.PlayBulbExplode(transform.position);
         Destroy(this.gameObject);
     }
 }

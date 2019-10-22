@@ -7,6 +7,9 @@ public class PAF_PlayerAnimator : MonoBehaviour
     [SerializeField] Animator playerAnimator = null;
 
 
+
+    public void Init(float _speed) => playerAnimator.SetFloat("start speed", _speed);
+
     public void SetMoving(bool _state)
     {
         if (!playerAnimator) return;

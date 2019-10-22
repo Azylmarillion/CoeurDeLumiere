@@ -17,11 +17,17 @@ public class PAF_Player : MonoBehaviour
     [SerializeField, Range(0, 5)] float stunTime = .5f;
     [SerializeField, Range(0, 5)] float fallTime = .5f;
 
-    [SerializeField, Range(0, 10)] float playerSpeed = 1.5f;
+    [SerializeField, Range(0, 10)] float playerSpeed = 5;
 
     [Header("Sight")]
     [SerializeField, Range(2, 180)] int sightAngle = 45;
-    [SerializeField, Range(0, 5)] float sightRange = 1.5f;
+    [SerializeField, Range(0, 10)] float sightRange = 1.5f;
+    #endregion
+
+    #region Sounds
+    [Header("Sounds")]
+    [SerializeField] AudioSource audioPlayer = null;
+    [SerializeField] SoundData soundDataPlayer = null;
     #endregion
 
     #region Objects
@@ -30,7 +36,7 @@ public class PAF_Player : MonoBehaviour
     [SerializeField] PAF_PlayerAnimator playerAnimator = null;
     #endregion
 
-    public bool IsReady => moveArea && playerRenderer && playerAnimator;
+    public bool IsReady => moveArea && playerRenderer && playerAnimator && audioPlayer && soundDataPlayer;
 
     #region Layers
     [Space, Header("Layers")]
@@ -44,6 +50,7 @@ public class PAF_Player : MonoBehaviour
 
     private void Start()
     {
+        playerAnimator.Init(playerSpeed);
         InvokeRepeating("StepSounds", 1, .5f);
     }
 
@@ -89,7 +96,9 @@ public class PAF_Player : MonoBehaviour
             if (!Physics.Raycast(transform.position, Vector3.down, 2, groundLayer) && !falling)
             {
                 falling = true;
-                PAF_SoundManager.I.PlayFallSound(transform.position, isPlayerOne);
+                AudioClip _clip = soundDataPlayer.GetFallPlayer();
+                if(_clip) audioPlayer.PlayOneShot(_clip);
+                //PAF_SoundManager.I.PlayFallSound(transform.position);
                 playerAnimator.SetFalling();
                 playerAnimator.SetMoving(false);
                 transform.rotation = Quaternion.LookRotation(_dir);
@@ -103,7 +112,12 @@ public class PAF_Player : MonoBehaviour
 
     void StepSounds()
     {
-        if(!idle) PAF_SoundManager.I.PlaySteps(transform.position);
+        if(!idle)
+        {
+            AudioClip _clip = soundDataPlayer.GetStepsPlayer();
+            if(_clip) audioPlayer.PlayOneShot(_clip);
+            //PAF_SoundManager.I.PlaySteps(transform.position);
+        }
     }
      
     void Interact()
@@ -116,7 +130,9 @@ public class PAF_Player : MonoBehaviour
             if (Physics.Raycast(transform.position, (Quaternion.Euler(0, i, 0) * transform.forward).normalized, sightRange, wallLayer))
             {
                 _angle = i;
-                PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Wall, IsPlayerOne);
+                AudioClip _clip = soundDataPlayer.GetHitWall();
+                if (_clip) audioPlayer.PlayOneShot(_clip);
+                //PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Wall);
                 _hasHit = true;
                 break;
             }
@@ -130,7 +146,9 @@ public class PAF_Player : MonoBehaviour
                 if (_item)
                 {
                     _item.AddForce(new Vector3(Random.Range(0, 100), Random.Range(0, 100), Random.Range(0, 100)));
-                    PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Fruit, IsPlayerOne);
+                    AudioClip _clip = soundDataPlayer.GetHitFruit();
+                    if (_clip) audioPlayer.PlayOneShot(_clip);
+                    //PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Fruit);
                     _hasHit = true;
                 }
             }
@@ -141,14 +159,13 @@ public class PAF_Player : MonoBehaviour
             if (Physics.Raycast(transform.position, (Quaternion.Euler(0, i, 0) * transform.forward).normalized, out _hitPlayer, sightRange, playerLayer))
             {
                 PAF_Player _player = _hitPlayer.transform.GetComponent<PAF_Player>();
-                Debug.Log(_player.name);
                 if (_player)
                 {
                     _player.Stun();
-                    PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Player, IsPlayerOne);
+                    //PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Player);
                     _hasHit = true;
+                    break;
                 }
-                break;
             }
         }
         for (int i = -_angle; i < _angle; i ++)
@@ -160,23 +177,33 @@ public class PAF_Player : MonoBehaviour
                 if (_bulb)
                 {
                     _bulb.Hit();
-                    PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Bulb, IsPlayerOne);
+                    AudioClip _clip = soundDataPlayer.GetHitBulb();
+                    if (_clip) audioPlayer.PlayOneShot(_clip);
+                    //PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Bulb);
                     _hasHit = true;
                 }
                 break;
             }
         }
-        if (!_hasHit) PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.None, IsPlayerOne);
+        //if (!_hasHit)
+        //{
+            AudioClip _clipSwipe = soundDataPlayer.GetHitNone();
+            if (_clipSwipe) audioPlayer.PlayOneShot(_clipSwipe);
+            //PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.None);
+        //}
+
         playerAnimator.SetAttack();
         StartCoroutine(InvertBoolDelay((state) => { canAttack = state; }, attackDelay));
     }
 
     public void Stun()
     {
-        if (!IsReady) return;
+        if (!IsReady || isInvulnerable) return;
         StartCoroutine(StunFlashTimer());
         InvokeRepeating("Flash", 0, .1f);
-        PAF_SoundManager.I.PlayHitPlayer(transform.position, IsPlayerOne);
+        AudioClip _clip = soundDataPlayer.GetHitPlayer();
+        if (_clip) audioPlayer.PlayOneShot(_clip);
+        //PAF_SoundManager.I.PlayHitPlayer(transform.position);
         playerAnimator.SetStunned();
     }
 
@@ -186,11 +213,11 @@ public class PAF_Player : MonoBehaviour
     {
         isInvulnerable = true;
         stunned = true;
-        yield return new WaitForSeconds(stunTime);
+        StartCoroutine(InvertBoolDelay((state) => { isInvulnerable = !state; }, invulnerableTime + stunTime));
+        yield return new WaitForSeconds(stunTime + invulnerableTime);
         CancelInvoke("Flash");
         if (playerRenderer) playerRenderer.enabled = true;
          stunned = false;
-        StartCoroutine(InvertBoolDelay((state) => { isInvulnerable = !state; }, invulnerableTime));
     }
 
     public static IEnumerator InvertBoolDelay(System.Action<bool> _callBack, float _time)

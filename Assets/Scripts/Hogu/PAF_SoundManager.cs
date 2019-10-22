@@ -1,155 +1,166 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿//using System.Collections;
+//using System.Collections.Generic;
+//using UnityEngine;
 
-public class PAF_SoundManager : MonoBehaviour
-{
-    public static PAF_SoundManager I { get; private set; }
+//public class PAF_SoundManager : MonoBehaviour
+//{
+//    public static PAF_SoundManager I { get; private set; }
 
-    #region AudioClips
-    [Space, Header("AudioClips")]
-    [SerializeField] AudioClip[] hitPlayer1 = null;
-    [SerializeField] AudioClip[] hitPlayer2 = null;
-    [SerializeField] AudioClip[] player1Attack = null;
-    [SerializeField] AudioClip[] player2Attack = null;
-    [SerializeField] AudioClip[] score = null;
-    [SerializeField] AudioClip[] steps = null;
-    [SerializeField] AudioClip fallPlayer1 = null;
-    [SerializeField] AudioClip fallPlayer2 = null;
-    [SerializeField] AudioClip hitBulb = null;
-    [SerializeField] AudioClip hitFruit = null;
-    [SerializeField] AudioClip hitNone = null;
-    [SerializeField] AudioClip hitWall = null;
-    [SerializeField] AudioClip fruitBounce = null;
-    [SerializeField] AudioClip bulbExplode = null;
-    #endregion
+//    [SerializeField, Range(0, 100)] int soundLevel = 50; 
 
-    #region AudioSources
-    [Space, Header("AudioSources")]
-    [SerializeField] AudioSource plantCoordonates = null;
-    [SerializeField] AudioSource player1CrowdCoordonates = null;
-    [SerializeField] AudioSource player2CrowdCoordonates = null;
-    [SerializeField] AudioSource cameraCoordonates = null;
-    [SerializeField] AudioSource music = null;
-    #endregion
+//    #region AudioClips
+//    [Space, Header("AudioClips")]
+//    [SerializeField] AudioClip[] hitPlayer = null;
+//    [SerializeField] AudioClip[] steps = null;
+//    [SerializeField] AudioClip[] hitBulb = null;
+//    [SerializeField] AudioClip[] hitFruit = null;
+//    [SerializeField] AudioClip[] hitNone = null;
+//    [SerializeField] AudioClip[] hitWall = null;
+//    [SerializeField] AudioClip[] fallPlayer = null;
+//    [SerializeField] AudioClip[] fruitBounce = null;
+//    [SerializeField] AudioClip[] bulbExplode = null;
+//    [SerializeField] AudioClip[] dalleFalling = null;
+//    [SerializeField] AudioClip moveMenu = null;
+//    [SerializeField] AudioClip selectMenu = null;
+//    #endregion
+
+//    #region AudioSources
+//    [Space, Header("AudioSources")]
+//    [SerializeField] AudioSource plantCoordonates = null;
+//    [SerializeField] AudioSource player1CrowdCoordonates = null;
+//    [SerializeField] AudioSource player2CrowdCoordonates = null;
+//    [SerializeField] AudioSource music = null;
+//    #endregion
     
 
-    public bool IsReady => music && steps.Length > 0 && hitPlayer1.Length > 0 && hitPlayer2.Length > 0 && player2Attack.Length > 0 && hitBulb && hitFruit && fruitBounce && player1Attack.Length > 0 && score.Length > 0 && plantCoordonates && player1CrowdCoordonates && player2CrowdCoordonates && cameraCoordonates && hitNone && hitWall && bulbExplode;
+
+//    private void Awake()
+//    {
+//        I = this;
+//    }
 
 
+//    public void StartMusic()
+//    {
+//        if (!music) return;
+//        music.Play();
+//    }
 
-    private void Awake()
-    {
-        I = this;
-    }
+//    public void StopMusic()
+//    {
+//        if (!music) return;
+//        music.Stop();
+//    }
 
+//    public void PauseMusic()
+//    {
+//        if (!music) return;
+//        if (music.isPlaying) music.Pause();
+//        else music.Play();
+//    }
 
-    public void StartMusic()
-    {
-        if (!IsReady) return;
-        music.Play();
-    }
+//    public void PlaySteps(Vector3 _pos)
+//    {
+//        if (steps.Length <= 0) return;
+//        int _rnd = Random.Range(0, steps.Length);
+//        AudioSource.PlayClipAtPoint(steps[_rnd], _pos, soundLevel / 100f);
+//    }
 
-    public void StopMusic()
-    {
-        if (!IsReady) return;
-        music.Stop();
-    }
+//    public void PlayHitPlayer(Vector3 _pos)
+//    {
+//        if (hitPlayer.Length <= 0) return;
+//        int _rnd = Random.Range(0, hitPlayer.Length);
+//        AudioSource.PlayClipAtPoint(hitPlayer[_rnd], _pos, soundLevel / 100f);
+//    }
 
-    public void PauseMusic()
-    {
-        if (!IsReady) return;
-        if (music.isPlaying) music.Pause();
-        else music.Play();
-    }
+//    public void PlayFallSound(Vector3 _pos)
+//    {
+//        if (fallPlayer.Length <= 0) return;
+//        AudioSource.PlayClipAtPoint(fallPlayer[Random.Range(0, fallPlayer.Length)], _pos, soundLevel / 100f);
+//    }
 
-    public void PlaySteps(Vector3 _pos)
-    {
-        if (!IsReady) return;
-        int _rnd = Random.Range(0, steps.Length);
-        AudioSource.PlayClipAtPoint(steps[_rnd], _pos);
-    }
+//    public void PlayFruitBounce(Vector3 _pos)
+//    {
+//        if (fruitBounce.Length <= 0) return;
+//        AudioSource.PlayClipAtPoint(fruitBounce[Random.Range(0, fruitBounce.Length)], _pos, soundLevel / 100f);
+//    }
 
-    public void PlayHitPlayer(Vector3 _pos, bool _isPlayer1)
-    {
-        if (!IsReady) return;
-        StartCoroutine(PlayClips(_isPlayer1 ? hitPlayer2 : hitPlayer1, _pos));
-    }
+//    public void PlayPlayerAttack(Vector3 _pos, AttackType _touched)
+//    {
+//        AudioClip _clip = null;
+//        switch (_touched)
+//        {
+//            case AttackType.Fruit:
+//                if (hitFruit.Length <= 0) break;
+//                _clip = hitFruit[Random.Range(0, hitFruit.Length)];
+//                break;
+//            case AttackType.Player:
+//                if (hitPlayer.Length <= 0) break;
+//                _clip = hitPlayer[Random.Range(0, hitPlayer.Length)];
+//                break;
+//            case AttackType.Bulb:
+//                if (hitBulb.Length <= 0) break;
+//                _clip = hitBulb[Random.Range(0, hitBulb.Length)];
+//                break;
+//            case AttackType.None:
+//                if (hitNone.Length <= 0) break;
+//                _clip = hitNone[Random.Range(0, hitNone.Length)];
+//                break;
+//            case AttackType.Wall:
+//                if (hitWall.Length <= 0) break;
+//                _clip = hitWall[Random.Range(0, hitWall.Length)];
+//                break;
+//            default:
+//                break;
+//        }
+//        if(_clip) AudioSource.PlayClipAtPoint(_clip, _pos, soundLevel / 100f);
+//    }
 
-    public void PlayFallSound(Vector3 _pos, bool _isPlayer1)
-    {
-        if (!IsReady) return;
-        AudioSource.PlayClipAtPoint(_isPlayer1 ? fallPlayer1 : fallPlayer2, _pos);
-    }
+//    public void PlayBulbExplode(Vector3 _pos)
+//    {
+//        if (bulbExplode.Length <= 0) return;
+//        AudioSource.PlayClipAtPoint(bulbExplode[Random.Range(0, bulbExplode.Length)], _pos, soundLevel / 100f);
+//    }
+    
+//    public void PlayDalleFalling(Vector3 _pos)
+//    {
+//        if (dalleFalling.Length <= 0) return;
+//        AudioSource.PlayClipAtPoint(dalleFalling[Random.Range(0, dalleFalling.Length)], _pos, soundLevel / 100f);
+//    }
 
-    public void PlayFruitBounce(Vector3 _pos)
-    {
-        if (!IsReady) return;
-        AudioSource.PlayClipAtPoint(fruitBounce, _pos);
-    }
+//    public void PlayPlantEat()
+//    {
+//        if (!plantCoordonates) return;
+//        if (plantCoordonates.isPlaying) plantCoordonates.Stop();
+//        plantCoordonates.Play();
+//    }
 
-    public void PlayPlayerAttack(Vector3 _pos, AttackType _touched, bool _isPlayer1)
-    {
-        if (!IsReady) return;
-        AudioClip _clip = null;
-        switch (_touched)
-        {
-            case AttackType.Fruit:
-                _clip = hitFruit;
-                break;
-            case AttackType.Player:
-                StartCoroutine(PlayClips(_isPlayer1 ? hitPlayer2 : hitPlayer1, _pos));
-                break;
-            case AttackType.Bulb:
-                _clip = hitBulb;
-                break;
-            case AttackType.None:
-                _clip = hitNone;
-                break;
-            case AttackType.Wall:
-                _clip = hitWall;
-                break;
-            default:
-                break;
-        }
-        if(_clip) AudioSource.PlayClipAtPoint(_clip, _pos);
-    }
+//    public void PlayScore(bool _isPlayer1)
+//    {
+//        if (!player1CrowdCoordonates) return;
+//        if (_isPlayer1) player1CrowdCoordonates.Play();
+//        else player2CrowdCoordonates.Play();
+//    }
 
-    public void PlayBulbExplode(Vector3 _pos)
-    {
-        if (!IsReady) return;
-        AudioSource.PlayClipAtPoint(bulbExplode, _pos);
-    }
+//    public void PlayMenuMove()
+//    {
+//        if (!moveMenu || !music) return;
+//        AudioSource.PlayClipAtPoint(moveMenu, music.transform.position);
+//    }
 
-    public void PlayPlantEat()
-    {
-        if (!IsReady) return;
-        if (plantCoordonates.isPlaying) plantCoordonates.Stop();
-        plantCoordonates.Play();
-    }
+//    public void PlayMenuSelected()
+//    {
+//        if (!selectMenu || !music) return;
+//        AudioSource.PlayClipAtPoint(selectMenu, music.transform.position);
+//    }
 
-    public void PlayScore(bool _isPlayer1)
-    {
-        if (!IsReady) return;
-        StartCoroutine(PlayClips(score, transform.position));
-    }
+//}
 
-    IEnumerator PlayClips(AudioClip[] _clips, Vector3 _pos)
-    {
-        for (int i = 0; i < _clips.Length; i++)
-        {
-            AudioSource.PlayClipAtPoint(_clips[i], _pos);
-            yield return new WaitForSeconds(_clips[i].length);
-        }
-    }
-
-}
-
-public enum AttackType
-{
-    Fruit,
-    Player,
-    Bulb,
-    None,
-    Wall
-}
+//public enum AttackType
+//{
+//    Fruit,
+//    Player,
+//    Bulb,
+//    None,
+//    Wall
+//}

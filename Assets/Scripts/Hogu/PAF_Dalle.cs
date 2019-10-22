@@ -31,6 +31,7 @@ public class PAF_Dalle : MonoBehaviour
         if (!collider) collider = GetComponent<BoxCollider>();
         if (!collider) return;
         if (GetComponent<Renderer>()) GetComponent<Renderer>().enabled = false;
+        //PAF_SoundManager.I.PlayDalleFalling(transform.position);
         isFalling = true;
         isLeft = _isLeft;
         Fell = true;

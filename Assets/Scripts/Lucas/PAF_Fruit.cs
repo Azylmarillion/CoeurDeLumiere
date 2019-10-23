@@ -29,6 +29,12 @@ public class PAF_Fruit : MonoBehaviour
     #endregion
 
     #region Parameters
+
+    #region Sound
+    [SerializeField] AudioSource audioSource = null;
+    [SerializeField] SoundData soundData = null;
+    #endregion
+
     /// <summary>
     /// Collider of the object.
     /// </summary>
@@ -82,6 +88,7 @@ public class PAF_Fruit : MonoBehaviour
             }
         }
     }
+
     #endregion
 
     #region Coroutines
@@ -192,6 +199,13 @@ public class PAF_Fruit : MonoBehaviour
             {
                 Debug.Log("Hit => " + _hits[_nearestHitIndex].transform.name + " | From => " + (_nearestHitIndex == 0 ? "Center" : _nearestHitIndex == 1 ? "Right" : "Left"));
 
+                // Play bounce Sound
+                if(audioSource && soundData)
+                {
+                    AudioClip _clip = soundData.GetFruitBounce();
+                    if (_clip) audioSource.PlayOneShot(_clip);
+                }
+
                 // Bounce on a Sphere collider
                 if (_hits[_nearestHitIndex].collider is SphereCollider _sphere)
                 {
@@ -240,7 +254,7 @@ public class PAF_Fruit : MonoBehaviour
                 else if (velocity.magnitude > .1f)
                 {
                     PAF_Player _player = _finalHit.collider.GetComponent<PAF_Player>();
-                    if (_player) _player.Stun();
+                    if (_player) _player.Stun(transform.position);
                 }
 
                 #if UNITY_EDITOR

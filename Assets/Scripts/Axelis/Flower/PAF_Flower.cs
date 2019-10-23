@@ -53,6 +53,9 @@ public class PAF_Flower : MonoBehaviour
 
     private FlowerState m_currentState = FlowerState.Searching; 
     private PAF_Fruit m_followedFruit = null;
+
+    [SerializeField] AudioSource audiosource = null;
+    [SerializeField] SoundData soundData = null;
     #endregion
 
     #region Methods
@@ -117,6 +120,11 @@ public class PAF_Flower : MonoBehaviour
         {
             // EAT THE FRUIT
             m_followedFruit.Eat(); 
+            if(soundData && audiosource)
+            {
+                AudioClip _clip = soundData.GetPlantEating();
+                if (_clip) audiosource.PlayOneShot(_clip);
+            }
             // CALL VFX AND SOUND HERE
 
         }

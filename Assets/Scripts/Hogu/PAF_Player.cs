@@ -80,7 +80,7 @@ public class PAF_Player : MonoBehaviour
         if (!IsReady) return;
         if (!stunned)
         {
-            Vector3 _dir = new Vector3(Input.GetAxisRaw(isPlayerOne ? "Horizontal1" : "Horizontal2"), 0, Input.GetAxisRaw(isPlayerOne ? "Vertical1" : "Vertical2"));
+            Vector3 _dir = new Vector3(Input.GetAxis(isPlayerOne ? "Horizontal1" : "Horizontal2"), 0, Input.GetAxis(isPlayerOne ? "Vertical1" : "Vertical2"));
             if (idle = _dir.magnitude < .1f)
             {
                 playerAnimator.SetMoving(idle);
@@ -88,7 +88,7 @@ public class PAF_Player : MonoBehaviour
             }
             Vector3 _nextPos = transform.position + _dir;
             _nextPos.y = moveArea.bounds.center.y;
-            if (moveArea.bounds.Contains(_nextPos) && !Physics.Raycast(transform.position, transform.forward, 1.5f, obstacleLayer) && !falling)
+            if (moveArea.bounds.Contains(_nextPos) && !Physics.Raycast(transform.position, transform.forward, 3, obstacleLayer) && !falling)
             {
                 _nextPos.y = transform.position.y;
                 transform.position = Vector3.MoveTowards(transform.position, _nextPos, Time.deltaTime * (playerSpeed * 3));
@@ -124,16 +124,14 @@ public class PAF_Player : MonoBehaviour
     {
         if (!canAttack || !IsReady) return;
         int _angle = sightAngle / 2;
-        bool _hasHit = false;
         for (int i = -_angle; i < _angle; i ++)
         {
             if (Physics.Raycast(transform.position, (Quaternion.Euler(0, i, 0) * transform.forward).normalized, sightRange, wallLayer))
             {
-                _angle = i;
+                //_angle = i;
                 AudioClip _clip = soundDataPlayer.GetHitWall();
                 if (_clip) audioPlayer.PlayOneShot(_clip);
                 //PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Wall);
-                _hasHit = true;
                 break;
             }
         }
@@ -145,11 +143,11 @@ public class PAF_Player : MonoBehaviour
                 PAF_Fruit _item = _hit.transform.GetComponent<PAF_Fruit>();
                 if (_item)
                 {
-                    _item.AddForce(new Vector3(Random.Range(0, 100), Random.Range(0, 100), Random.Range(0, 100)));
+                    Vector3 _force = transform.forward * Random.Range(0, .5f);
+                    _item.AddForce(_force);
                     AudioClip _clip = soundDataPlayer.GetHitFruit();
                     if (_clip) audioPlayer.PlayOneShot(_clip);
                     //PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Fruit);
-                    _hasHit = true;
                 }
             }
         }
@@ -161,9 +159,8 @@ public class PAF_Player : MonoBehaviour
                 PAF_Player _player = _hitPlayer.transform.GetComponent<PAF_Player>();
                 if (_player)
                 {
-                    _player.Stun();
+                    _player.Stun(transform.position);
                     //PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Player);
-                    _hasHit = true;
                     break;
                 }
             }
@@ -177,10 +174,9 @@ public class PAF_Player : MonoBehaviour
                 if (_bulb)
                 {
                     _bulb.Hit();
-                    AudioClip _clip = soundDataPlayer.GetHitBulb();
-                    if (_clip) audioPlayer.PlayOneShot(_clip);
+                    //AudioClip _clip = soundDataPlayer.GetHitBulb();
+                    //if (_clip) audioPlayer.PlayOneShot(_clip);
                     //PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Bulb);
-                    _hasHit = true;
                 }
                 break;
             }
@@ -196,9 +192,10 @@ public class PAF_Player : MonoBehaviour
         StartCoroutine(InvertBoolDelay((state) => { canAttack = state; }, attackDelay));
     }
 
-    public void Stun()
+    public void Stun(Vector3 _from)
     {
         if (!IsReady || isInvulnerable) return;
+        transform.rotation = Quaternion.LookRotation(_from - transform.position);
         StartCoroutine(StunFlashTimer());
         InvokeRepeating("Flash", 0, .1f);
         AudioClip _clip = soundDataPlayer.GetHitPlayer();

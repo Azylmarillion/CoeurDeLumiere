@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic; 
 using System.Linq; 
 using UnityEngine;
 
@@ -37,7 +38,6 @@ public class PAF_Flower : MonoBehaviour
     #endregion
 
     #region Fields / Properties
-    [SerializeField] private Transform m_IKTransform = null;
     [SerializeField] private Animator m_animator = null; 
 
     [SerializeField, Range(.1f, 5.0f)]
@@ -49,7 +49,9 @@ public class PAF_Flower : MonoBehaviour
     private int m_fieldOfView = 60;
 
     [SerializeField, Range(.1f, 5.0f)]
-    private float m_speed = 2.0f; 
+    private float m_speed = 2.0f;
+
+    [SerializeField] private PAF_FlowerJoint[] m_joints = new PAF_FlowerJoint[] { }; 
 
     private FlowerState m_currentState = FlowerState.Searching; 
     private PAF_Fruit m_followedFruit = null;
@@ -79,8 +81,9 @@ public class PAF_Flower : MonoBehaviour
                 m_animator.SetInteger("BehaviourState", (int)m_currentState);
                 yield break;
             }
-            _targetedPosition = transform.position + (m_followedFruit.transform.position - transform.position).normalized * m_eatingRange; 
-            m_IKTransform.position = Vector3.MoveTowards(m_IKTransform.position, _targetedPosition, Time.deltaTime * m_speed); 
+            _targetedPosition = transform.position + (m_followedFruit.transform.position - transform.position).normalized * m_eatingRange;
+            float[] _angles = m_joints.ToList().Select(j => j.BaseTransform.localRotation.eulerAngles.y).ToArray();
+            PAF_ProceduralAnimationHelper.InverseKinematics(_targetedPosition, m_joints, _angles, .1f);
             yield return null; 
         }
         m_currentState = FlowerState.Searching;
@@ -129,10 +132,22 @@ public class PAF_Flower : MonoBehaviour
     #endregion
 
     #region Unity Methods
+    private void Awake()
+    {
+        m_joints.ToList().ForEach(j => j.Init()); 
+    }
+
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawSphere(m_IKTransform.position, .25f); 
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(transform.position, .5f); 
+
+        Gizmos.color = Color.red;
+        for (int i = 0; i < m_joints.Length - 1; i++)
+        {
+            Gizmos.DrawSphere(m_joints[i].BaseTransform.position, .25f); 
+            Gizmos.DrawLine(m_joints[i].BaseTransform.position, m_joints[i + 1].BaseTransform.position); 
+        }
     }
     #endregion
 

@@ -368,6 +368,7 @@ public class PAF_Fruit : MonoBehaviour
         #endif
     }
 
+    #if UNITY_EDITOR
     // Implement OnDrawGizmos if you want to draw gizmos that are also pickable and always drawn
     private void OnDrawGizmos()
     {
@@ -419,6 +420,7 @@ public class PAF_Fruit : MonoBehaviour
             Gizmos.DrawLine(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity + (flatVelocity.normalized * collider.bounds.extents.x));
         }
     }
+    #endif
 
     // Destroying the attached Behaviour will result in the game or Scene receiving OnDestroy
     private void OnDestroy()

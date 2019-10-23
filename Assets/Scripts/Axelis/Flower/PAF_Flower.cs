@@ -84,9 +84,6 @@ public class PAF_Flower : MonoBehaviour
                 m_animator.SetInteger("BehaviourState", (int)m_currentState);
                 yield break;
             }
-            _targetedPosition = transform.position + (m_followedFruit.transform.position - transform.position).normalized * m_eatingRange;
-            float[] _angles = m_joints.ToList().Select(j => j.BaseTransform.localRotation.eulerAngles.y).ToArray();
-            PAF_ProceduralAnimationHelper.InverseKinematics(_targetedPosition, m_joints, _angles, .1f);
 
             if (PAF_Fruit.ArenaFruits.Length > 0)
             {
@@ -97,9 +94,9 @@ public class PAF_Flower : MonoBehaviour
                     m_followedFruit = _fruits.OrderBy(f => Vector3.Distance(transform.position, f.transform.position)).FirstOrDefault();
             }
 
-
             _targetedPosition = transform.position + (m_followedFruit.transform.position - transform.position).normalized * m_eatingRange;
-            m_IKTransform.position = Vector3.MoveTowards(m_IKTransform.position, _targetedPosition, Time.deltaTime * m_speed);
+            float[] _angles = m_joints.ToList().Select(j => j.BaseTransform.localRotation.eulerAngles.y).ToArray();
+            PAF_ProceduralAnimationHelper.InverseKinematics(_targetedPosition, m_joints, _angles, .1f);
             yield return null; 
         }
         m_currentState = FlowerState.Searching;

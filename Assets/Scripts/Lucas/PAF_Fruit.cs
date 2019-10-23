@@ -97,7 +97,7 @@ public class PAF_Fruit : MonoBehaviour
     /// <summary>
     /// Scriptable Object used for sound datas. (To remove from here.)
     /// </summary>
-    [SerializeField] SoundData soundData = null;
+    [SerializeField] PAF_SoundData soundData = null;
     #endregion
 
     #region Coroutines

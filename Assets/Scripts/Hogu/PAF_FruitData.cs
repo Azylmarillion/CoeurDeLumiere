@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "FruitData", menuName = "ScriptableObjects/FruitDataScriptableObject", order = 1)]
-public class FruitData : ScriptableObject
+public class PAF_FruitData : ScriptableObject
 {
     [SerializeField] GameObject[] fruits;
 

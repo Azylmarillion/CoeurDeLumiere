@@ -6,7 +6,7 @@ public class PAF_Dalle : MonoBehaviour
 {
     [SerializeField] BoxCollider collider = null;
     [SerializeField, Range(1,10)] float speedDecay = 2;
-    [SerializeField] SoundData soundData = null;
+    [SerializeField] PAF_SoundData soundData = null;
     [SerializeField] AudioSource audioSource = null;
     bool isFalling = false;
     bool isLeft = false;
@@ -34,6 +34,7 @@ public class PAF_Dalle : MonoBehaviour
         if (!collider) return;
         if (GetComponent<Renderer>()) GetComponent<Renderer>().enabled = false;
         //PAF_SoundManager.I.PlayDalleFalling(transform.position);
+        if (!audioSource && GetComponent<AudioSource>()) audioSource = GetComponent<AudioSource>();
         if(soundData && audioSource)
         {
             AudioClip _clip = soundData.GetDalleFalling();

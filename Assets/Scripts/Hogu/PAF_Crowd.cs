@@ -7,7 +7,7 @@ public class PAF_Crowd : MonoBehaviour
     [SerializeField] bool team1 = true;
 
     [SerializeField] AudioSource audioSource = null;
-    [SerializeField] SoundData soundData = null;
+    [SerializeField] PAF_SoundData soundData = null;
 
 
     public void ScorePoint()

@@ -9,9 +9,9 @@ public class PAF_Bulb : MonoBehaviour
     #region Object
     [SerializeField] Animator bulbAnimator = null;
     [SerializeField] GameObject[] items = null;
-    [SerializeField] SoundData soundData = null;
+    [SerializeField] PAF_SoundData soundData = null;
     [SerializeField] AudioSource soundSource = null;
-    [SerializeField] FruitData fruitData = null;
+    [SerializeField] PAF_FruitData fruitData = null;
     #endregion
 
     #region Fields
@@ -92,10 +92,10 @@ public class PAF_Bulb : MonoBehaviour
                 AudioClip _clip = soundData.GetFruitSpawn();
                 if (_clip) soundSource.PlayOneShot(_clip);
             }
-            PAF_Fruit _fruit = Instantiate(items[Random.Range(0, items.Length)]).GetComponent<PAF_Fruit>();
-            Vector3 _force = new Vector3(Random.Range(minHitForce, maxHitForce), Random.Range(minHeightForce, maxHeightForce), Random.Range(minHitForce, maxHitForce));
-            _force = _force.normalized;
-            if (_fruit) _fruit.AddForce(_force * .1f);
+            PAF_Fruit _fruit = Instantiate(items[Random.Range(0, items.Length)], transform.position, transform.rotation).GetComponent<PAF_Fruit>();
+            Vector3 _force = new Vector3(Random.Range(-2f, 2f), Random.Range(-2f, 2f), Random.Range(-2f, 2f));
+            _force = Vector3.ClampMagnitude(_force, Random.Range(.1f, 1));
+            if (_fruit) _fruit.AddForce(_force);
         }
         bulbAnimator.SetBool("explode", true);
         StartCoroutine(DelayDestroy());
@@ -108,7 +108,7 @@ public class PAF_Bulb : MonoBehaviour
             AudioClip _clip = soundData.GetBulbExploding();
             if (_clip) soundSource.PlayOneShot(_clip);
         }
-        yield return new WaitForSeconds(bulbAnimator.runtimeAnimatorController.animationClips[2].averageDuration);
+        yield return new WaitForSeconds(bulbAnimator.runtimeAnimatorController.animationClips[isBigBulb ? 2 : 3].averageDuration);
         //PAF_SoundManager.I.PlayBulbExplode(transform.position);
         Destroy(this.gameObject);
     }

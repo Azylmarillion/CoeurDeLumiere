@@ -27,7 +27,7 @@ public class PAF_Player : MonoBehaviour
     #region Sounds
     [Header("Sounds")]
     [SerializeField] AudioSource audioPlayer = null;
-    [SerializeField] SoundData soundDataPlayer = null;
+    [SerializeField] PAF_SoundData soundDataPlayer = null;
     #endregion
 
     #region Objects
@@ -61,7 +61,7 @@ public class PAF_Player : MonoBehaviour
             Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button1 : KeyCode.Joystick2Button1) ||
             Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button2 : KeyCode.Joystick2Button2) ||
             Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button3 : KeyCode.Joystick2Button3) &&
-            canAttack) Interact();
+            canAttack && !stunned) Interact();
     }
 
     private void OnDrawGizmos()
@@ -88,12 +88,12 @@ public class PAF_Player : MonoBehaviour
             }
             Vector3 _nextPos = transform.position + _dir;
             _nextPos.y = moveArea.bounds.center.y;
-            if (moveArea.bounds.Contains(_nextPos) && !Physics.Raycast(transform.position, transform.forward, 3, obstacleLayer) && !falling)
+            if (moveArea.bounds.Contains(_nextPos) && !Physics.Raycast(transform.position, transform.forward, 1.5f, obstacleLayer) && !falling)
             {
                 _nextPos.y = transform.position.y;
                 transform.position = Vector3.MoveTowards(transform.position, _nextPos, Time.deltaTime * (playerSpeed * 3));
             }
-            if (!Physics.Raycast(transform.position, Vector3.down, 2, groundLayer) && !falling)
+            if (!Physics.Raycast(transform.position - transform.forward * .5f, Vector3.down, 2, groundLayer) && !falling)
             {
                 falling = true;
                 AudioClip _clip = soundDataPlayer.GetFallPlayer();
@@ -135,6 +135,7 @@ public class PAF_Player : MonoBehaviour
                 break;
             }
         }
+        List<PAF_Fruit> _fruitsHit = new List<PAF_Fruit>();
         for (int i = -_angle; i < _angle; i ++)
         {
             RaycastHit[] _hitItems = Physics.RaycastAll(transform.position, (Quaternion.Euler(0, i, 0) * transform.forward).normalized, sightRange, fruitLayer);
@@ -143,8 +144,11 @@ public class PAF_Player : MonoBehaviour
                 PAF_Fruit _item = _hit.transform.GetComponent<PAF_Fruit>();
                 if (_item)
                 {
-                    Vector3 _force = transform.forward * Random.Range(0, .5f);
-                    _item.AddForce(_force);
+                    if (_fruitsHit.Contains(_item)) continue;
+                    _fruitsHit.Add(_item);
+                    Vector3 _force = (_item.transform.position - transform.position) /** 2*//*Random.Range(0, .5f)*/;
+                    _item.AddForce(_force.normalized);
+                    Debug.Log(_force.normalized);
                     AudioClip _clip = soundDataPlayer.GetHitFruit();
                     if (_clip) audioPlayer.PlayOneShot(_clip);
                     //PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Fruit);
@@ -229,6 +233,7 @@ public class PAF_Player : MonoBehaviour
     public void Respawn()
     {
         if (!falling) return;
+        if (PAF_DalleManager.I.AllUpDalles.Count <= 0) return;
         BoxCollider _dalle = PAF_DalleManager.I.AllUpDalles[Random.Range(0, PAF_DalleManager.I.AllUpDalles.Count)].GetComponent<BoxCollider>();
         Vector3 _spawnPos = new Vector3(Random.Range(_dalle.bounds.min.x, _dalle.bounds.max.x), 0, Random.Range(_dalle.bounds.min.z, _dalle.bounds.max.z));
         transform.position = _spawnPos;

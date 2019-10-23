@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "SoundData", menuName = "ScriptableObjects/SoundDataScriptableObject", order = 1)]
-public class SoundData : ScriptableObject
+public class PAF_SoundData : ScriptableObject
 {
     [SerializeField] AudioClip[] steps = null;// plugged
     [SerializeField] AudioClip[] hitPlayer = null; // plugged

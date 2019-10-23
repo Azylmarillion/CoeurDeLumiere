@@ -160,6 +160,16 @@ public class PAF_Fruit : MonoBehaviour
     public void AddForce(Vector3 _force) => Velocity += _force;
 
     /// <summary>
+    /// Adds a force to the fruit, making it go in this direction.
+    /// </summary>
+    /// <param name="_force">Force to apply.</param>
+    public void AddForce(Vector3 _force, PAF_Player _player)
+    {
+        pointsOwner = _player;
+        AddForce(_force);
+    }
+
+    /// <summary>
     /// Apply a force to the fruit.
     /// </summary>
     /// <returns></returns>

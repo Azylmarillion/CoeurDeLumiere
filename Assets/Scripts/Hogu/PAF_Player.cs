@@ -147,7 +147,7 @@ public class PAF_Player : MonoBehaviour
                     if (_fruitsHit.Contains(_item)) continue;
                     _fruitsHit.Add(_item);
                     Vector3 _force = (_item.transform.position - transform.position) /** 2*//*Random.Range(0, .5f)*/;
-                    _item.AddForce(_force.normalized);
+                    _item.AddForce(_force.normalized, this);
                     Debug.Log(_force.normalized);
                     AudioClip _clip = soundDataPlayer.GetHitFruit();
                     if (_clip) audioPlayer.PlayOneShot(_clip);

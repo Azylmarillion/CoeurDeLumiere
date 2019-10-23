@@ -75,13 +75,29 @@ public class PAF_Fruit : MonoBehaviour
         get { return velocity; }
         set
         {
+            value = new Vector3(Mathf.Clamp(value.x, -999, 999), Mathf.Clamp(value.y, -999, 999), Mathf.Clamp(value.z, -999, 999));
+
             velocity = value;
-            if ((value != Vector3.zero) && (applyForceCoroutine == null))
+            if (value != Vector3.zero)
             {
+                if (applyForceCoroutine != null) StopCoroutine(applyForceCoroutine);
                 applyForceCoroutine = StartCoroutine(ApplyForce());
             }
         }
     }
+
+    #endregion
+
+    #region Sounds
+    /// <summary>
+    /// Audio source of the object.
+    /// </summary>
+    [SerializeField] AudioSource audioSource = null;
+
+    /// <summary>
+    /// Scriptable Object used for sound datas. (To remove from here.)
+    /// </summary>
+    [SerializeField] PAF_SoundData soundData = null;
     #endregion
 
     #region Coroutines
@@ -144,6 +160,16 @@ public class PAF_Fruit : MonoBehaviour
     public void AddForce(Vector3 _force) => Velocity += _force;
 
     /// <summary>
+    /// Adds a force to the fruit, making it go in this direction.
+    /// </summary>
+    /// <param name="_force">Force to apply.</param>
+    public void AddForce(Vector3 _force, PAF_Player _player)
+    {
+        pointsOwner = _player;
+        AddForce(_force);
+    }
+
+    /// <summary>
     /// Apply a force to the fruit.
     /// </summary>
     /// <returns></returns>
@@ -172,6 +198,7 @@ public class PAF_Fruit : MonoBehaviour
             {
                 _hits[0].distance = _flatVelocity.magnitude + collider.bounds.extents.x + .01f;
             }
+            else _hits[0].distance += collider.bounds.extents.x;
 
             for (int _i = 1; _i < 3; _i++)
             {
@@ -191,6 +218,13 @@ public class PAF_Fruit : MonoBehaviour
             {
                 Debug.Log("Hit => " + _hits[_nearestHitIndex].transform.name + " | From => " + (_nearestHitIndex == 0 ? "Center" : _nearestHitIndex == 1 ? "Right" : "Left"));
 
+                // Play bounce Sound
+                if(audioSource && soundData)
+                {
+                    AudioClip _clip = soundData.GetFruitBounce();
+                    if (_clip) audioSource.PlayOneShot(_clip);
+                }
+
                 // Bounce on a Sphere collider
                 if (_hits[_nearestHitIndex].collider is SphereCollider _sphere)
                 {
@@ -204,25 +238,33 @@ public class PAF_Fruit : MonoBehaviour
                         _edge = _sphere.bounds.center + (_normal * (_nearestHitIndex == 1 ? -1 : 1) * _sphere.bounds.extents.x);
                     }
 
-                    Vector3 _intersection = _sphere.bounds.center + (Mathf.Cos(Vector3.Angle(_edge, _hits[_nearestHitIndex].point) * Mathf.Deg2Rad) * _normal);
+                    Vector3 _intersection = _sphere.bounds.center + (Mathf.Cos(Vector3.Angle(_edge, _hits[_nearestHitIndex].point) * Mathf.Deg2Rad) * _normal * _sphere.bounds.extents.x);
                     Vector3 _rayPos = _edge - ((_edge - _intersection) / 2);
 
-                    if (!Physics.Raycast(_rayPos, -_nFlatVelocity, out _finalHit, _hits[_nearestHitIndex].distance, whatCollide) || !Physics.Raycast(_finalHit.point, _nFlatVelocity, out _finalHit, _hits[_nearestHitIndex].distance, whatCollide))
+                    if (!Physics.Raycast(_rayPos, -_nFlatVelocity, out _finalHit, _hits[_nearestHitIndex].distance + _sphere.bounds.extents.x, whatCollide) || !Physics.Raycast(_finalHit.point, _nFlatVelocity, out _finalHit, _hits[_nearestHitIndex].distance, whatCollide))
                     {
-                        _MoveToVelocity();
-                        continue;
+                        Debug.Log("Lost Sphere");
+                        _finalHit = _hits[_nearestHitIndex];
+                        _finalHit.distance = 0;
                     }
+                    else Debug.Log("Bounce Sphere");
                 }
                 // Bounce on a Box Collider
                 else
                 {
                     // Raycast from the point that should hit other collider to get distance between
-                    if (!Physics.Raycast(new Vector3(collider.bounds.center.x - (_hits[_nearestHitIndex].normal.normalized.x * (collider.bounds.extents.x - .05f)), collider.bounds.center.y, collider.bounds.center.z - (_hits[_nearestHitIndex].normal.normalized.z * (collider.bounds.extents.x - .05f))), _nFlatVelocity, out _finalHit, collider.bounds.extents.x + _flatVelocity.magnitude + .05f, whatCollide))
+                    if (!Physics.Raycast(new Vector3(collider.bounds.center.x - (_hits[_nearestHitIndex].normal.normalized.x * (collider.bounds.extents.x - .01f)), collider.bounds.center.y, collider.bounds.center.z - (_hits[_nearestHitIndex].normal.normalized.z * (collider.bounds.extents.x - .01f))), _nFlatVelocity, out _finalHit, collider.bounds.extents.x + _flatVelocity.magnitude + .01f, whatCollide))
                     {
-                        Debug.Log("Lost");
-                        _MoveToVelocity();
-                        continue;
+                        Debug.Log("Lost Box");
+                        _finalHit = _hits[_nearestHitIndex];
+                        _finalHit.distance = 0;
                     }
+                    #if UNITY_EDITOR
+                    else
+                    {
+                        _raycastPos[_nearestHitIndex] = new Vector3(collider.bounds.center.x - (_hits[_nearestHitIndex].normal.normalized.x * (collider.bounds.extents.x - .01f)), collider.bounds.center.y, collider.bounds.center.z - (_hits[_nearestHitIndex].normal.normalized.z * (collider.bounds.extents.x - .01f)));
+                    }
+                    #endif
                 }
 
                 // Push the touched fruit if one, or stun a player if hit one
@@ -231,15 +273,42 @@ public class PAF_Fruit : MonoBehaviour
                 else if (velocity.magnitude > .1f)
                 {
                     PAF_Player _player = _finalHit.collider.GetComponent<PAF_Player>();
-                    if (_player) _player.Stun();
+                    if (_player) _player.Stun(transform.position);
                 }
 
+                #if UNITY_EDITOR
                 yield return new WaitForFixedUpdate();
+                #endif
+
+                // Calculate new position
+                Vector3 _newPosition = transform.position + _nFlatVelocity * (Mathf.Min(_finalHit.distance, _flatVelocity.magnitude) - .015f);
+
+                Collider[] _obstacles = Physics.OverlapSphere(_newPosition, collider.bounds.extents.x, whatCollide);
+                if (_obstacles.Length > 0)
+                {
+                    RaycastHit _otherHit;
+                    Vector3 _direction;
+                    Vector3 _distance;
+
+                    foreach (Collider _collider in _obstacles)
+                    {
+                        if (_collider == collider) continue;
+
+                        _direction = _collider.bounds.center - _newPosition;
+                        if (Physics.Raycast(_newPosition, _direction, out _otherHit, collider.bounds.extents.x + Mathf.Max(_collider.bounds.extents.x, _collider.bounds.extents.z), whatCollide))
+                        {
+                            _distance = _newPosition - _otherHit.point;
+                            _distance = new Vector3(Mathf.Abs(_distance.x), 0, Mathf.Abs(_distance.z));
+
+                            _newPosition += Vector3.Scale(_otherHit.normal, new Vector3(collider.bounds.extents.x - _distance.x, 0, collider.bounds.extents.z - _distance.z));
+                        }
+                    }
+                }
 
                 // Set new position & velocity
-                transform.position += _nFlatVelocity * (Mathf.Min(_finalHit.distance, _flatVelocity.magnitude) - .01f);
+                transform.position = _newPosition;
 
-                _flatVelocity = Vector3.Reflect(_flatVelocity, _finalHit.normal);
+                _flatVelocity = Vector3.Reflect(_flatVelocity, _finalHit.normal) * .8f;
                 velocity = new Vector3(_flatVelocity.x, velocity.y, _flatVelocity.z);
 
                 #if UNITY_EDITOR
@@ -247,8 +316,7 @@ public class PAF_Fruit : MonoBehaviour
 
                 Physics.SyncTransforms();
                 lastHitRay[0] = _raycastPos[_nearestHitIndex];
-                lastHitRay[1] = _raycastPos[_nearestHitIndex] + (_nFlatVelocity * _hits[_nearestHitIndex].distance);
-                //yield return new WaitForFixedUpdate();
+                lastHitRay[1] = _raycastPos[_nearestHitIndex] + (_nFlatVelocity * (Mathf.Min(_finalHit.distance, _flatVelocity.magnitude) - .015f));
                 #endif
             }
             else
@@ -262,9 +330,10 @@ public class PAF_Fruit : MonoBehaviour
         // Makes the fruit moves like if no obstacle is in its way
         void _MoveToVelocity()
         {
-            transform.position += velocity;
+            transform.position += _flatVelocity;
 
-            velocity = new Vector3(velocity.x * .9875f, velocity.y/* - (Physics.gravity.magnitude * (weight / 10) * Time.fixedDeltaTime)*/, velocity.z * .9875f);
+            if (_flatVelocity.magnitude < .5f) _flatVelocity *= .975f;
+            velocity = new Vector3(_flatVelocity.x * .9875f, velocity.y/* - (Physics.gravity.magnitude * (weight / 10) * Time.fixedDeltaTime)*/, _flatVelocity.z * .95f);
         }
     }
 
@@ -299,6 +368,7 @@ public class PAF_Fruit : MonoBehaviour
         #endif
     }
 
+    #if UNITY_EDITOR
     // Implement OnDrawGizmos if you want to draw gizmos that are also pickable and always drawn
     private void OnDrawGizmos()
     {
@@ -350,6 +420,7 @@ public class PAF_Fruit : MonoBehaviour
             Gizmos.DrawLine(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity + (flatVelocity.normalized * collider.bounds.extents.x));
         }
     }
+    #endif
 
     // Destroying the attached Behaviour will result in the game or Scene receiving OnDestroy
     private void OnDestroy()

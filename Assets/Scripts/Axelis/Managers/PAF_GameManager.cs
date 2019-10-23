@@ -110,9 +110,11 @@ public class PAF_GameManager : MonoBehaviour
         if(_isFirstPlayer)
         {
             m_playerOneScore += _fruitScore;
+            PAF_UIManager.Instance?.SetPlayerScore(m_playerOneScore, true);
             return; 
         }
-        m_playerTwoScore += _fruitScore; 
+        m_playerTwoScore += _fruitScore;
+        PAF_UIManager.Instance?.SetPlayerScore(m_playerOneScore, false);
     }
     #endregion
 

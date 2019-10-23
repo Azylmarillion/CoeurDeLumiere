@@ -55,6 +55,9 @@ public class PAF_Flower : MonoBehaviour
 
     private FlowerState m_currentState = FlowerState.Searching; 
     private PAF_Fruit m_followedFruit = null;
+
+    [SerializeField] AudioSource audiosource = null;
+    [SerializeField] PAF_SoundData soundData = null;
     #endregion
 
     #region Methods
@@ -84,6 +87,19 @@ public class PAF_Flower : MonoBehaviour
             _targetedPosition = transform.position + (m_followedFruit.transform.position - transform.position).normalized * m_eatingRange;
             float[] _angles = m_joints.ToList().Select(j => j.BaseTransform.localRotation.eulerAngles.y).ToArray();
             PAF_ProceduralAnimationHelper.InverseKinematics(_targetedPosition, m_joints, _angles, .1f);
+
+            if (PAF_Fruit.ArenaFruits.Length > 0)
+            {
+                PAF_Fruit[] _fruits = PAF_Fruit.ArenaFruits.ToList().Where(f => Vector3.Distance(transform.position, f.transform.position) <= m_detectionRange
+                                                             && Vector3.Angle(transform.forward, f.transform.position - transform.position) < (m_fieldOfView / 2)).ToArray();
+
+                if (_fruits.Length > 0)
+                    m_followedFruit = _fruits.OrderBy(f => Vector3.Distance(transform.position, f.transform.position)).FirstOrDefault();
+            }
+
+
+            _targetedPosition = transform.position + (m_followedFruit.transform.position - transform.position).normalized * m_eatingRange;
+            m_IKTransform.position = Vector3.MoveTowards(m_IKTransform.position, _targetedPosition, Time.deltaTime * m_speed);
             yield return null; 
         }
         m_currentState = FlowerState.Searching;
@@ -120,6 +136,11 @@ public class PAF_Flower : MonoBehaviour
         {
             // EAT THE FRUIT
             m_followedFruit.Eat(); 
+            if(soundData && audiosource)
+            {
+                AudioClip _clip = soundData.GetPlantEating();
+                if (_clip) audiosource.PlayOneShot(_clip);
+            }
             // CALL VFX AND SOUND HERE
 
         }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 9028631829981903029}
   - component: {fileID: 8306055004933956996}
   - component: {fileID: 711572045162650171}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: pedoncule01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -87,7 +87,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8643635996547595474}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: nurbsCircle1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -119,7 +119,7 @@ GameObject:
   - component: {fileID: 6094968057139450748}
   - component: {fileID: 8149092468318732370}
   - component: {fileID: 345954577867251070}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: fruit01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -197,7 +197,8 @@ GameObject:
   - component: {fileID: 8338003950582570344}
   - component: {fileID: 1969197049292224122}
   - component: {fileID: 7324809382051584449}
-  m_Layer: 0
+  - component: {fileID: 5157784346852599037}
+  m_Layer: 11
   m_Name: Fruit_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -213,7 +214,7 @@ Transform:
   m_GameObject: {fileID: 5038916321531785083}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_LocalScale: {x: 15, y: 15, z: 15}
   m_Children:
   - {fileID: 2525472220790336180}
   m_Father: {fileID: 0}
@@ -236,11 +237,18 @@ MonoBehaviour:
   fruitScore: 100
   whatCollide:
     serializedVersion: 2
-    m_Bits: 7937
+    m_Bits: 6912
   pointsOwner: {fileID: 0}
   velocity: {x: 0, y: 0, z: 0}
+  audioSource: {fileID: 0}
+  soundData: {fileID: 11400000, guid: 0f1532b6b6bd9db4e9917bf5dc20602c, type: 2}
+  doDrawLastRaycastHit: 1
+  doDrawRaycasts: 1
   gizmosColor: {r: 0, g: 1, b: 1, a: 1}
-  gizmosSize: 0.25
+  collisionPos: []
+  lastHitRay:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
 --- !u!135 &7324809382051584449
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -253,7 +261,103 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.0375
-  m_Center: {x: 0, y: 0.035, z: 0}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!82 &5157784346852599037
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5038916321531785083}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &8093425818266722565
 GameObject:
   m_ObjectHideFlags: 0
@@ -263,7 +367,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2525472220790336180}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: grp_fruit_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -297,7 +401,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5407592379104387012}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: curve1
   m_TagString: Untagged
   m_Icon: {fileID: 0}

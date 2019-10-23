@@ -8,7 +8,10 @@ public class PAF_Bulb : MonoBehaviour
 {
     #region Object
     [SerializeField] Animator bulbAnimator = null;
-    [SerializeField] GameObject[] item = null;
+    [SerializeField] GameObject[] items = null;
+    [SerializeField] PAF_SoundData soundData = null;
+    [SerializeField] AudioSource soundSource = null;
+    [SerializeField] PAF_FruitData fruitData = null;
     #endregion
 
     #region Fields
@@ -57,6 +60,11 @@ public class PAF_Bulb : MonoBehaviour
     
     public void Hit()
     {
+        if (soundData && soundSource)
+        {
+            AudioClip _clip = soundData.GetHitBulb();
+            if (_clip) soundSource.PlayOneShot(_clip);
+        }
         if (isBigBulb && canHit)
         {
             hits++;
@@ -75,11 +83,18 @@ public class PAF_Bulb : MonoBehaviour
 
     public void Explode(int _itemsToSpawn)
     {
-        if (item.Length < 0 || !bulbAnimator) return;
+        if (items.Length < 0 || !bulbAnimator || !fruitData) return;
+        items = fruitData.GetRandomFruit(Random.Range(isBigBulb ? minItemsInBigBulb : minItemsInBulb, isBigBulb ? maxItemsInBigBulb : maxItemsInBulb));
         for (int i = 0; i < _itemsToSpawn; i++)
         {
-            PAF_Fruit _fruit = Instantiate(item[Random.Range(0, item.Length)]).GetComponent<PAF_Fruit>();
-            Vector3 _force = new Vector3(Random.Range(minHitForce, maxHitForce), Random.Range(minHeightForce, maxHeightForce), Random.Range(minHitForce, maxHitForce));
+            if (soundData && soundSource)
+            {
+                AudioClip _clip = soundData.GetFruitSpawn();
+                if (_clip) soundSource.PlayOneShot(_clip);
+            }
+            PAF_Fruit _fruit = Instantiate(items[Random.Range(0, items.Length)], transform.position, transform.rotation).GetComponent<PAF_Fruit>();
+            Vector3 _force = new Vector3(Random.Range(-2f, 2f), Random.Range(-2f, 2f), Random.Range(-2f, 2f));
+            _force = Vector3.ClampMagnitude(_force, Random.Range(.1f, 1));
             if (_fruit) _fruit.AddForce(_force);
         }
         bulbAnimator.SetBool("explode", true);
@@ -88,7 +103,13 @@ public class PAF_Bulb : MonoBehaviour
 
     IEnumerator DelayDestroy()
     {
-        yield return new WaitForSeconds(bulbAnimator.runtimeAnimatorController.animationClips[2].averageDuration);
+        if (soundData && soundSource)
+        {
+            AudioClip _clip = soundData.GetBulbExploding();
+            if (_clip) soundSource.PlayOneShot(_clip);
+        }
+        yield return new WaitForSeconds(bulbAnimator.runtimeAnimatorController.animationClips[isBigBulb ? 2 : 3].averageDuration);
+        //PAF_SoundManager.I.PlayBulbExplode(transform.position);
         Destroy(this.gameObject);
     }
 }

@@ -29,12 +29,6 @@ public class PAF_Fruit : MonoBehaviour
     #endregion
 
     #region Parameters
-
-    #region Sound
-    [SerializeField] AudioSource audioSource = null;
-    [SerializeField] SoundData soundData = null;
-    #endregion
-
     /// <summary>
     /// Collider of the object.
     /// </summary>
@@ -81,14 +75,29 @@ public class PAF_Fruit : MonoBehaviour
         get { return velocity; }
         set
         {
+            value = new Vector3(Mathf.Clamp(value.x, -999, 999), Mathf.Clamp(value.y, -999, 999), Mathf.Clamp(value.z, -999, 999));
+
             velocity = value;
-            if ((value != Vector3.zero) && (applyForceCoroutine == null))
+            if (value != Vector3.zero)
             {
+                if (applyForceCoroutine != null) StopCoroutine(applyForceCoroutine);
                 applyForceCoroutine = StartCoroutine(ApplyForce());
             }
         }
     }
 
+    #endregion
+
+    #region Sounds
+    /// <summary>
+    /// Audio source of the object.
+    /// </summary>
+    [SerializeField] AudioSource audioSource = null;
+
+    /// <summary>
+    /// Scriptable Object used for sound datas. (To remove from here.)
+    /// </summary>
+    [SerializeField] SoundData soundData = null;
     #endregion
 
     #region Coroutines
@@ -289,7 +298,7 @@ public class PAF_Fruit : MonoBehaviour
                 // Set new position & velocity
                 transform.position = _newPosition;
 
-                _flatVelocity = Vector3.Reflect(_flatVelocity, _finalHit.normal);
+                _flatVelocity = Vector3.Reflect(_flatVelocity, _finalHit.normal) * .8f;
                 velocity = new Vector3(_flatVelocity.x, velocity.y, _flatVelocity.z);
 
                 #if UNITY_EDITOR
@@ -311,8 +320,10 @@ public class PAF_Fruit : MonoBehaviour
         // Makes the fruit moves like if no obstacle is in its way
         void _MoveToVelocity()
         {
-            transform.position += velocity;
-            velocity = new Vector3(velocity.x * .9875f, velocity.y/* - (Physics.gravity.magnitude * (weight / 10) * Time.fixedDeltaTime)*/, velocity.z * .9875f);
+            transform.position += _flatVelocity;
+
+            if (_flatVelocity.magnitude < .5f) _flatVelocity *= .975f;
+            velocity = new Vector3(_flatVelocity.x * .9875f, velocity.y/* - (Physics.gravity.magnitude * (weight / 10) * Time.fixedDeltaTime)*/, _flatVelocity.z * .95f);
         }
     }
 

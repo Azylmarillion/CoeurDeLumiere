@@ -44,6 +44,14 @@ public class PAF_FruitEditor : Editor
     SerializedProperty velocity = null;
     #endregion
 
+    #region Sounds
+    /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="AudioSource"/>.</summary>
+    SerializedProperty audioSource = null;
+
+    /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="SoundData"/>.</summary>
+    SerializedProperty soundData = null;
+    #endregion
+
     #endregion
 
     #region Parameters
@@ -136,7 +144,6 @@ public class PAF_FruitEditor : Editor
 
         EditorGUILayout.PropertyField(doDrawRaycasts, new GUIContent("Draw Raycasts", "Draws or not raycasts from velocity."));
         EditorGUILayout.PropertyField(gizmosColor, new GUIContent("Gizmos Color", "Color used to draw this fruit gizmos."));
-
     }
 
     /// <summary>
@@ -146,6 +153,8 @@ public class PAF_FruitEditor : Editor
     {
         EditorGUILayout.LabelField("Parameters", EditorStyles.boldLabel);
 
+        EditorGUILayout.PropertyField(audioSource, new GUIContent("Audio Source", "Audio Source of the fruit."));
+        EditorGUILayout.PropertyField(soundData, new GUIContent("Sound Data", "Sound Data reference of the project."));
         EditorGUILayout.PropertyField(collider, new GUIContent("Collider", "Sphere collider of the fruit."));
         EditorGUILayout.PropertyField(whatCollide, new GUIContent("What Collide", "Layermask used to indicate what should the object detect or not."));
 
@@ -179,6 +188,9 @@ public class PAF_FruitEditor : Editor
         doDrawRaycasts = serializedObject.FindProperty("doDrawRaycasts");
         gizmosColor = serializedObject.FindProperty("gizmosColor");
         collisionPos = serializedObject.FindProperty("collisionPos");
+
+        audioSource = serializedObject.FindProperty("audioSource");
+        soundData = serializedObject.FindProperty("soundData");
 
         collider = serializedObject.FindProperty("collider");
         weight = serializedObject.FindProperty("weight");

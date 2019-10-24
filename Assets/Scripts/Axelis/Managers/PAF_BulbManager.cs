@@ -93,7 +93,12 @@ public class PAF_BulbManager : MonoBehaviour
     #region void
     public void CallBigBulb()
     {
-        m_spawnedBulbs.Where(b => b.transform.position == m_centerPosition).FirstOrDefault()?.Explode(0);
+        PAF_Bulb _centerBulb = m_spawnedBulbs.Where(b => b.transform.position == m_centerPosition).FirstOrDefault();
+        if (_centerBulb)
+        {
+            _centerBulb.Explode(0);
+            m_spawnedBulbs.Remove(_centerBulb); 
+        }
         Instantiate(m_bulbPrefab, m_centerPosition, Quaternion.identity).GetComponent<PAF_Bulb>().SetBigBulb(); 
     }
 

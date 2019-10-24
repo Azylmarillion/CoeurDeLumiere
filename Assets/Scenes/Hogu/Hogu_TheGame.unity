@@ -3662,6 +3662,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
+    - target: {fileID: 265624115886741625, guid: b3e2bb847c086334b8caaf5211d6e25d,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 630355919825863387, guid: b3e2bb847c086334b8caaf5211d6e25d,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 1608088771609336901, guid: b3e2bb847c086334b8caaf5211d6e25d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3787,11 +3797,6 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 164.28
       objectReference: {fileID: 0}
-    - target: {fileID: 630355919825863387, guid: b3e2bb847c086334b8caaf5211d6e25d,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 3532594927626295429, guid: b3e2bb847c086334b8caaf5211d6e25d,
         type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -3811,11 +3816,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 429.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 265624115886741625, guid: b3e2bb847c086334b8caaf5211d6e25d,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}

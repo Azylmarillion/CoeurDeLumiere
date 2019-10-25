@@ -40,16 +40,13 @@ public class PAF_Flower : MonoBehaviour
     #region Fields / Properties
     [SerializeField] private Animator m_animator = null; 
 
-    [SerializeField, Range(.1f, 5.0f)]
+    [SerializeField, Range(.1f, 10.0f)]
     private float m_eatingRange = 1.0f;
     [SerializeField, Range(5.0f, 50.0f)]
     private float m_detectionRange = 2.0f;
 
     [SerializeField, Range(1, 360)]
     private int m_fieldOfView = 60;
-
-    [SerializeField, Range(.1f, 5.0f)]
-    private float m_speed = 2.0f;
 
     [SerializeField] private PAF_FlowerJoint[] m_joints = new PAF_FlowerJoint[] { }; 
 
@@ -131,19 +128,30 @@ public class PAF_Flower : MonoBehaviour
     {
         if (m_followedFruit)
         {
+            m_currentState = FlowerState.Eating;
+            m_animator.SetInteger("BehaviourState", (int)m_currentState);
+
+            m_followedFruit.Velocity = Vector3.zero;
+            m_followedFruit.Velocity = (transform.position - m_followedFruit.transform.position).normalized * .1f;
+        }
+        //RESET THE STATE
+        m_currentState = FlowerState.Searching;
+        m_animator.SetInteger("BehaviourState", (int)m_currentState);
+    }
+
+    public void Chomp()
+    {
+        if(m_followedFruit)
+        {
             // EAT THE FRUIT
-            m_followedFruit.Eat(); 
-            if(soundData && audiosource)
+            m_followedFruit.Eat();
+            if (soundData && audiosource)
             {
                 AudioClip _clip = soundData.GetPlantEating();
                 if (_clip) audiosource.PlayOneShot(_clip);
             }
             // CALL VFX AND SOUND HERE
-
         }
-        //RESET THE STATE
-        m_currentState = FlowerState.Searching;
-        m_animator.SetInteger("BehaviourState", (int)m_currentState);
     }
     #endregion
 

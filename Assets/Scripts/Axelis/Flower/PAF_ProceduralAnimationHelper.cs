@@ -4,7 +4,7 @@ using UnityEngine;
 public static class PAF_ProceduralAnimationHelper
 {
     public const float SAMPLING_DISTANCE = .1f;
-    public const float LEARNING_RATE = 10f; 
+    public const float LEARNING_RATE = 50.0f; 
 
     /// <summary>
     /// CHECKED

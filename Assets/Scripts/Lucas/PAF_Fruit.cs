@@ -78,9 +78,9 @@ public class PAF_Fruit : MonoBehaviour
             value = new Vector3(Mathf.Clamp(value.x, -999, 999), Mathf.Clamp(value.y, -999, 999), Mathf.Clamp(value.z, -999, 999));
 
             velocity = value;
+            if (applyForceCoroutine != null) StopCoroutine(applyForceCoroutine);
             if (value != Vector3.zero)
             {
-                if (applyForceCoroutine != null) StopCoroutine(applyForceCoroutine);
                 applyForceCoroutine = StartCoroutine(ApplyForce());
             }
         }

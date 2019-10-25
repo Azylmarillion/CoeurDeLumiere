@@ -40,6 +40,7 @@ public class PAF_FlowerEditor : Editor
     private SerializedProperty m_detectionRange = null;
     private SerializedProperty m_eatingRange = null;
     private SerializedProperty m_fieldOfView = null;
+    private SerializedProperty m_joints = null; 
     #endregion
 
     #region Methods
@@ -66,6 +67,7 @@ public class PAF_FlowerEditor : Editor
         m_fieldOfView = serializedObject.FindProperty("m_fieldOfView");
         m_detectionRange = serializedObject.FindProperty("m_detectionRange");
         m_eatingRange = serializedObject.FindProperty("m_eatingRange");
+        m_joints = serializedObject.FindProperty("m_joints"); 
     }
 
     private void OnSceneGUI()

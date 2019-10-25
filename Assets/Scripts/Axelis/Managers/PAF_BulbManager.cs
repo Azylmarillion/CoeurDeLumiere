@@ -96,7 +96,7 @@ public class PAF_BulbManager : MonoBehaviour
         PAF_Bulb _centerBulb = m_spawnedBulbs.Where(b => b.transform.position == m_centerPosition).FirstOrDefault();
         if (_centerBulb)
         {
-            _centerBulb.Explode(0);
+            _centerBulb.Explode(false);
             m_spawnedBulbs.Remove(_centerBulb); 
         }
         Instantiate(m_bulbPrefab, m_centerPosition, Quaternion.identity).GetComponent<PAF_Bulb>().SetBigBulb(); 
@@ -122,7 +122,7 @@ public class PAF_BulbManager : MonoBehaviour
 
     }
 
-    public void DestroyAllBulbs() => m_spawnedBulbs.ForEach(b => b.Explode(0)); 
+    public void DestroyAllBulbs() => m_spawnedBulbs.ForEach(b => b.Explode(false)); 
     #endregion
 
     #region Vector3

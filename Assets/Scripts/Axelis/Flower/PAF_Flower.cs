@@ -92,8 +92,11 @@ public class PAF_Flower : MonoBehaviour
             }
 
             _targetedPosition = transform.position + (m_followedFruit.transform.position - transform.position).normalized * m_eatingRange;
-            float[] _angles = m_joints.ToList().Select(j => j.BaseTransform.localRotation.eulerAngles.y).ToArray();
-            PAF_ProceduralAnimationHelper.InverseKinematics(_targetedPosition, m_joints, _angles, .1f);
+            if(m_joints != null && m_joints.Length > 0)
+            {
+                float[] _angles = m_joints.ToList().Select(j => j.BaseTransform.localRotation.eulerAngles.y).ToArray();
+                PAF_ProceduralAnimationHelper.InverseKinematics(_targetedPosition, m_joints, _angles, .1f);
+            }
             yield return null; 
         }
         m_currentState = FlowerState.Searching;

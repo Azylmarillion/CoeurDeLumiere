@@ -51,7 +51,7 @@ MonoBehaviour:
   stunned: 0
   canAttack: 1
   isInvulnerable: 0
-  attackDelay: 0.25
+  attackDelay: 0.4
   invulnerableTime: 0.5
   stunTime: 0.5
   fallTime: 1
@@ -220,16 +220,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: perso2
       objectReference: {fileID: 0}
-    - target: {fileID: -298201549707840098, guid: 42aef5f8a0219ca4ea03ccbd4bc0110f,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: c3d45447af62b8246b5f88eb33c95f52, type: 2}
-    - target: {fileID: -6057140222963153312, guid: 42aef5f8a0219ca4ea03ccbd4bc0110f,
-        type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: 2ab6404aad529304ca38f62bd075d1b4, type: 2}
     - target: {fileID: -4216859302048453862, guid: 42aef5f8a0219ca4ea03ccbd4bc0110f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -285,6 +275,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -298201549707840098, guid: 42aef5f8a0219ca4ea03ccbd4bc0110f,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: c3d45447af62b8246b5f88eb33c95f52, type: 2}
+    - target: {fileID: -6057140222963153312, guid: 42aef5f8a0219ca4ea03ccbd4bc0110f,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 2ab6404aad529304ca38f62bd075d1b4, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 42aef5f8a0219ca4ea03ccbd4bc0110f, type: 3}
 --- !u!4 &976573876803288281 stripped

@@ -48,8 +48,6 @@ public static class PAF_ProceduralAnimationHelper
 	
     public static void InverseKinematics (Vector3 _target, PAF_FlowerJoint[] _joints, float [] _angles, float _distanceThreshold)
     {
-        //Debug.LogError(_target + " -> " + GetForwardKinematic(_joints, _angles) + " = " + DistanceFromTarget(_target, _joints, _angles));
-
         if (DistanceFromTarget(_target, _joints, _angles) < _distanceThreshold)
         {
             return;
@@ -62,8 +60,14 @@ public static class PAF_ProceduralAnimationHelper
             float gradient = PartialGradiant(_target, _joints, _angles, i);
             _angles[i] -= (LEARNING_RATE * gradient);
 
+            if (_angles[i] > 180)
+            {
+                _angles[i] -= 360;
+            }
+
             // Clamp
-            //_angles[i] = Mathf.Clamp(_angles[i], _joints[i].MinAngle, _joints[i].MaxAngle);
+            _angles[i] = Mathf.Clamp(_angles[i], _joints[i].MinAngle, _joints[i].MaxAngle);
+            _joints[i].CurrentAngle = _angles[i];
             _joints[i].BaseTransform.localRotation = Quaternion.RotateTowards(_joints[i].BaseTransform.localRotation, Quaternion.AngleAxis(_angles[i], _joints[i].Axis), .1f); 
             
             // Early termination

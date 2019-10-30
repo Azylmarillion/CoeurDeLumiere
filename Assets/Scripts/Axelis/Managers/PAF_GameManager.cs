@@ -47,7 +47,11 @@ public class PAF_GameManager : MonoBehaviour
     /// <summary>
     /// Event called when the game Ends
     /// </summary>
-    public static event Action OnGameEnd = null; 
+    public static event Action OnGameEnd = null;
+    /// <summary>
+    /// Event called when ont of the player scores
+    /// </summary>
+    public static event Action<bool, int> OnPlayerScored = null; 
     #endregion
 
     #region Fields / Properties
@@ -107,14 +111,14 @@ public class PAF_GameManager : MonoBehaviour
     /// <param name="_fruitScore">The points to add to the player score</param>
     private void IncreasePlayerScore(bool _isFirstPlayer, int _fruitScore)
     {
-        if(_isFirstPlayer)
+        if (_isFirstPlayer)
         {
             m_playerOneScore += _fruitScore;
-            PAF_UIManager.Instance?.SetPlayerScore(m_playerOneScore, true);
+            OnPlayerScored?.Invoke(_isFirstPlayer, m_playerOneScore);
             return; 
         }
         m_playerTwoScore += _fruitScore;
-        PAF_UIManager.Instance?.SetPlayerScore(m_playerOneScore, false);
+        OnPlayerScored?.Invoke(_isFirstPlayer, m_playerTwoScore); 
     }
     #endregion
 

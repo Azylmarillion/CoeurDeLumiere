@@ -32,19 +32,12 @@ public class PAF_UIManager : MonoBehaviour
     /// <summary>
     /// Text used to display first player's score.
     /// </summary>
-    [SerializeField] private TextMeshPro playerOneScore = null;
+    [SerializeField] private TextMeshProUGUI playerOneScore = null;
 
     /// <summary>
     /// Text used to display second player's score.
     /// </summary>
-    [SerializeField] private TextMeshPro playerTwoScore = null;
-    #endregion
-
-    #region Singleton
-    /// <summary>
-    /// Singleton instance of this script.
-    /// </summary>
-    public static PAF_UIManager Instance = null;
+    [SerializeField] private TextMeshProUGUI playerTwoScore = null;
     #endregion
 
     #region Methods
@@ -55,17 +48,19 @@ public class PAF_UIManager : MonoBehaviour
     /// </summary>
     /// <param name="_score">New player score.</param>
     /// <param name="_isPlayerOne">Is it the score of the first or second player ?</param>
-    public void SetPlayerScore(int _score, bool _isPlayerOne)
+    public void SetPlayerScore(bool _isPlayerOne, int _score)
     {
         if (_isPlayerOne)
         {
             playerOneScore.text = _score.ToString();
-            worldAnimator.SetTrigger("Score P1");
+            //worldAnimator.SetTrigger("Score P1");
+            screenAnimator.SetTrigger("P1 Score"); 
         }
         else
         {
             playerTwoScore.text = _score.ToString();
-            worldAnimator.SetTrigger("Score P2");
+            //worldAnimator.SetTrigger("Score P2");
+            screenAnimator.SetTrigger("P2 Score");
         }
     }
 
@@ -93,14 +88,8 @@ public class PAF_UIManager : MonoBehaviour
     // Awake is called when the script instance is being loaded
     private void Awake()
     {
-        if (!Instance) Instance = this;
-        else Destroy(this);
-    }
+        PAF_GameManager.OnPlayerScored += SetPlayerScore; 
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
     }
     #endregion
 

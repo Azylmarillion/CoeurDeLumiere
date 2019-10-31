@@ -6,7 +6,7 @@ public class PAF_Player : MonoBehaviour
 {
     #region Fields
     [SerializeField] bool isPlayerOne = true;
-        public bool IsPlayerOne { get { return isPlayerOne; } }
+    public bool IsPlayerOne { get { return isPlayerOne; } }
     [SerializeField] bool stunned = false;
     [SerializeField] bool canAttack = true;
     [SerializeField] bool isInvulnerable = false;
@@ -51,11 +51,27 @@ public class PAF_Player : MonoBehaviour
     private void Start()
     {
         playerAnimator.Init(playerSpeed);
-        InvokeRepeating("StepSounds", 1, .5f);
+        InvokeRepeating("StepSounds", 1, .5f); // Gaffe à  ça! Autant le mettre dans l'anim! 
     }
 
     private void Update()
     {
+        if(PAF_GameManager.Instance && !PAF_GameManager.Instance.GameIsReadyToStart)
+        {
+            /*
+             * DEBUG POUR UNE SEULE MANETTE
+            if(Input.GetKeyDown(KeyCode.A))
+                PAF_GameManager.Instance?.SetPlayerReay(isPlayerOne);
+            return; 
+            */
+
+            if (Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button0 : KeyCode.Joystick2Button0) ||
+                Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button1 : KeyCode.Joystick2Button1) ||
+                Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button2 : KeyCode.Joystick2Button2) ||
+                Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button3 : KeyCode.Joystick2Button3))
+                PAF_GameManager.Instance?.SetPlayerReay(isPlayerOne);
+            return; 
+        }
         Move();
         if (Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button0 : KeyCode.Joystick2Button0) ||
             Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button1 : KeyCode.Joystick2Button1) ||

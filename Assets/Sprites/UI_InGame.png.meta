@@ -4,10 +4,10 @@ TextureImporter:
   internalIDToNameTable:
   - first:
       213: 679381236401819250
-    second: UI_InGame_0
+    second: ScoreHolder
   - first:
       213: 4745014530213226620
-    second: UI_InGame_1
+    second: TitleHolder
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -92,7 +92,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: UI_InGame_0
+      name: ScoreHolder
       rect:
         serializedVersion: 2
         x: 57
@@ -113,7 +113,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UI_InGame_1
+      name: TitleHolder
       rect:
         serializedVersion: 2
         x: 80
@@ -121,7 +121,7 @@ TextureImporter:
         width: 857
         height: 259
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

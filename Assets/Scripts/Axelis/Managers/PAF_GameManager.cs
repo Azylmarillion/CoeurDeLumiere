@@ -49,13 +49,21 @@ public class PAF_GameManager : MonoBehaviour
     /// </summary>
     public static event Action OnGameEnd = null;
     /// <summary>
-    /// Event called when ont of the player scores
+    /// Event called when one of the player scores
     /// </summary>
-    public static event Action<bool, int> OnPlayerScored = null; 
+    public static event Action<bool, int> OnPlayerScored = null;
+    /// <summary>
+    /// Event called when one of the player is ready
+    /// </summary>
+    public static event Action<bool> OnPlayerReady = null; 
     #endregion
 
     #region Fields / Properties
     public static PAF_GameManager Instance = null;
+
+    [SerializeField]private bool m_playerOneIsReady = false;
+    [SerializeField]private bool m_playerTwoIsReady = false;
+    public bool GameIsReadyToStart { get { return m_playerOneIsReady && m_playerTwoIsReady; } }
 
     /// <summary>
     /// Duration of the game
@@ -79,12 +87,21 @@ public class PAF_GameManager : MonoBehaviour
     /// Array of all events called during the game at a certain timecode
     /// </summary>
     [Header("Game Events")]
-    [SerializeField] private PAF_Event[] m_gameEvents = new PAF_Event[] { }; 
-	#endregion
+    [SerializeField] private PAF_Event[] m_gameEvents = new PAF_Event[] { };
+    #endregion
 
-	#region Methods
+    #region Methods
 
-	#region Original Methods
+    #region Original Methods
+    /// <summary>
+    /// Start the IncreasePlayingTime Coroutine
+    /// </summary>
+    private void StartGame() => StartCoroutine(IncreasePlayingTime()); 
+
+    /// <summary>
+    /// Increase playing time and call the events when the timer is greater than their calling time
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator IncreasePlayingTime()
     {
         OnGameStart?.Invoke();
@@ -120,13 +137,51 @@ public class PAF_GameManager : MonoBehaviour
         m_playerTwoScore += _fruitScore;
         OnPlayerScored?.Invoke(_isFirstPlayer, m_playerTwoScore); 
     }
+
+    /// <summary>
+    /// Set if the player is ready
+    /// If both players are ready, start the game
+    /// </summary>
+    /// <param name="_isPlayerOne"></param>
+    public void SetPlayerReay(bool _isPlayerOne)
+    {
+        if (_isPlayerOne)
+            m_playerOneIsReady = true;
+        else
+            m_playerTwoIsReady = true;
+
+        OnPlayerReady?.Invoke(_isPlayerOne); 
+
+        if(GameIsReadyToStart)
+        {
+            StartGame(); 
+        }
+    }
     #endregion
 
     #region Unity Methods
+    private void Awake()
+    {
+        if(Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(this);
+            return; 
+        }
+
+    }
+
     private void Start()
     {
-        StartCoroutine(IncreasePlayingTime());
         PAF_Fruit.OnFruitEaten += IncreasePlayerScore; 
+    }
+
+    private void OnDestroy()
+    {
+        PAF_Fruit.OnFruitEaten -= IncreasePlayerScore; 
     }
     #endregion
 

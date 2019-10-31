@@ -33,11 +33,18 @@ public class PAF_UIManager : MonoBehaviour
     /// Text used to display first player's score.
     /// </summary>
     [SerializeField] private TextMeshProUGUI playerOneScore = null;
+    [SerializeField] private TextMeshProUGUI playerOneReadyText = null;
 
     /// <summary>
     /// Text used to display second player's score.
     /// </summary>
     [SerializeField] private TextMeshProUGUI playerTwoScore = null;
+    [SerializeField] private TextMeshProUGUI playerTwoReadyText = null;
+
+    /// <summary>
+    /// Parent Object of the main menu 
+    /// </summary>
+    [SerializeField] private GameObject m_mainMenuObject = null; 
     #endregion
 
     #region Methods
@@ -54,16 +61,25 @@ public class PAF_UIManager : MonoBehaviour
         {
             playerOneScore.text = _score.ToString();
             //worldAnimator.SetTrigger("Score P1");
-            screenAnimator.SetTrigger("P1 Score"); 
+            screenAnimator.SetTrigger("P1 Score");
+            return;
         }
-        else
-        {
-            playerTwoScore.text = _score.ToString();
-            //worldAnimator.SetTrigger("Score P2");
-            screenAnimator.SetTrigger("P2 Score");
-        }
+        playerTwoScore.text = _score.ToString();
+        //worldAnimator.SetTrigger("Score P2");
+        screenAnimator.SetTrigger("P2 Score");
     }
 
+    public void SetPlayerReady(bool _isPlayerOne)
+    {
+        if(_isPlayerOne)
+        {
+            playerOneReadyText.text = "Waiting for other player!"; 
+            screenAnimator.SetTrigger("P1 Ready");
+            return;
+        }
+        screenAnimator.SetTrigger("P2 Ready");
+        playerTwoReadyText.text = "Waiting for other player!";
+    }
 
     /// <summary>
     /// Set game UI for a given state.
@@ -82,14 +98,31 @@ public class PAF_UIManager : MonoBehaviour
     {
         screenAnimator.SetInteger("State", _state);
     }
+
+    /// <summary>
+    /// Hide the main menu object if it exists
+    /// </summary>
+    private void HideMainMenu()
+    {
+        if (!m_mainMenuObject) return;
+        m_mainMenuObject.SetActive(false); 
+    }
     #endregion
 
     #region Unity Methods
     // Awake is called when the script instance is being loaded
     private void Awake()
     {
-        PAF_GameManager.OnPlayerScored += SetPlayerScore; 
+        PAF_GameManager.OnGameStart += HideMainMenu; 
+        PAF_GameManager.OnPlayerScored += SetPlayerScore;
+        PAF_GameManager.OnPlayerReady += SetPlayerReady; 
+    }
 
+    private void OnDestroy()
+    {
+        PAF_GameManager.OnGameStart -= HideMainMenu;
+        PAF_GameManager.OnPlayerScored -= SetPlayerScore;
+        PAF_GameManager.OnPlayerReady -= SetPlayerReady;
     }
     #endregion
 

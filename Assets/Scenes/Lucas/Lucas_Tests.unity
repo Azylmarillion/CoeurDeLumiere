@@ -3676,6 +3676,26 @@ PrefabInstance:
       propertyPath: m_Center.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2525472220790336180, guid: 5af142f6eb446074f8473ed6198ad5c4,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2525472220790336180, guid: 5af142f6eb446074f8473ed6198ad5c4,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2525472220790336180, guid: 5af142f6eb446074f8473ed6198ad5c4,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2525472220790336180, guid: 5af142f6eb446074f8473ed6198ad5c4,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5af142f6eb446074f8473ed6198ad5c4, type: 3}
 --- !u!1 &2129341743
@@ -3690,7 +3710,7 @@ GameObject:
   - component: {fileID: 2129341746}
   - component: {fileID: 2129341745}
   - component: {fileID: 2129341744}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3853,6 +3873,14 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1375773866, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1276244243, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}

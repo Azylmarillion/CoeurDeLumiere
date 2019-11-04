@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI; 
 using TMPro;
 
 public class PAF_UIManager : MonoBehaviour
@@ -18,17 +19,13 @@ public class PAF_UIManager : MonoBehaviour
     */
 
     #region Fields / Properties
+    [Header("Animators")]
     /// <summary>
     /// Screen UI animator, making all different menus and sub-menus transitions.
     /// </summary>
     [SerializeField] private Animator screenAnimator = null;
 
-    /// <summary>
-    /// World UI animator, playing animations for score & timer in world space.
-    /// </summary>
-    [SerializeField] private Animator worldAnimator = null;
-
-
+    [Header("Texts")]
     /// <summary>
     /// Text used to display first player's score.
     /// </summary>
@@ -41,10 +38,35 @@ public class PAF_UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playerTwoScore = null;
     [SerializeField] private TextMeshProUGUI playerTwoReadyText = null;
 
+    [Header("Images")]
+    [SerializeField] private Image m_playerOneReadyImage = null; 
+    [SerializeField] private Image m_playerTwoReadyImage = null; 
+
+    [Header("Parents")]
     /// <summary>
     /// Parent Object of the main menu 
     /// </summary>
-    [SerializeField] private GameObject m_mainMenuObject = null; 
+    [SerializeField] private GameObject m_mainMenuObject = null;
+    [SerializeField] private GameObject m_optionMenuParent = null;
+
+    [Header("Volume")]
+    [SerializeField] private UnityEngine.Audio.AudioMixer m_audioMixer = null; 
+    [SerializeField] private float m_volumeIntensity = 1.0f; 
+    public float VolumeIntensity
+    {
+        get
+        {
+            return m_volumeIntensity; 
+        }
+        set
+        {
+            m_volumeIntensity = value;
+            PlayerPrefs.SetFloat("VolumeAttenuation", value);
+            if (m_audioMixer) m_audioMixer.SetFloat("VolumeAttenuation", value); 
+        }
+
+    }
+    [SerializeField] private Slider m_volumeSlider = null;
     #endregion
 
     #region Methods
@@ -73,12 +95,14 @@ public class PAF_UIManager : MonoBehaviour
     {
         if(_isPlayerOne)
         {
+            m_playerOneReadyImage.color = Color.green; 
             playerOneReadyText.text = "Waiting for other player!"; 
             screenAnimator.SetTrigger("P1 Ready");
             return;
         }
         screenAnimator.SetTrigger("P2 Ready");
         playerTwoReadyText.text = "Waiting for other player!";
+        m_playerTwoReadyImage.color = Color.green;
     }
 
     /// <summary>
@@ -107,20 +131,83 @@ public class PAF_UIManager : MonoBehaviour
         if (!m_mainMenuObject) return;
         m_mainMenuObject.SetActive(false); 
     }
+
+    /// <summary>
+    /// Init the audio mixer
+    /// Get or set the value in the player prefs
+    /// </summary>
+    private void InitAudioMixer()
+    {
+        if (m_audioMixer)
+        {
+            float _value = 0;
+            if (!PlayerPrefs.HasKey("VolumeAttenuation"))
+            {
+                m_audioMixer.GetFloat("VolumeAttenuation", out _value);
+                PlayerPrefs.SetFloat("VolumeAttenuation", _value);
+            }
+            else
+            {
+                m_audioMixer.SetFloat("VolumeAttenuation", PlayerPrefs.GetFloat("VolumeAttenuation"));
+                m_audioMixer.GetFloat("VolumeAttenuation", out _value);
+            }
+            if(m_volumeSlider)
+            {
+                m_volumeSlider.value = _value; 
+            }
+        }
+    }
+
+    /// <summary>
+    /// Hide or show the option Menu
+    /// </summary>
+    private void DisplayOptionsMenu()
+    {
+        if (m_optionMenuParent == null) return;
+        m_optionMenuParent.SetActive(!m_optionMenuParent.activeInHierarchy); 
+    }
+
+    /// <summary>
+    /// Start the countdown animation 
+    /// </summary>
+    private void StartCountDown()
+    {
+        if(screenAnimator)
+        {
+            screenAnimator.SetTrigger("StartCountDown"); 
+            return; 
+        }
+        PAF_GameManager.Instance.StartGame(); 
+    }
     #endregion
 
     #region Unity Methods
     // Awake is called when the script instance is being loaded
     private void Awake()
     {
-        PAF_GameManager.OnGameStart += HideMainMenu; 
+        PAF_GameManager.OnEndCinematic += HideMainMenu;
+        PAF_GameManager.OnEndCinematic += StartCountDown; 
         PAF_GameManager.OnPlayerScored += SetPlayerScore;
         PAF_GameManager.OnPlayerReady += SetPlayerReady; 
     }
 
+    private void Start()
+    {
+        InitAudioMixer(); 
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            DisplayOptionsMenu(); 
+        }
+    }
+
     private void OnDestroy()
     {
-        PAF_GameManager.OnGameStart -= HideMainMenu;
+        PAF_GameManager.OnEndCinematic -= HideMainMenu;
+        PAF_GameManager.OnEndCinematic -= StartCountDown;
         PAF_GameManager.OnPlayerScored -= SetPlayerScore;
         PAF_GameManager.OnPlayerReady -= SetPlayerReady;
     }

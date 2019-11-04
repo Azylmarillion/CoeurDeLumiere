@@ -94,7 +94,7 @@ public class PAF_BulbManager : MonoBehaviour
     public void CallBigBulb()
     {
         PAF_Bulb _centerBulb = m_spawnedBulbs.Where(b => b.transform.position == m_centerPosition).FirstOrDefault();
-        if (_centerBulb)
+        if (_centerBulb != null)
         {
             _centerBulb.Explode(0);
             m_spawnedBulbs.Remove(_centerBulb); 

@@ -35,6 +35,7 @@ public class PAF_GameManager : MonoBehaviour
 	*/
 
     #region Events
+    public static event Action OnEndCinematic = null; 
     /// <summary>
     /// Event called when the game Starts
     /// </summary>
@@ -63,7 +64,9 @@ public class PAF_GameManager : MonoBehaviour
 
     [SerializeField]private bool m_playerOneIsReady = false;
     [SerializeField]private bool m_playerTwoIsReady = false;
-    public bool GameIsReadyToStart { get { return m_playerOneIsReady && m_playerTwoIsReady; } }
+    private bool m_gameIsReadyToStart = false; 
+    public bool PlayersAreReadyToStart { get { return m_playerOneIsReady && m_playerTwoIsReady;  } }
+    public bool GameIsReadyToStart { get { return m_playerOneIsReady && m_playerTwoIsReady && m_gameIsReadyToStart; } }
 
     /// <summary>
     /// Duration of the game
@@ -88,15 +91,26 @@ public class PAF_GameManager : MonoBehaviour
     /// </summary>
     [Header("Game Events")]
     [SerializeField] private PAF_Event[] m_gameEvents = new PAF_Event[] { };
+
+    [SerializeField] private UnityEngine.Video.VideoPlayer m_videoPlayer = null; 
     #endregion
 
     #region Methods
 
     #region Original Methods
     /// <summary>
-    /// Start the IncreasePlayingTime Coroutine
+    /// Start the video player to start the cinematic
     /// </summary>
-    private void StartGame() => StartCoroutine(IncreasePlayingTime()); 
+    /// <returns></returns>
+    private IEnumerator StartVideoPlayer()
+    {
+        m_videoPlayer.Play();
+        while (m_videoPlayer.isPlaying)
+        {
+            yield return new WaitForSeconds(.1f); 
+        }
+        OnEndCinematic?.Invoke(); 
+    }
 
     /// <summary>
     /// Increase playing time and call the events when the timer is greater than their calling time
@@ -146,16 +160,34 @@ public class PAF_GameManager : MonoBehaviour
     public void SetPlayerReady(bool _isPlayerOne)
     {
         if (_isPlayerOne)
+        {
             m_playerOneIsReady = true;
+        }
         else
+        {
             m_playerTwoIsReady = true;
+        }
 
         OnPlayerReady?.Invoke(_isPlayerOne); 
 
-        if(GameIsReadyToStart)
+        if(PlayersAreReadyToStart)
         {
-            StartGame(); 
+            if(m_videoPlayer)
+            {
+                StartCoroutine(StartVideoPlayer());
+                return; 
+            }
+            OnEndCinematic?.Invoke();
         }
+    }
+
+    /// <summary>
+    /// Start the IncreasePlayingTime Coroutine
+    /// </summary>
+    public void StartGame()
+    {
+        m_gameIsReadyToStart = true;
+        StartCoroutine(IncreasePlayingTime());
     }
     #endregion
 

@@ -58,18 +58,16 @@ public class PAF_Player : MonoBehaviour
     {
         if(PAF_GameManager.Instance && !PAF_GameManager.Instance.GameIsReadyToStart)
         {
-            /*
-             * DEBUG POUR UNE SEULE MANETTE
+            
+            // * DEBUG POUR UNE SEULE MANETTE
             if(Input.GetKeyDown(KeyCode.A))
-                PAF_GameManager.Instance?.SetPlayerReay(isPlayerOne);
-            return; 
-            */
+                PAF_GameManager.Instance?.SetPlayerReady(isPlayerOne);
 
             if (Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button0 : KeyCode.Joystick2Button0) ||
                 Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button1 : KeyCode.Joystick2Button1) ||
                 Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button2 : KeyCode.Joystick2Button2) ||
                 Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button3 : KeyCode.Joystick2Button3))
-                PAF_GameManager.Instance?.SetPlayerReay(isPlayerOne);
+                PAF_GameManager.Instance?.SetPlayerReady(isPlayerOne);
             return; 
         }
         Move();

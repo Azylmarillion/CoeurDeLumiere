@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI; 
 using TMPro;
 
 public class PAF_UIManager : MonoBehaviour
@@ -24,11 +25,6 @@ public class PAF_UIManager : MonoBehaviour
     /// </summary>
     [SerializeField] private Animator screenAnimator = null;
 
-    /// <summary>
-    /// World UI animator, playing animations for score & timer in world space.
-    /// </summary>
-    [SerializeField] private Animator worldAnimator = null;
-
     [Header("Texts")]
     /// <summary>
     /// Text used to display first player's score.
@@ -41,6 +37,10 @@ public class PAF_UIManager : MonoBehaviour
     /// </summary>
     [SerializeField] private TextMeshProUGUI playerTwoScore = null;
     [SerializeField] private TextMeshProUGUI playerTwoReadyText = null;
+
+    [Header("Images")]
+    [SerializeField] private Image m_playerOneReadyImage = null; 
+    [SerializeField] private Image m_playerTwoReadyImage = null; 
 
     [Header("Parents")]
     /// <summary>
@@ -66,7 +66,7 @@ public class PAF_UIManager : MonoBehaviour
         }
 
     }
-    [SerializeField] private UnityEngine.UI.Slider m_volumeSlider = null;
+    [SerializeField] private Slider m_volumeSlider = null;
     #endregion
 
     #region Methods
@@ -95,12 +95,14 @@ public class PAF_UIManager : MonoBehaviour
     {
         if(_isPlayerOne)
         {
+            m_playerOneReadyImage.color = Color.green; 
             playerOneReadyText.text = "Waiting for other player!"; 
             screenAnimator.SetTrigger("P1 Ready");
             return;
         }
         screenAnimator.SetTrigger("P2 Ready");
         playerTwoReadyText.text = "Waiting for other player!";
+        m_playerTwoReadyImage.color = Color.green;
     }
 
     /// <summary>
@@ -130,6 +132,10 @@ public class PAF_UIManager : MonoBehaviour
         m_mainMenuObject.SetActive(false); 
     }
 
+    /// <summary>
+    /// Init the audio mixer
+    /// Get or set the value in the player prefs
+    /// </summary>
     private void InitAudioMixer()
     {
         if (m_audioMixer)
@@ -152,10 +158,26 @@ public class PAF_UIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Hide or show the option Menu
+    /// </summary>
     private void DisplayOptionsMenu()
     {
         if (m_optionMenuParent == null) return;
         m_optionMenuParent.SetActive(!m_optionMenuParent.activeInHierarchy); 
+    }
+
+    /// <summary>
+    /// Start the countdown animation 
+    /// </summary>
+    private void StartCountDown()
+    {
+        if(screenAnimator)
+        {
+            screenAnimator.SetTrigger("StartCountDown"); 
+            return; 
+        }
+        PAF_GameManager.Instance.StartGame(); 
     }
     #endregion
 
@@ -163,7 +185,8 @@ public class PAF_UIManager : MonoBehaviour
     // Awake is called when the script instance is being loaded
     private void Awake()
     {
-        PAF_GameManager.OnGameStart += HideMainMenu; 
+        PAF_GameManager.OnEndCinematic += HideMainMenu;
+        PAF_GameManager.OnEndCinematic += StartCountDown; 
         PAF_GameManager.OnPlayerScored += SetPlayerScore;
         PAF_GameManager.OnPlayerReady += SetPlayerReady; 
     }
@@ -183,7 +206,8 @@ public class PAF_UIManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        PAF_GameManager.OnGameStart -= HideMainMenu;
+        PAF_GameManager.OnEndCinematic -= HideMainMenu;
+        PAF_GameManager.OnEndCinematic -= StartCountDown;
         PAF_GameManager.OnPlayerScored -= SetPlayerScore;
         PAF_GameManager.OnPlayerReady -= SetPlayerReady;
     }

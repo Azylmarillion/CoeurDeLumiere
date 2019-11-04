@@ -77,6 +77,20 @@ public class PAF_FlowerEditor : Editor
         Handles.color = new Color(0, 0, 1, .5f);
         DrawFieldOfView((serializedObject.targetObject as PAF_Flower).transform.position, (serializedObject.targetObject as PAF_Flower).transform.forward, m_eatingRange.floatValue, m_fieldOfView.intValue);
     }
+
+    public override void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+        if(GUILayout.Button("Reset Joints"))
+        {
+            for (int i = 0; i < m_joints.arraySize; i++)
+            {
+                m_joints.GetArrayElementAtIndex(i).FindPropertyRelative("m_minAngle").floatValue = -180;
+                m_joints.GetArrayElementAtIndex(i).FindPropertyRelative("m_maxAngle").floatValue = 180;
+            }
+        }
+        serializedObject.ApplyModifiedProperties(); 
+    }
     #endregion
 
     #endregion

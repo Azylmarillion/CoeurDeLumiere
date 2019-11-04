@@ -32,19 +32,19 @@ public class PAF_UIManager : MonoBehaviour
     /// <summary>
     /// Text used to display first player's score.
     /// </summary>
-    [SerializeField] private TextMeshPro playerOneScore = null;
+    [SerializeField] private TextMeshProUGUI playerOneScore = null;
+    [SerializeField] private TextMeshProUGUI playerOneReadyText = null;
 
     /// <summary>
     /// Text used to display second player's score.
     /// </summary>
-    [SerializeField] private TextMeshPro playerTwoScore = null;
-    #endregion
+    [SerializeField] private TextMeshProUGUI playerTwoScore = null;
+    [SerializeField] private TextMeshProUGUI playerTwoReadyText = null;
 
-    #region Singleton
     /// <summary>
-    /// Singleton instance of this script.
+    /// Parent Object of the main menu 
     /// </summary>
-    public static PAF_UIManager Instance = null;
+    [SerializeField] private GameObject m_mainMenuObject = null; 
     #endregion
 
     #region Methods
@@ -55,20 +55,31 @@ public class PAF_UIManager : MonoBehaviour
     /// </summary>
     /// <param name="_score">New player score.</param>
     /// <param name="_isPlayerOne">Is it the score of the first or second player ?</param>
-    public void SetPlayerScore(int _score, bool _isPlayerOne)
+    public void SetPlayerScore(bool _isPlayerOne, int _score)
     {
         if (_isPlayerOne)
         {
             playerOneScore.text = _score.ToString();
-            worldAnimator.SetTrigger("Score P1");
+            //worldAnimator.SetTrigger("Score P1");
+            screenAnimator.SetTrigger("P1 Score");
+            return;
         }
-        else
-        {
-            playerTwoScore.text = _score.ToString();
-            worldAnimator.SetTrigger("Score P2");
-        }
+        playerTwoScore.text = _score.ToString();
+        //worldAnimator.SetTrigger("Score P2");
+        screenAnimator.SetTrigger("P2 Score");
     }
 
+    public void SetPlayerReady(bool _isPlayerOne)
+    {
+        if(_isPlayerOne)
+        {
+            playerOneReadyText.text = "Waiting for other player!"; 
+            screenAnimator.SetTrigger("P1 Ready");
+            return;
+        }
+        screenAnimator.SetTrigger("P2 Ready");
+        playerTwoReadyText.text = "Waiting for other player!";
+    }
 
     /// <summary>
     /// Set game UI for a given state.
@@ -87,20 +98,31 @@ public class PAF_UIManager : MonoBehaviour
     {
         screenAnimator.SetInteger("State", _state);
     }
+
+    /// <summary>
+    /// Hide the main menu object if it exists
+    /// </summary>
+    private void HideMainMenu()
+    {
+        if (!m_mainMenuObject) return;
+        m_mainMenuObject.SetActive(false); 
+    }
     #endregion
 
     #region Unity Methods
     // Awake is called when the script instance is being loaded
     private void Awake()
     {
-        if (!Instance) Instance = this;
-        else Destroy(this);
+        PAF_GameManager.OnGameStart += HideMainMenu; 
+        PAF_GameManager.OnPlayerScored += SetPlayerScore;
+        PAF_GameManager.OnPlayerReady += SetPlayerReady; 
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void OnDestroy()
     {
-        
+        PAF_GameManager.OnGameStart -= HideMainMenu;
+        PAF_GameManager.OnPlayerScored -= SetPlayerScore;
+        PAF_GameManager.OnPlayerReady -= SetPlayerReady;
     }
     #endregion
 

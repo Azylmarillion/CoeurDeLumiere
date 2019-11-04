@@ -133,6 +133,11 @@ public class PAF_Fruit : MonoBehaviour
     /// Array of last hitting ray positions, start at index, and hit point at 1.
     /// </summary>
     [SerializeField] private Vector3[] lastHitRay = new Vector3[2];
+
+    /// <summary>
+    /// Position used to debug spheres collision raycast.
+    /// </summary>
+    [SerializeField] private Vector3 sphereDebug = new Vector3();
     #endif
     #endregion
 
@@ -194,15 +199,15 @@ public class PAF_Fruit : MonoBehaviour
 
             // Raycast from side extrem points and front center, and get closest touched object if one
             _nearestHitIndex = 0;
-            if (!Physics.Raycast(_raycastPos[0], _nFlatVelocity, out _hits[0], _flatVelocity.magnitude + .01f, whatCollide))
+            if (!Physics.Raycast(_raycastPos[0], _nFlatVelocity, out _hits[0], _flatVelocity.magnitude + .01f, whatCollide, QueryTriggerInteraction.Ignore))
             {
                 _hits[0].distance = _flatVelocity.magnitude + collider.bounds.extents.x + .01f;
             }
-            else _hits[0].distance += collider.bounds.extents.x;
+            else if (_hits[0].collider is BoxCollider) _hits[0].distance += collider.bounds.extents.x;
 
             for (int _i = 1; _i < 3; _i++)
             {
-                if (Physics.Raycast(_raycastPos[_i], _nFlatVelocity, out _hits[_i], _flatVelocity.magnitude + collider.bounds.extents.x + .01f, whatCollide))
+                if (Physics.Raycast(_raycastPos[_i], _nFlatVelocity, out _hits[_i], _flatVelocity.magnitude + collider.bounds.extents.x + .01f, whatCollide, QueryTriggerInteraction.Ignore))
                 {
                     Debug.Log("HIIIIT => Distance : " + _hits[_i].distance + " | 0 : " + _hits[0].distance);
                     if (_hits[_i].distance < _hits[_nearestHitIndex].distance)
@@ -228,6 +233,8 @@ public class PAF_Fruit : MonoBehaviour
                 // Bounce on a Sphere collider
                 if (_hits[_nearestHitIndex].collider is SphereCollider _sphere)
                 {
+                    int _side = ((_hits[_nearestHitIndex].point - (_sphere.bounds.center + (_sphere.bounds.extents.x * _normal))).magnitude < (_hits[_nearestHitIndex].point - (_sphere.bounds.center - (_sphere.bounds.extents.x * _normal))).magnitude) ? 1 : -1;
+
                     Vector3 _edge;
                     if (_nearestHitIndex == 0)
                     {
@@ -235,25 +242,30 @@ public class PAF_Fruit : MonoBehaviour
                     }
                     else
                     {
-                        _edge = _sphere.bounds.center + (_normal * (_nearestHitIndex == 1 ? -1 : 1) * _sphere.bounds.extents.x);
+                        _edge = _sphere.bounds.center + (_normal * _side * _sphere.bounds.extents.x);
                     }
 
-                    Vector3 _intersection = _sphere.bounds.center + (Mathf.Cos(Vector3.Angle(_edge, _hits[_nearestHitIndex].point) * Mathf.Deg2Rad) * _normal * _sphere.bounds.extents.x);
+                    Vector3 _intersection = _sphere.bounds.center + (Mathf.Abs(Mathf.Cos(Vector3.Angle(-_normal, (_hits[_nearestHitIndex].point - _sphere.bounds.center).normalized) * Mathf.Deg2Rad)) * _normal * _side * _sphere.bounds.extents.x);
                     Vector3 _rayPos = _edge - ((_edge - _intersection) / 2);
 
-                    if (!Physics.Raycast(_rayPos, -_nFlatVelocity, out _finalHit, _hits[_nearestHitIndex].distance + _sphere.bounds.extents.x, whatCollide) || !Physics.Raycast(_finalHit.point, _nFlatVelocity, out _finalHit, _hits[_nearestHitIndex].distance, whatCollide))
+                    //Debug.Log("Angle => " + Vector3.Angle(_normal, _hits[_nearestHitIndex].point - _sphere.bounds.center));
+                    //Debug.Log("Cos => " + (1 - Mathf.Cos(Vector3.Angle(_normal, _hits[_nearestHitIndex].point - _sphere.bounds.center) * Mathf.Deg2Rad)));
+                    //Debug.Log("Sin => " + (1 - Mathf.Sin(Vector3.Angle(_normal, _hits[_nearestHitIndex].point - _sphere.bounds.center) * Mathf.Deg2Rad)));
+                    sphereDebug = _rayPos;
+
+                    if (!Physics.Raycast(_rayPos, -_nFlatVelocity, out _finalHit, _hits[_nearestHitIndex].distance + _sphere.bounds.extents.x, whatCollide, QueryTriggerInteraction.Ignore) || !Physics.Raycast(_finalHit.point, _nFlatVelocity, out _finalHit, _hits[_nearestHitIndex].distance, whatCollide, QueryTriggerInteraction.Ignore))
                     {
-                        Debug.Log("Lost Sphere");
+                        Debug.Log("Lost Sphere " + _side);
                         _finalHit = _hits[_nearestHitIndex];
                         _finalHit.distance = 0;
                     }
-                    else Debug.Log("Bounce Sphere");
+                    else Debug.Log("Bounce Sphere " + _side);
                 }
                 // Bounce on a Box Collider
                 else
                 {
                     // Raycast from the point that should hit other collider to get distance between
-                    if (!Physics.Raycast(new Vector3(collider.bounds.center.x - (_hits[_nearestHitIndex].normal.normalized.x * (collider.bounds.extents.x - .01f)), collider.bounds.center.y, collider.bounds.center.z - (_hits[_nearestHitIndex].normal.normalized.z * (collider.bounds.extents.x - .01f))), _nFlatVelocity, out _finalHit, collider.bounds.extents.x + _flatVelocity.magnitude + .01f, whatCollide))
+                    if (!Physics.Raycast(new Vector3(collider.bounds.center.x - (_hits[_nearestHitIndex].normal.normalized.x * (collider.bounds.extents.x - .01f)), collider.bounds.center.y, collider.bounds.center.z - (_hits[_nearestHitIndex].normal.normalized.z * (collider.bounds.extents.x - .01f))), _nFlatVelocity, out _finalHit, collider.bounds.extents.x + _flatVelocity.magnitude + .01f, whatCollide, QueryTriggerInteraction.Ignore))
                     {
                         Debug.Log("Lost Box");
                         _finalHit = _hits[_nearestHitIndex];
@@ -295,7 +307,7 @@ public class PAF_Fruit : MonoBehaviour
                         if (_collider == collider) continue;
 
                         _direction = _collider.bounds.center - _newPosition;
-                        if (Physics.Raycast(_newPosition, _direction, out _otherHit, collider.bounds.extents.x + Mathf.Max(_collider.bounds.extents.x, _collider.bounds.extents.z), whatCollide))
+                        if (Physics.Raycast(_newPosition, _direction, out _otherHit, collider.bounds.extents.x + Mathf.Max(_collider.bounds.extents.x, _collider.bounds.extents.z), whatCollide, QueryTriggerInteraction.Ignore))
                         {
                             _distance = _newPosition - _otherHit.point;
                             _distance = new Vector3(Mathf.Abs(_distance.x), 0, Mathf.Abs(_distance.z));
@@ -308,7 +320,7 @@ public class PAF_Fruit : MonoBehaviour
                 // Set new position & velocity
                 transform.position = _newPosition;
 
-                _flatVelocity = Vector3.Reflect(_flatVelocity, _finalHit.normal) * .8f;
+                _flatVelocity = Vector3.Reflect(_flatVelocity, _finalHit.normal) /** .8f*/;
                 velocity = new Vector3(_flatVelocity.x, velocity.y, _flatVelocity.z);
 
                 #if UNITY_EDITOR
@@ -400,6 +412,12 @@ public class PAF_Fruit : MonoBehaviour
 
             Gizmos.color = Color.red;
             Gizmos.DrawSphere(lastHitRay[1], .1f);
+        }
+
+        if (sphereDebug != Vector3.zero)
+        {
+            Gizmos.color = Color.black;
+            Gizmos.DrawCube(sphereDebug, Vector3.one * .1f);
         }
 
         if (collider)

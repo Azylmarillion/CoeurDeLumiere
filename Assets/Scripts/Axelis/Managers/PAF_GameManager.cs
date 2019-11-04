@@ -143,7 +143,7 @@ public class PAF_GameManager : MonoBehaviour
     /// If both players are ready, start the game
     /// </summary>
     /// <param name="_isPlayerOne"></param>
-    public void SetPlayerReay(bool _isPlayerOne)
+    public void SetPlayerReady(bool _isPlayerOne)
     {
         if (_isPlayerOne)
             m_playerOneIsReady = true;

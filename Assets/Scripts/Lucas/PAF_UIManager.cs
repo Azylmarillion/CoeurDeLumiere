@@ -18,6 +18,7 @@ public class PAF_UIManager : MonoBehaviour
     */
 
     #region Fields / Properties
+    [Header("Animators")]
     /// <summary>
     /// Screen UI animator, making all different menus and sub-menus transitions.
     /// </summary>
@@ -28,7 +29,7 @@ public class PAF_UIManager : MonoBehaviour
     /// </summary>
     [SerializeField] private Animator worldAnimator = null;
 
-
+    [Header("Texts")]
     /// <summary>
     /// Text used to display first player's score.
     /// </summary>
@@ -41,10 +42,31 @@ public class PAF_UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playerTwoScore = null;
     [SerializeField] private TextMeshProUGUI playerTwoReadyText = null;
 
+    [Header("Parents")]
     /// <summary>
     /// Parent Object of the main menu 
     /// </summary>
-    [SerializeField] private GameObject m_mainMenuObject = null; 
+    [SerializeField] private GameObject m_mainMenuObject = null;
+    [SerializeField] private GameObject m_optionMenuParent = null;
+
+    [Header("Volume")]
+    [SerializeField] private UnityEngine.Audio.AudioMixer m_audioMixer = null; 
+    [SerializeField] private float m_volumeIntensity = 1.0f; 
+    public float VolumeIntensity
+    {
+        get
+        {
+            return m_volumeIntensity; 
+        }
+        set
+        {
+            m_volumeIntensity = value;
+            PlayerPrefs.SetFloat("VolumeAttenuation", value);
+            if (m_audioMixer) m_audioMixer.SetFloat("VolumeAttenuation", value); 
+        }
+
+    }
+    [SerializeField] private UnityEngine.UI.Slider m_volumeSlider = null;
     #endregion
 
     #region Methods
@@ -107,6 +129,34 @@ public class PAF_UIManager : MonoBehaviour
         if (!m_mainMenuObject) return;
         m_mainMenuObject.SetActive(false); 
     }
+
+    private void InitAudioMixer()
+    {
+        if (m_audioMixer)
+        {
+            float _value = 0;
+            if (!PlayerPrefs.HasKey("VolumeAttenuation"))
+            {
+                m_audioMixer.GetFloat("VolumeAttenuation", out _value);
+                PlayerPrefs.SetFloat("VolumeAttenuation", _value);
+            }
+            else
+            {
+                m_audioMixer.SetFloat("VolumeAttenuation", PlayerPrefs.GetFloat("VolumeAttenuation"));
+                m_audioMixer.GetFloat("VolumeAttenuation", out _value);
+            }
+            if(m_volumeSlider)
+            {
+                m_volumeSlider.value = _value; 
+            }
+        }
+    }
+
+    private void DisplayOptionsMenu()
+    {
+        if (m_optionMenuParent == null) return;
+        m_optionMenuParent.SetActive(!m_optionMenuParent.activeInHierarchy); 
+    }
     #endregion
 
     #region Unity Methods
@@ -116,6 +166,19 @@ public class PAF_UIManager : MonoBehaviour
         PAF_GameManager.OnGameStart += HideMainMenu; 
         PAF_GameManager.OnPlayerScored += SetPlayerScore;
         PAF_GameManager.OnPlayerReady += SetPlayerReady; 
+    }
+
+    private void Start()
+    {
+        InitAudioMixer(); 
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            DisplayOptionsMenu(); 
+        }
     }
 
     private void OnDestroy()

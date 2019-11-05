@@ -7,7 +7,6 @@ public class PAF_Fruit : MonoBehaviour
 {
     /*
      * TO DO :
-     *      • Rouler
      *      • Auto-guider pour manger
      *      • Améliorer
      *      • Velocité / seconde
@@ -56,6 +55,11 @@ public class PAF_Fruit : MonoBehaviour
     /// Is the fruit above ground or falling down ?
     /// </summary>
     [SerializeField] private bool isFalling = false;
+
+    /// <summary>
+    /// Original height of the renderer pivot.
+    /// </summary>
+    private float originalPivotHeight = 0;
 
     /// <summary>
     /// Weight of the fruit, influencing its movement force.
@@ -125,11 +129,6 @@ public class PAF_Fruit : MonoBehaviour
     /// Audio source of the object.
     /// </summary>
     [SerializeField] AudioSource audioSource = null;
-
-    /// <summary>
-    /// Scriptable Object used for sound datas. (To remove from here.)
-    /// </summary>
-    [SerializeField] PAF_SoundData soundData = null;
     #endregion
 
     #region Coroutines
@@ -264,9 +263,9 @@ public class PAF_Fruit : MonoBehaviour
                     //Debug.Log("Hit => " + _hits[_nearestHitIndex].transform.name + " | From => " + (_nearestHitIndex == 0 ? "Center" : _nearestHitIndex == 1 ? "Right" : "Left"));
 
                     // Play bounce Sound
-                    if (audioSource && soundData)
+                    if (audioSource)
                     {
-                        AudioClip _clip = soundData.GetFruitBounce();
+                        AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetFruitBounce();
                         if (_clip) audioSource.PlayOneShot(_clip);
                     }
 
@@ -376,6 +375,8 @@ public class PAF_Fruit : MonoBehaviour
 
                     if (_flatVelocity.magnitude < .5f) _flatVelocity *= .975f;
                     velocity = new Vector3(_flatVelocity.x * .9875f, velocity.y, _flatVelocity.z * .9875f);
+
+                    renderer.Rotate(_normal, Time.fixedDeltaTime * _flatVelocity.magnitude * 5000);
                 }
             }
             if (velocity.y != 0)
@@ -393,9 +394,9 @@ public class PAF_Fruit : MonoBehaviour
                 }
                 else
                 {
-                    if (!isFalling && (renderer.position.y < 0))
+                    if (!isFalling && (renderer.position.y < originalPivotHeight))
                     {
-                        renderer.position = new Vector3(renderer.position.x, 0, renderer.position.z);
+                        renderer.position = new Vector3(renderer.position.x, renderer.position.y + (originalPivotHeight - renderer.position.y), renderer.position.z);
                         renderer.localScale = originalSize;
                         velocity.y = 0;
 
@@ -430,6 +431,7 @@ public class PAF_Fruit : MonoBehaviour
                 if (isFalling)
                 {
                     Velocity = new Vector3(velocity.x, 0, velocity.z);
+                    if (renderer.position.y < originalPivotHeight) renderer.position = new Vector3(renderer.position.x, renderer.position.y + (originalPivotHeight - renderer.position.y), renderer.position.z);
                     renderer.localScale = originalSize;
 
                     isFalling = false;
@@ -495,8 +497,10 @@ public class PAF_Fruit : MonoBehaviour
 
         // Get original size
         originalSize = renderer.localScale;
+        originalPivotHeight = renderer.position.y;
 
-        // Add this fruit to the arena list on start !
+
+    // Add this fruit to the arena list on start !
         arenaFruits.Add(this);
 
         #if UNITY_EDITOR

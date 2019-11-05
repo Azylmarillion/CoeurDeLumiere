@@ -120,12 +120,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!4 &15875610 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2525472220790336180, guid: 5af142f6eb446074f8473ed6198ad5c4,
-    type: 3}
-  m_PrefabInstance: {fileID: 2051990961}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &124921901
 GameObject:
   m_ObjectHideFlags: 0
@@ -3592,11 +3586,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Fruit_01
       objectReference: {fileID: 0}
-    - target: {fileID: 5038916321531785083, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8338003950582570344, guid: 5af142f6eb446074f8473ed6198ad5c4,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3651,76 +3640,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8338003950582570344, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 8338003950582570344, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 8338003950582570344, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 1969197049292224122, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: velocity.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1969197049292224122, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: velocity.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1969197049292224122, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: whatCollide.m_Bits
-      value: 6913
-      objectReference: {fileID: 0}
-    - target: {fileID: 1969197049292224122, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: isFalling
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1969197049292224122, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: whatIsGround.m_Bits
-      value: 1024
-      objectReference: {fileID: 0}
-    - target: {fileID: 1969197049292224122, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: renderer
-      value: 
-      objectReference: {fileID: 15875610}
-    - target: {fileID: 7324809382051584449, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_Center.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2525472220790336180, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2525472220790336180, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2525472220790336180, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2525472220790336180, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5af142f6eb446074f8473ed6198ad5c4, type: 3}

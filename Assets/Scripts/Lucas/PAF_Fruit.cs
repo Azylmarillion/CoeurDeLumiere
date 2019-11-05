@@ -7,8 +7,6 @@ public class PAF_Fruit : MonoBehaviour
 {
     /*
      * TO DO :
-     * 
-     *      • Verticalité
      *      • Rouler
      *      • Auto-guider pour manger
      *      • Améliorer
@@ -57,7 +55,7 @@ public class PAF_Fruit : MonoBehaviour
     /// <summary>
     /// Is the fruit above ground or falling down ?
     /// </summary>
-    private bool isFalling = true;
+    [SerializeField] private bool isFalling = false;
 
     /// <summary>
     /// Weight of the fruit, influencing its movement force.
@@ -75,9 +73,9 @@ public class PAF_Fruit : MonoBehaviour
     [SerializeField] private int fruitScore = 100;
 
     /// <summary>
-    /// Ground layer int.
+    /// Ground layer mask.
     /// </summary>
-    private int whatIsGround = 1;
+    [SerializeField] private LayerMask whatIsGround = new LayerMask();
 
     /// <summary>
     /// Layer mask of what the fruits should collide on.
@@ -382,21 +380,20 @@ public class PAF_Fruit : MonoBehaviour
             }
             if (velocity.y != 0)
             {
-                bool _isAbove = renderer.position.y > .1f;
-
                 renderer.position = new Vector3(renderer.position.x, renderer.position.y + velocity.y, renderer.position.z);
 
                 if (velocity.y > 0)
                 {
 
-                    _newScale = renderer.localScale * (1 + (velocity.y / 100));
-                    velocity.y *= .975f;
+                    _newScale = renderer.localScale * (1 + (velocity.y / 10));
+                    if (velocity.y < .02f) velocity.y *= .9f;
+                    else velocity.y *= .95f;
 
-                    if (velocity.y < .1f) velocity.y *= -1;
+                    if (velocity.y < .01f) velocity.y *= -1;
                 }
                 else
                 {
-                    if (_isAbove && (renderer.position.y < 0))
+                    if (!isFalling && (renderer.position.y < 0))
                     {
                         renderer.position = new Vector3(renderer.position.x, 0, renderer.position.z);
                         renderer.localScale = originalSize;
@@ -405,8 +402,12 @@ public class PAF_Fruit : MonoBehaviour
                         continue;
                     }
 
-                    _newScale = renderer.localScale / (-1 + (velocity.y / 100));
-                    if (velocity.y > -100) velocity.y *=  1.02f;
+                    _newScale = renderer.localScale / (-1 + (velocity.y / 10));
+                    if (velocity.y > -100)
+                    {
+                        if (velocity.y > -1) velocity.y *= 1.05f;
+                        else velocity.y *= 1.02f;
+                    }
                 }
                 renderer.localScale = new Vector3(Mathf.Abs(_newScale.x), Mathf.Abs(_newScale.y), Mathf.Abs(_newScale.z));
             }
@@ -424,7 +425,7 @@ public class PAF_Fruit : MonoBehaviour
 
         for (int _i = 0; _i < 4; _i++)
         {
-            if (Physics.Raycast(new Vector3(renderer.position.x, renderer.position.y + .05f, renderer.position.z) + (_raycastPos[_i] * collider.bounds.extents.x), Vector3.down, (velocity.y < 0 ? Mathf.Max(-velocity.y, .1f) : .1f) + .1f, whatCollide, QueryTriggerInteraction.Ignore))
+            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + .05f, transform.position.z) + (_raycastPos[_i] * collider.bounds.extents.x), Vector3.down, .1f, whatIsGround, QueryTriggerInteraction.Ignore))
             {
                 if (isFalling)
                 {
@@ -442,10 +443,16 @@ public class PAF_Fruit : MonoBehaviour
         {
             isFalling = true;
             Invoke("DoomFruit", 1f);
-        }
-        if (velocity.y == 0) Velocity -= Vector3.up;
 
-        if (flatVelocity.magnitude < .5f) DoomFruit();
+            if (velocity.y == 0) Velocity -= new Vector3(0, .0001f, 0);
+        }
+        else if (flatVelocity.magnitude < .3f)
+        {
+            Velocity -= new Vector3(0, .01f, 0);
+
+            CancelInvoke("DoomFruit");
+            DoomFruit();
+        }
     }
 
     /// <summary>
@@ -488,7 +495,6 @@ public class PAF_Fruit : MonoBehaviour
 
         // Get original size
         originalSize = renderer.localScale;
-        whatIsGround = LayerMask.NameToLayer("Ground");
 
         // Add this fruit to the arena list on start !
         arenaFruits.Add(this);

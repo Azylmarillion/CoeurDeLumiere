@@ -4,42 +4,39 @@ using UnityEngine;
 
 public class PAF_Dalle : MonoBehaviour
 {
-    [SerializeField] BoxCollider collider = null;
+    [SerializeField] MeshCollider collider = null;
+    [SerializeField] Renderer renderer = null;
     [SerializeField, Range(1,10)] float speedDecay = 2;
     [SerializeField] PAF_SoundData soundData = null;
     [SerializeField] AudioSource audioSource = null;
+    [SerializeField] bool isShifting = true;
+    [SerializeField] bool randomColor = true;
+    [SerializeField] Material[] materials = new Material[] { };
     bool isFalling = false;
     bool isLeft = false;
     public bool Fell { get; private set; } = false;
 
 
-
-    private void Update()
+    private void Start()
     {
-        if (!isFalling) return;
-        collider.size = Vector3.MoveTowards(collider.size, new Vector3(0, 0, collider.size.z), Time.deltaTime * speedDecay);
-        if (collider.size.x <= 0)
-        {
-            collider.enabled = false;
-            isFalling = false;
-            return;
-        }
-        collider.center = Vector3.MoveTowards(collider.center, collider.center + (isLeft ? Vector3.right : Vector3.left) * .0085f * speedDecay, Time.deltaTime * speedDecay);
-
+        if (isShifting) transform.position += Vector3.up * Random.Range(-PAF_DalleManager.I.Shift * 2, -PAF_DalleManager.I.Shift);
+        if (materials.Length <= 0 ||!randomColor) return;
+        if (!renderer) renderer = GetComponent<Renderer>();
+        if (renderer) renderer.material = materials[Random.Range(0, materials.Length)];
     }
+
 
     public void Fall(bool _isLeft)
     {
-        if (!collider) collider = GetComponent<BoxCollider>();
-        if (!collider) return;
-        if (GetComponent<Renderer>()) GetComponent<Renderer>().enabled = false;
-        //PAF_SoundManager.I.PlayDalleFalling(transform.position);
-        if (!audioSource && GetComponent<AudioSource>()) audioSource = GetComponent<AudioSource>();
-        if(soundData && audioSource)
-        {
-            AudioClip _clip = soundData.GetDalleFalling();
-            if (_clip) audioSource.PlayOneShot(_clip);
-        }
+        if (!collider) collider = GetComponent<MeshCollider>();
+        if (!soundData) soundData = (PAF_SoundData)Resources.Load("Data/Sounds");
+        if (!renderer) renderer = GetComponent<Renderer>();
+        if (!audioSource) audioSource = GetComponent<AudioSource>();
+        if (!collider || !audioSource || !soundData || ! renderer) return;
+        renderer.enabled = false;
+        collider.enabled = false;
+        AudioClip _clip = soundData.GetDalleFalling();
+        if (_clip) audioSource.PlayOneShot(_clip);
         isFalling = true;
         isLeft = _isLeft;
         Fell = true;

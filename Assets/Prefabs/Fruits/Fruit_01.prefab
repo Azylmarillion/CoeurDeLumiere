@@ -232,6 +232,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3665497634d6d3341b247198f4408a04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  renderer: {fileID: 0}
   collider: {fileID: 7324809382051584449}
   weight: 1
   fruitScore: 100
@@ -240,7 +241,7 @@ MonoBehaviour:
     m_Bits: 6912
   pointsOwner: {fileID: 0}
   velocity: {x: 0, y: 0, z: 0}
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 5157784346852599037}
   soundData: {fileID: 11400000, guid: 0f1532b6b6bd9db4e9917bf5dc20602c, type: 2}
   doDrawLastRaycastHit: 1
   doDrawRaycasts: 1
@@ -249,6 +250,7 @@ MonoBehaviour:
   lastHitRay:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 0}
+  sphereDebug: {x: 0, y: 0, z: 0}
 --- !u!135 &7324809382051584449
 SphereCollider:
   m_ObjectHideFlags: 0

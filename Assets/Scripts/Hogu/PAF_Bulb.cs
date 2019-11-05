@@ -33,33 +33,73 @@ public class PAF_Bulb : MonoBehaviour
     [SerializeField, Range(1, 100)] float maxHitForce = 50; 
     [SerializeField, Range(0, 100)] float minHeightForce = 10; 
     [SerializeField, Range(1, 100)] float maxHeightForce = 50;
+
+
+
+    Vector3 initScale = Vector3.zero;
+    bool animateBigBulb = false;
     #endregion
-    
+
 
     private void Start()
     {
-        transform.localScale = Vector3.zero;
+        initScale = transform.localScale;
         if (maxItemsInBigBulb <= minItemsInBigBulb) maxItemsInBigBulb = minItemsInBigBulb + 1;
         if (maxItemsInBulb <= minItemsInBulb) maxItemsInBulb = minItemsInBulb + 1;
         if (maxHitForce <= minHitForce) maxHitForce = minHitForce + 1;
         if (maxHeightForce <= minHeightForce) maxHeightForce = minHeightForce + 1;
-        if(bulbAnimator) delayHitCoroutine = StartCoroutine(PAF_Player.InvertBoolDelay((state) => { canHit = state; }, bulbAnimator.runtimeAnimatorController.animationClips[0].averageDuration));
+        canHit = false;
         if (isBigBulb) SetBigBulb();
     }
+
+    private void Update()
+    {
+        if(animateBigBulb) AnimateBigger();
+    }
+
 
 
     public void SetBigBulb()
     {
         if (!bulbAnimator) return;
-        if (delayHitCoroutine != null) StopCoroutine(delayHitCoroutine);
-        bulbAnimator.SetBool("bigbulb", true);
         isBigBulb = true;
         bulbAnimator.enabled = true;
-        StartCoroutine(PAF_Player.InvertBoolDelay((state) => { canHit = state; }, bulbAnimator.runtimeAnimatorController.animationClips[1].averageDuration));
+        canHit = false;
+        StartCoroutine(BigBulbAnimation());
+    }
+
+    void AnimateBigger()
+    {
+        transform.localScale = Vector3.Slerp(transform.localScale, initScale + Vector3.one * .5f, Time.deltaTime * 20);
+    }
+
+    IEnumerator BigBulbAnimation()
+    {
+        animateBigBulb = true;
+        bulbAnimator.SetTrigger("spawn");
+        yield return new WaitForSeconds(.5f);
+        animateBigBulb = false;
+        initScale = transform.localScale;
+        yield return new WaitForSeconds(2);
+        animateBigBulb = true;
+        bulbAnimator.SetTrigger("spawn");
+        yield return new WaitForSeconds(.5f);
+        animateBigBulb = false;
+        initScale = transform.localScale;
+        yield return new WaitForSeconds(2);
+        animateBigBulb = true;
+        bulbAnimator.SetTrigger("spawn");
+        yield return new WaitForSeconds(.5f);
+        animateBigBulb = false;
+        initScale = transform.localScale;
+        yield return new WaitForSeconds(2);
+        canHit = true;
     }
     
     public void Hit()
     {
+        if (!bulbAnimator) return;
+        bulbAnimator.SetTrigger("hit");
         if (soundData && soundSource)
         {
             AudioClip _clip = soundData.GetHitBulb();
@@ -70,20 +110,20 @@ public class PAF_Bulb : MonoBehaviour
             hits++;
             if (hits >= bigBulbHitNeeded)
             {
-                int _rnd = Random.Range(minItemsInBigBulb, maxItemsInBigBulb);
-                Explode(_rnd);
+                bulbAnimator.SetTrigger("spit");
             }
         }
         else if (canHit)
         {
-            int _rnd = Random.Range(minItemsInBulb, maxItemsInBulb);
-            Explode(_rnd);
+            bulbAnimator.SetTrigger("spit");
         }
     }
 
-    public void Explode(int _itemsToSpawn)
+    public void Explode(bool _spawnItems)
     {
         if (items.Length < 0 || !bulbAnimator || !fruitData) return;
+        int _itemsToSpawn = Random.Range(isBigBulb ? minItemsInBigBulb : minItemsInBulb, isBigBulb ? maxItemsInBigBulb : maxItemsInBulb);
+        if (!_spawnItems) _itemsToSpawn = 0;
         items = fruitData.GetRandomFruit(Random.Range(isBigBulb ? minItemsInBigBulb : minItemsInBulb, isBigBulb ? maxItemsInBigBulb : maxItemsInBulb));
         for (int i = 0; i < _itemsToSpawn; i++)
         {
@@ -98,18 +138,38 @@ public class PAF_Bulb : MonoBehaviour
             if (_fruit) _fruit.AddForce(_force);
         }
         bulbAnimator.SetBool("explode", true);
-        StartCoroutine(DelayDestroy());
+    }
+    
+    public void ExplodeWithoutBool()
+    {
+        if (items.Length < 0 || !bulbAnimator || !fruitData) return;
+        int _itemsToSpawn = Random.Range(isBigBulb ? minItemsInBigBulb : minItemsInBulb, isBigBulb ? maxItemsInBigBulb : maxItemsInBulb);
+        //if (!_spawnItems) _itemsToSpawn = 0;
+        items = fruitData.GetRandomFruit(Random.Range(isBigBulb ? minItemsInBigBulb : minItemsInBulb, isBigBulb ? maxItemsInBigBulb : maxItemsInBulb));
+        for (int i = 0; i < _itemsToSpawn; i++)
+        {
+            if (soundData && soundSource)
+            {
+                AudioClip _clip = soundData.GetFruitSpawn();
+                if (_clip) soundSource.PlayOneShot(_clip);
+            }
+            PAF_Fruit _fruit = Instantiate(items[Random.Range(0, items.Length)], transform.position, transform.rotation).GetComponent<PAF_Fruit>();
+            Vector3 _force = new Vector3(Random.Range(-2f, 2f), Random.Range(-2f, 2f), Random.Range(-2f, 2f));
+            _force = Vector3.ClampMagnitude(_force, Random.Range(.1f, 1));
+            if (_fruit) _fruit.AddForce(_force);
+        }
+        bulbAnimator.SetBool("explode", true);
     }
 
-    IEnumerator DelayDestroy()
+
+    public void SetCanHit(bool _state) => canHit = _state;
+
+    public void DestroyBulb()
     {
         if (soundData && soundSource)
         {
             AudioClip _clip = soundData.GetBulbExploding();
             if (_clip) soundSource.PlayOneShot(_clip);
         }
-        yield return new WaitForSeconds(bulbAnimator.runtimeAnimatorController.animationClips[isBigBulb ? 2 : 3].averageDuration);
-        //PAF_SoundManager.I.PlayBulbExplode(transform.position);
-        Destroy(this.gameObject);
     }
 }

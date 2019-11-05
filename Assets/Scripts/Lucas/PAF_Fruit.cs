@@ -486,6 +486,11 @@ public class PAF_Fruit : MonoBehaviour
         if (velocity.y > 0) velocity.y = -1;
         while (true)
         {
+            Vector3 _newVelocity = (_toFollow.position - transform.position).normalized * flatVelocity.magnitude;
+            if (_newVelocity.magnitude > 1) _newVelocity *= .9f;
+
+            Velocity = new Vector3(_newVelocity.x, velocity.y, _newVelocity.z);
+
             yield return null;
         }
     }

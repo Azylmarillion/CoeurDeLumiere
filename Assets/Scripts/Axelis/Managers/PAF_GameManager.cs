@@ -47,8 +47,9 @@ public class PAF_GameManager : MonoBehaviour
     public static event Action<int> OnNextSecond = null; 
     /// <summary>
     /// Event called when the game Ends
+    /// The argument is the score of both players
     /// </summary>
-    public static event Action OnGameEnd = null;
+    public static event Action<int, int> OnGameEnd = null;
     /// <summary>
     /// Event called when one of the player scores
     /// </summary>
@@ -61,6 +62,7 @@ public class PAF_GameManager : MonoBehaviour
 
     #region Fields / Properties
     public static PAF_GameManager Instance = null;
+
 
     [SerializeField]private bool m_playerOneIsReady = false;
     [SerializeField]private bool m_playerTwoIsReady = false;
@@ -92,7 +94,13 @@ public class PAF_GameManager : MonoBehaviour
     [Header("Game Events")]
     [SerializeField] private PAF_Event[] m_gameEvents = new PAF_Event[] { };
 
-    [SerializeField] private UnityEngine.Video.VideoPlayer m_videoPlayer = null; 
+    [Header("Video")]
+    [SerializeField] private UnityEngine.Video.VideoPlayer m_videoPlayer = null;
+    [SerializeField] private PAF_SoundData m_soundDatas = null;
+    public PAF_SoundData SoundDatas
+    {
+        get { return m_soundDatas;  }
+    }
     #endregion
 
     #region Methods
@@ -132,7 +140,7 @@ public class PAF_GameManager : MonoBehaviour
             yield return new WaitForSeconds(1.0f);
             m_currentGameTime++;
         }
-        OnGameEnd?.Invoke(); 
+        OnGameEnd?.Invoke(m_playerOneScore, m_playerTwoScore); 
     }
 
     /// <summary>
@@ -203,7 +211,6 @@ public class PAF_GameManager : MonoBehaviour
             Destroy(this);
             return; 
         }
-
     }
 
     private void Start()

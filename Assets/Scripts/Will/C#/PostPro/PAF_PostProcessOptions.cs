@@ -23,6 +23,7 @@ public class PAF_PostProcessOptions : MonoBehaviour
                 m_settings.basic.contrast = m_contrastIntensity;
                 optionPPProfile.colorGrading.settings = m_settings;
             }
+            PlayerPrefs.SetFloat("ContrastIntensity", value); 
         }
     }
 
@@ -56,7 +57,7 @@ public class PAF_PostProcessOptions : MonoBehaviour
                 m_settings.basic.saturation = SaturationIntensity;
                 optionPPProfile.colorGrading.settings = m_settings;
             }
-
+            PlayerPrefs.SetFloat("SaturationIntensity", value);
         }
     }
 
@@ -90,7 +91,28 @@ public class PAF_PostProcessOptions : MonoBehaviour
         */
 
         m_settings = optionPPProfile.colorGrading.settings;
-        if(m_exposureSlider)m_exposureSlider.value = m_settings.basic.postExposure;
+#if UNITY_STANDALONE
+        //Get Saturation Player Prefs
+        if (PlayerPrefs.HasKey("SaturationIntensity"))
+        {
+            m_settings.basic.saturation = PlayerPrefs.GetFloat("SaturationIntensity"); 
+        }
+        else
+        {
+            PlayerPrefs.SetFloat("SaturationIntensity", m_settings.basic.saturation); 
+        }
+        //Get Contrast Player Prefs
+        if (PlayerPrefs.HasKey("ContrastIntensity"))
+        {
+            m_settings.basic.saturation = PlayerPrefs.GetFloat("ContrastIntensity");
+        }
+        else
+        {
+            PlayerPrefs.SetFloat("ContrastIntensity", m_settings.basic.contrast);
+        }
+        optionPPProfile.colorGrading.settings = m_settings;
+#endif
+        if (m_exposureSlider)m_exposureSlider.value = m_settings.basic.postExposure;
         if (m_contrastSlider) m_contrastSlider.value = m_settings.basic.contrast;
         if (m_saturationSlider) m_saturationSlider.value = m_settings.basic.saturation; 
     }

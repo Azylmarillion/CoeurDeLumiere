@@ -9,7 +9,6 @@ public class PAF_Bulb : MonoBehaviour
     #region Object
     [SerializeField] Animator bulbAnimator = null;
     [SerializeField] GameObject[] items = null;
-    [SerializeField] PAF_SoundData soundData = null;
     [SerializeField] AudioSource soundSource = null;
     [SerializeField] PAF_FruitData fruitData = null;
     #endregion
@@ -100,9 +99,9 @@ public class PAF_Bulb : MonoBehaviour
     {
         if (!bulbAnimator) return;
         bulbAnimator.SetTrigger("hit");
-        if (soundData && soundSource)
+        if (soundSource)
         {
-            AudioClip _clip = soundData.GetHitBulb();
+            AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetHitBulb();
             if (_clip) soundSource.PlayOneShot(_clip);
         }
         if (isBigBulb && canHit)
@@ -127,9 +126,9 @@ public class PAF_Bulb : MonoBehaviour
         items = fruitData.GetRandomFruit(Random.Range(isBigBulb ? minItemsInBigBulb : minItemsInBulb, isBigBulb ? maxItemsInBigBulb : maxItemsInBulb));
         for (int i = 0; i < _itemsToSpawn; i++)
         {
-            if (soundData && soundSource)
+            if (soundSource)
             {
-                AudioClip _clip = soundData.GetFruitSpawn();
+                AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetFruitSpawn();
                 if (_clip) soundSource.PlayOneShot(_clip);
             }
             PAF_Fruit _fruit = Instantiate(items[Random.Range(0, items.Length)], transform.position, transform.rotation).GetComponent<PAF_Fruit>();
@@ -148,9 +147,9 @@ public class PAF_Bulb : MonoBehaviour
         items = fruitData.GetRandomFruit(Random.Range(isBigBulb ? minItemsInBigBulb : minItemsInBulb, isBigBulb ? maxItemsInBigBulb : maxItemsInBulb));
         for (int i = 0; i < _itemsToSpawn; i++)
         {
-            if (soundData && soundSource)
+            if (soundSource)
             {
-                AudioClip _clip = soundData.GetFruitSpawn();
+                AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetFruitSpawn();
                 if (_clip) soundSource.PlayOneShot(_clip);
             }
             PAF_Fruit _fruit = Instantiate(items[Random.Range(0, items.Length)], transform.position, transform.rotation).GetComponent<PAF_Fruit>();
@@ -166,9 +165,9 @@ public class PAF_Bulb : MonoBehaviour
 
     public void DestroyBulb()
     {
-        if (soundData && soundSource)
+        if (soundSource)
         {
-            AudioClip _clip = soundData.GetBulbExploding();
+            AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetBulbExploding();
             if (_clip) soundSource.PlayOneShot(_clip);
         }
     }

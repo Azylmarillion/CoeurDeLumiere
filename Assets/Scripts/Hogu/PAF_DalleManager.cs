@@ -8,9 +8,12 @@ public class PAF_DalleManager : MonoBehaviour
     public static PAF_DalleManager I { get; private set; }
 
     [SerializeField] List<PAF_Dalle> allDallesToFall = new List<PAF_Dalle>();
-    public List<PAF_Dalle> AllUpDalles { get { return allDallesToFall.Where(d => !d.Fell).ToList(); } }
+    [SerializeField] List<PAF_Dalle> allRespawnableDalles = new List<PAF_Dalle>();
+    public List<PAF_Dalle> AllUpDalles { get { return allRespawnableDalles; } }
     [SerializeField] Transform center = null;
     [SerializeField] float fallDelay = .25f;
+    [SerializeField, Range(0,.1f)] float shift = .05f;
+        public float Shift { get { return shift; } }
 
     public bool IsReady => center && allDallesToFall.Count > 0;
 

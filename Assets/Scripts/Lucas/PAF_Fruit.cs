@@ -486,7 +486,7 @@ public class PAF_Fruit : MonoBehaviour
         if (velocity.y > 0) velocity.y = -1;
         while (true)
         {
-
+            yield return null;
         }
     }
 

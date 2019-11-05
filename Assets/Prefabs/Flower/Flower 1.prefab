@@ -54,33 +54,43 @@ MonoBehaviour:
   - m_baseTransform: {fileID: 7450587640156823457}
     m_minAngle: -180
     m_maxAngle: 180
+    m_currentAngle: 0
   - m_baseTransform: {fileID: 4056047976964133113}
     m_minAngle: -180
     m_maxAngle: 180
+    m_currentAngle: 0
   - m_baseTransform: {fileID: 4710468006131115021}
     m_minAngle: -180
     m_maxAngle: 180
+    m_currentAngle: 0
   - m_baseTransform: {fileID: 676194067580112008}
     m_minAngle: -180
     m_maxAngle: 180
+    m_currentAngle: 0
   - m_baseTransform: {fileID: 2976864826949874190}
     m_minAngle: -180
     m_maxAngle: 180
+    m_currentAngle: 0
   - m_baseTransform: {fileID: 1982732962629919614}
     m_minAngle: -180
     m_maxAngle: 180
+    m_currentAngle: 0
   - m_baseTransform: {fileID: 4894858731961579609}
     m_minAngle: -180
     m_maxAngle: 180
+    m_currentAngle: 0
   - m_baseTransform: {fileID: 543144026175925248}
     m_minAngle: -180
     m_maxAngle: 180
+    m_currentAngle: 0
   - m_baseTransform: {fileID: 9031231288285492066}
     m_minAngle: -180
     m_maxAngle: 180
+    m_currentAngle: 0
   - m_baseTransform: {fileID: 5336109325931082962}
     m_minAngle: -180
     m_maxAngle: 180
+    m_currentAngle: 0
   audiosource: {fileID: 7702343025045107162}
   soundData: {fileID: 0}
 --- !u!95 &7702343025045107161
@@ -111,7 +121,8 @@ AudioSource:
   m_GameObject: {fileID: 7702343025045107166}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: ab95f4241408a654aa3c6d8323415645,
+    type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -265,20 +276,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8004218104033529125, guid: 887da9a0e65a34d4fbe5c5fef162579f,
+    - target: {fileID: -6851783709190245353, guid: 887da9a0e65a34d4fbe5c5fef162579f,
         type: 3}
-      propertyPath: m_LocalPosition.x
+      propertyPath: m_LocalRotation.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8004218104033529125, guid: 887da9a0e65a34d4fbe5c5fef162579f,
+    - target: {fileID: -6851783709190245353, guid: 887da9a0e65a34d4fbe5c5fef162579f,
         type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8004218104033529125, guid: 887da9a0e65a34d4fbe5c5fef162579f,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
+      propertyPath: m_LocalRotation.w
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8250042734801592476, guid: 887da9a0e65a34d4fbe5c5fef162579f,
         type: 3}
@@ -295,18 +301,22 @@ PrefabInstance:
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: -6851783709190245353, guid: 887da9a0e65a34d4fbe5c5fef162579f,
+    - target: {fileID: 8004218104033529125, guid: 887da9a0e65a34d4fbe5c5fef162579f,
         type: 3}
-      propertyPath: m_LocalRotation.y
+      propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -6851783709190245353, guid: 887da9a0e65a34d4fbe5c5fef162579f,
+    - target: {fileID: 8004218104033529125, guid: 887da9a0e65a34d4fbe5c5fef162579f,
         type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
+      propertyPath: m_LocalPosition.y
+      value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: -6057140222963153312, guid: 887da9a0e65a34d4fbe5c5fef162579f, type: 3}
+    - target: {fileID: 8004218104033529125, guid: 887da9a0e65a34d4fbe5c5fef162579f,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 887da9a0e65a34d4fbe5c5fef162579f, type: 3}
 --- !u!4 &3431334871492258783 stripped
 Transform:

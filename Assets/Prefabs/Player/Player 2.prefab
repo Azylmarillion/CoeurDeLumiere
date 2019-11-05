@@ -55,9 +55,9 @@ MonoBehaviour:
   invulnerableTime: 0.5
   stunTime: 0.5
   fallTime: 1
-  playerSpeed: 2
+  playerSpeed: 4
   sightAngle: 122
-  sightRange: 6
+  sightRange: 3.5
   audioPlayer: {fileID: 5257891037964131954}
   soundDataPlayer: {fileID: 11400000, guid: 0f1532b6b6bd9db4e9917bf5dc20602c, type: 2}
   moveArea: {fileID: 0}
@@ -103,7 +103,8 @@ AudioSource:
   m_GameObject: {fileID: 5257891037964131916}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: ab95f4241408a654aa3c6d8323415645,
+    type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -220,6 +221,19 @@ PrefabInstance:
       propertyPath: m_Name
       value: perso2
       objectReference: {fileID: 0}
+<<<<<<< HEAD
+=======
+    - target: {fileID: -6057140222963153312, guid: 42aef5f8a0219ca4ea03ccbd4bc0110f,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 2ab6404aad529304ca38f62bd075d1b4, type: 2}
+    - target: {fileID: -298201549707840098, guid: 42aef5f8a0219ca4ea03ccbd4bc0110f,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: c3d45447af62b8246b5f88eb33c95f52, type: 2}
+>>>>>>> master
     - target: {fileID: -4216859302048453862, guid: 42aef5f8a0219ca4ea03ccbd4bc0110f,
         type: 3}
       propertyPath: m_LocalPosition.x

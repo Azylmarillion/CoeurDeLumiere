@@ -427,7 +427,7 @@ public class PAF_Fruit : MonoBehaviour
 
         for (int _i = 0; _i < 4; _i++)
         {
-            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + .05f, transform.position.z) + (_raycastPos[_i] * collider.bounds.extents.x), Vector3.down, .1f, whatIsGround, QueryTriggerInteraction.Ignore))
+            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + .05f, transform.position.z) + (_raycastPos[_i] * collider.bounds.extents.x), Vector3.down, 1, whatIsGround, QueryTriggerInteraction.Ignore))
             {
                 if (isFalling)
                 {
@@ -477,12 +477,27 @@ public class PAF_Fruit : MonoBehaviour
     }
 
     /// <summary>
+    /// Follows a given transform.
+    /// </summary>
+    /// <param name="_toFollow">Transform of to follow.</param>
+    /// <returns>IEnumerator, baby.</returns>
+    private IEnumerator FollowTransform(Transform _toFollow)
+    {
+        if (velocity.y > 0) velocity.y = -1;
+        while (true)
+        {
+
+        }
+    }
+
+    /// <summary>
     /// Use this when the plant start eating the fruit to make it the plant mouth.
     /// </summary>
     /// <param name="_toFollow">Transform of the plant mouth to follow.</param>
     public void StartToEat(Transform _toFollow)
     {
-
+        isDoomed = true;
+        StartCoroutine(FollowTransform(_toFollow));
     }
     #endregion
 

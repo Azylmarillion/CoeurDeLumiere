@@ -5081,6 +5081,7 @@ MonoBehaviour:
           m_CallState: 2
     m_callingTime: 90
   m_videoPlayer: {fileID: 0}
+  m_soundDatas: {fileID: 0}
 --- !u!114 &4779515517769943198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5185,8 +5186,10 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  allRespawnableDalles: []
   center: {fileID: 4779515516874671242}
   fallDelay: 0.5
+  shift: 0.05
 --- !u!114 &2037259806
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5855,11 +5858,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4779515516605842288}
     m_Modifications:
-    - target: {fileID: 1608088771609336903, guid: b3e2bb847c086334b8caaf5211d6e25d,
-        type: 3}
-      propertyPath: m_Name
-      value: UI
-      objectReference: {fileID: 0}
     - target: {fileID: 1375773867, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}
       propertyPath: m_LocalScale.x
       value: -1
@@ -5879,6 +5877,11 @@ PrefabInstance:
     - target: {fileID: 1276244244, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}
       propertyPath: m_Pivot.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1608088771609336903, guid: b3e2bb847c086334b8caaf5211d6e25d,
+        type: 3}
+      propertyPath: m_Name
+      value: UI
       objectReference: {fileID: 0}
     - target: {fileID: 1375773866, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}
       propertyPath: m_Name

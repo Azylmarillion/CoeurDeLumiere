@@ -7,6 +7,7 @@ public class PAF_Fruit : MonoBehaviour
 {
     /*
      * TO DO :
+     *      • Enpêcher la rotation sur les axes désirés
      *      • Auto-guider pour manger
      *      • Améliorer
      *      • Velocité / seconde
@@ -473,6 +474,15 @@ public class PAF_Fruit : MonoBehaviour
     {
         if (pointsOwner) OnFruitEaten?.Invoke(pointsOwner.IsPlayerOne, fruitScore);
         Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// Use this when the plant start eating the fruit to make it the plant mouth.
+    /// </summary>
+    /// <param name="_toFollow">Transform of the plant mouth to follow.</param>
+    public void StartToEat(Transform _toFollow)
+    {
+
     }
     #endregion
 

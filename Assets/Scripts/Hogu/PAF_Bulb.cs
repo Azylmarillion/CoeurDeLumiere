@@ -6,6 +6,8 @@ using Random = UnityEngine.Random;
 
 public class PAF_Bulb : MonoBehaviour
 {
+    public event Action OnBulbDestroyed; 
+
     #region Object
     [SerializeField] Animator bulbAnimator = null;
     [SerializeField] GameObject[] items = null;
@@ -136,7 +138,7 @@ public class PAF_Bulb : MonoBehaviour
             _force = Vector3.ClampMagnitude(_force, Random.Range(.1f, 1));
             if (_fruit) _fruit.AddForce(_force);
         }
-        bulbAnimator.SetBool("explode", true);
+        bulbAnimator.SetTrigger("explode");
     }
     
     public void ExplodeWithoutBool()
@@ -157,7 +159,7 @@ public class PAF_Bulb : MonoBehaviour
             _force = Vector3.ClampMagnitude(_force, Random.Range(.1f, 1));
             if (_fruit) _fruit.AddForce(_force);
         }
-        bulbAnimator.SetBool("explode", true);
+        bulbAnimator.SetTrigger("explode");
     }
 
 
@@ -165,6 +167,8 @@ public class PAF_Bulb : MonoBehaviour
 
     public void DestroyBulb()
     {
+        OnBulbDestroyed?.Invoke();
+        OnBulbDestroyed = null; 
         if (soundSource)
         {
             AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetBulbExploding();

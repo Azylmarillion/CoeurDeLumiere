@@ -16,6 +16,7 @@ public class PAF_Player : MonoBehaviour
     [SerializeField, Range(0, 5)] float invulnerableTime = .5f;
     [SerializeField, Range(0, 5)] float stunTime = .5f;
     [SerializeField, Range(0, 5)] float fallTime = .5f;
+    [SerializeField, Range(.1f, 1)] float fallDetectionSize = .5f;
 
     [SerializeField, Range(0, 10)] float playerSpeed = 5;
 
@@ -51,7 +52,7 @@ public class PAF_Player : MonoBehaviour
     private void Start()
     {
         playerAnimator.Init(playerSpeed);
-        InvokeRepeating("StepSounds", 1, .5f); // Gaffe à  ça! Autant le mettre dans l'anim! 
+        //InvokeRepeating("StepSounds", 1, .5f); // Gaffe à  ça! Autant le mettre dans l'anim! 
     }
 
     private void Update()
@@ -107,7 +108,10 @@ public class PAF_Player : MonoBehaviour
                 _nextPos.y = transform.position.y;
                 transform.position = Vector3.MoveTowards(transform.position, _nextPos, Time.deltaTime * (playerSpeed * 3));
             }
-            if (!Physics.Raycast(transform.position - transform.forward * .5f, Vector3.down, 2, groundLayer) && !falling)
+            if (!Physics.Raycast(transform.position - transform.forward * fallDetectionSize, Vector3.down, 2, groundLayer) &&
+                !Physics.Raycast(transform.position + transform.forward * fallDetectionSize, Vector3.down, 2, groundLayer) &&
+                !Physics.Raycast(transform.position - transform.right * fallDetectionSize, Vector3.down, 2, groundLayer) &&
+                !Physics.Raycast(transform.position + transform.right * fallDetectionSize, Vector3.down, 2, groundLayer) && !falling)
             {
                 falling = true;
                 AudioClip _clip = soundDataPlayer.GetFallPlayer();
@@ -248,7 +252,7 @@ public class PAF_Player : MonoBehaviour
     {
         if (!falling) return;
         if (PAF_DalleManager.I.AllUpDalles.Count <= 0) return;
-        BoxCollider _dalle = PAF_DalleManager.I.AllUpDalles[Random.Range(0, PAF_DalleManager.I.AllUpDalles.Count)].GetComponent<BoxCollider>();
+        MeshCollider _dalle = PAF_DalleManager.I.AllUpDalles[Random.Range(0, PAF_DalleManager.I.AllUpDalles.Count)].GetComponent<MeshCollider>();
         Vector3 _spawnPos = new Vector3(Random.Range(_dalle.bounds.min.x, _dalle.bounds.max.x), 0, Random.Range(_dalle.bounds.min.z, _dalle.bounds.max.z));
         transform.position = _spawnPos;
         falling = false;

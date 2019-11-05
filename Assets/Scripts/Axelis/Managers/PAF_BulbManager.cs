@@ -56,7 +56,9 @@ public class PAF_BulbManager : MonoBehaviour
     private PAF_Bulb m_bulbPrefab = null;
 
     private Coroutine m_checkBulbsCoroutine = null;
-    private List<PAF_Bulb> m_spawnedBulbs = new List<PAF_Bulb>(); 
+    private List<PAF_Bulb> m_spawnedBulbs = new List<PAF_Bulb>();
+
+    private bool m_bigBulbIsCalled = false; 
     #endregion
 
     #region Methods
@@ -83,7 +85,12 @@ public class PAF_BulbManager : MonoBehaviour
         {
             yield return new WaitForSeconds(Mathf.Clamp(m_bulbDelay, .1f, 1.0f)); 
         }
+        while (m_bigBulbIsCalled)
+        {
+            yield return new WaitForSeconds(Mathf.Clamp(m_bulbDelay, .1f, 1.0f));
+        }
         yield return new WaitForSeconds(m_bulbDelay);
+
         m_spawnedBulbs.Clear(); 
         SelectNewBulbs();
         m_checkBulbsCoroutine = null; 
@@ -93,13 +100,12 @@ public class PAF_BulbManager : MonoBehaviour
     #region void
     public void CallBigBulb()
     {
-        PAF_Bulb _centerBulb = m_spawnedBulbs.Where(b => b.transform.position == m_centerPosition).FirstOrDefault();
-        if (_centerBulb != null)
-        {
-            _centerBulb.Explode(false);
-            m_spawnedBulbs.Remove(_centerBulb); 
-        }
-        Instantiate(m_bulbPrefab, m_centerPosition, Quaternion.identity).GetComponent<PAF_Bulb>().SetBigBulb(); 
+        m_bigBulbIsCalled = true;
+        Debug.Log(m_spawnedBulbs.Count); 
+        DestroyAllBulbs();
+        PAF_Bulb _bigBulb = Instantiate(m_bulbPrefab, m_centerPosition, Quaternion.identity).GetComponent<PAF_Bulb>();
+        _bigBulb.SetBigBulb();
+        _bigBulb.OnBulbDestroyed += () => m_bigBulbIsCalled = false; 
     }
 
     public void SelectFirstBulb()

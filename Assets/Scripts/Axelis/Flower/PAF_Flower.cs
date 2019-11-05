@@ -48,12 +48,16 @@ public class PAF_Flower : MonoBehaviour
     [SerializeField, Range(1, 360)]
     private int m_fieldOfView = 60;
 
-    [SerializeField] private PAF_FlowerJoint[] m_joints = new PAF_FlowerJoint[] { }; 
+    [SerializeField] private PAF_FlowerJoint[] m_joints = new PAF_FlowerJoint[] { };
+
+    [SerializeField] private Transform m_mouthTransform = null; 
 
     private FlowerState m_currentState = FlowerState.Searching; 
     private PAF_Fruit m_followedFruit = null;
 
     [SerializeField] AudioSource audiosource = null;
+
+    public static List<PAF_Flower> Flowers = new List<PAF_Flower>(); 
     #endregion
 
     #region Methods
@@ -76,8 +80,7 @@ public class PAF_Flower : MonoBehaviour
 
             if(Vector3.Distance(transform.position, m_followedFruit.transform.position) <= m_eatingRange)
             {
-                m_currentState = FlowerState.Eating;
-                m_animator.SetInteger("BehaviourState", (int)m_currentState);
+                EatFruit(); 
                 yield break;
             }
 
@@ -115,8 +118,7 @@ public class PAF_Flower : MonoBehaviour
             m_followedFruit = _fruits.OrderBy(f => Vector3.Distance(transform.position, f.transform.position)).FirstOrDefault(); 
             if(Vector3.Distance(transform.position, m_followedFruit.transform.position) <= m_eatingRange)
             {
-                m_currentState = FlowerState.Eating;
-                m_animator.SetInteger("BehaviourState", (int)m_currentState);
+                EatFruit();
                 yield break; 
             }
         }
@@ -130,15 +132,12 @@ public class PAF_Flower : MonoBehaviour
     {
         if (m_followedFruit)
         {
+            m_followedFruit.StartToEat(m_mouthTransform);
+
             m_currentState = FlowerState.Eating;
             m_animator.SetInteger("BehaviourState", (int)m_currentState);
-
-            m_followedFruit.Velocity = Vector3.zero;
-            m_followedFruit.Velocity = (transform.position - m_followedFruit.transform.position).normalized * .1f;
         }
-        //RESET THE STATE
-        m_currentState = FlowerState.Searching;
-        m_animator.SetInteger("BehaviourState", (int)m_currentState);
+        
     }
 
     public void Chomp()
@@ -154,6 +153,9 @@ public class PAF_Flower : MonoBehaviour
             }
             // CALL VFX AND SOUND HERE
         }
+        //RESET THE STATE
+        m_currentState = FlowerState.Searching;
+        m_animator.SetInteger("BehaviourState", (int)m_currentState);
     }
     #endregion
 
@@ -162,7 +164,13 @@ public class PAF_Flower : MonoBehaviour
     #region Unity Methods
     private void Awake()
     {
-        m_joints.ToList().ForEach(j => j.Init()); 
+        m_joints.ToList().ForEach(j => j.Init());
+        Flowers.Add(this); 
+    }
+
+    private void OnDestroy()
+    {
+        Flowers.Remove(this); 
     }
 
     private void OnDrawGizmos()

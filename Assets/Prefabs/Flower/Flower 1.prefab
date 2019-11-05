@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5214467280388618580
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 461134039764520032}
+  m_Layer: 0
+  m_Name: Tongue_Tip
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &461134039764520032
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5214467280388618580}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.81, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 9031231288285492066}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7702343025045107166
 GameObject:
   m_ObjectHideFlags: 0
@@ -91,8 +121,8 @@ MonoBehaviour:
     m_minAngle: -180
     m_maxAngle: 180
     m_currentAngle: 0
+  m_mouthTransform: {fileID: 461134039764520032}
   audiosource: {fileID: 7702343025045107162}
-  soundData: {fileID: 0}
 --- !u!95 &7702343025045107161
 Animator:
   serializedVersion: 3
@@ -221,6 +251,31 @@ PrefabInstance:
       propertyPath: m_Name
       value: irigoyana_skinned
       objectReference: {fileID: 0}
+    - target: {fileID: -6851783709190245353, guid: 887da9a0e65a34d4fbe5c5fef162579f,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -6851783709190245353, guid: 887da9a0e65a34d4fbe5c5fef162579f,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8250042734801592476, guid: 887da9a0e65a34d4fbe5c5fef162579f,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8250042734801592476, guid: 887da9a0e65a34d4fbe5c5fef162579f,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8250042734801592476, guid: 887da9a0e65a34d4fbe5c5fef162579f,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 887da9a0e65a34d4fbe5c5fef162579f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -275,31 +330,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -6851783709190245353, guid: 887da9a0e65a34d4fbe5c5fef162579f,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -6851783709190245353, guid: 887da9a0e65a34d4fbe5c5fef162579f,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -8250042734801592476, guid: 887da9a0e65a34d4fbe5c5fef162579f,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8250042734801592476, guid: 887da9a0e65a34d4fbe5c5fef162579f,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8250042734801592476, guid: 887da9a0e65a34d4fbe5c5fef162579f,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8004218104033529125, guid: 887da9a0e65a34d4fbe5c5fef162579f,
         type: 3}

@@ -101,7 +101,6 @@ public class PAF_BulbManager : MonoBehaviour
     public void CallBigBulb()
     {
         m_bigBulbIsCalled = true;
-        Debug.Log(m_spawnedBulbs.Count); 
         DestroyAllBulbs();
         PAF_Bulb _bigBulb = Instantiate(m_bulbPrefab, m_centerPosition, Quaternion.identity).GetComponent<PAF_Bulb>();
         _bigBulb.SetBigBulb();

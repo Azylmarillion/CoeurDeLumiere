@@ -165,7 +165,6 @@ public class PAF_Player : MonoBehaviour
                     _fruitsHit.Add(_item);
                     Vector3 _force = (_item.transform.position - transform.position) /** 2*//*Random.Range(0, .5f)*/;
                     _item.AddForce(_force.normalized, this);
-                    Debug.Log(_force.normalized);
                     AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetHitFruit();
                     if (_clip) audioPlayer.PlayOneShot(_clip);
                     //PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Fruit);

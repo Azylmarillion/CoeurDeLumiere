@@ -40,7 +40,7 @@ public class PAF_FlowerEditor : Editor
     private SerializedProperty m_detectionRange = null;
     private SerializedProperty m_eatingRange = null;
     private SerializedProperty m_fieldOfView = null;
-    private SerializedProperty m_joints = null; 
+    private SerializedProperty m_joints = null;
     #endregion
 
     #region Methods
@@ -55,6 +55,7 @@ public class PAF_FlowerEditor : Editor
     /// <param name="_angle">Angle of the arc</param>
     private void DrawFieldOfView(Vector3 _origin, Vector3 _localForward, float _range, int _angle)
     {
+        return; 
         float _totalAngle = Vector3.SignedAngle(Vector3.forward, _localForward, Vector3.up) - (_angle / 2);
         Vector3 _start = new Vector3(Mathf.Sin(_totalAngle * Mathf.Deg2Rad), 0, Mathf.Cos(_totalAngle * Mathf.Deg2Rad)).normalized;
         Handles.DrawSolidArc(_origin, Vector3.up, _start, _angle, _range);

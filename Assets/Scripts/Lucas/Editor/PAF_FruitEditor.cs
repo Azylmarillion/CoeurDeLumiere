@@ -56,9 +56,6 @@ public class PAF_FruitEditor : Editor
     #region Sounds
     /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="AudioSource"/>.</summary>
     SerializedProperty audioSource = null;
-
-    /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="SoundData"/>.</summary>
-    SerializedProperty soundData = null;
     #endregion
 
     #endregion
@@ -163,7 +160,6 @@ public class PAF_FruitEditor : Editor
         EditorGUILayout.LabelField("Parameters", EditorStyles.boldLabel);
 
         EditorGUILayout.PropertyField(audioSource, new GUIContent("Audio Source", "Audio Source of the fruit."));
-        EditorGUILayout.PropertyField(soundData, new GUIContent("Sound Data", "Sound Data reference of the project."));
         EditorGUILayout.PropertyField(renderer, new GUIContent("Renderer", "Renderer transform of the fruit."));
         EditorGUILayout.PropertyField(collider, new GUIContent("Collider", "Sphere collider of the fruit."));
         EditorGUILayout.PropertyField(whatCollide, new GUIContent("Collide Layers", "Layermask used to indicate what should the object detect or not."));
@@ -203,7 +199,6 @@ public class PAF_FruitEditor : Editor
         collisionPos = serializedObject.FindProperty("collisionPos");
 
         audioSource = serializedObject.FindProperty("audioSource");
-        soundData = serializedObject.FindProperty("soundData");
 
         renderer = serializedObject.FindProperty("renderer");
         collider = serializedObject.FindProperty("collider");

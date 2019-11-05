@@ -25,8 +25,14 @@ public class PAF_FruitEditor : Editor
     #endregion
 
     #region Parameters
+    /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="Transform"/>.</summary>
+    SerializedProperty renderer = null;
+
     /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="SphereCollider"/>.</summary>
     SerializedProperty collider = null;
+
+    /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="bool"/>.</summary>
+    SerializedProperty isFalling = null;
 
     /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="float"/>.</summary>
     SerializedProperty weight = null;
@@ -36,6 +42,9 @@ public class PAF_FruitEditor : Editor
 
     /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="LayerMask"/>.</summary>
     SerializedProperty whatCollide = null;
+
+    /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="LayerMask"/>.</summary>
+    SerializedProperty whatIsGround = null;
 
     /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="PAF_Player"/>.</summary>
     SerializedProperty pointsOwner = null;
@@ -155,8 +164,10 @@ public class PAF_FruitEditor : Editor
 
         EditorGUILayout.PropertyField(audioSource, new GUIContent("Audio Source", "Audio Source of the fruit."));
         EditorGUILayout.PropertyField(soundData, new GUIContent("Sound Data", "Sound Data reference of the project."));
+        EditorGUILayout.PropertyField(renderer, new GUIContent("Renderer", "Renderer transform of the fruit."));
         EditorGUILayout.PropertyField(collider, new GUIContent("Collider", "Sphere collider of the fruit."));
-        EditorGUILayout.PropertyField(whatCollide, new GUIContent("What Collide", "Layermask used to indicate what should the object detect or not."));
+        EditorGUILayout.PropertyField(whatCollide, new GUIContent("Collide Layers", "Layermask used to indicate what should the object detect or not."));
+        EditorGUILayout.PropertyField(whatIsGround, new GUIContent("Ground Layers", "Layermask used to indicate what is ground."));
 
 
         GUILayout.Space(5);
@@ -176,6 +187,8 @@ public class PAF_FruitEditor : Editor
         {
             serializedObject.targetObjects.ToList().ForEach(f => ((PAF_Fruit)f).Velocity = velocity.vector3Value);
         }
+
+        EditorGUILayout.Toggle(new GUIContent("Falling", "Is the object falling down or not."), isFalling.boolValue, EditorStyles.radioButton);
     }
     #endregion
 
@@ -192,10 +205,13 @@ public class PAF_FruitEditor : Editor
         audioSource = serializedObject.FindProperty("audioSource");
         soundData = serializedObject.FindProperty("soundData");
 
+        renderer = serializedObject.FindProperty("renderer");
         collider = serializedObject.FindProperty("collider");
+        isFalling = serializedObject.FindProperty("isFalling");
         weight = serializedObject.FindProperty("weight");
         fruitScore = serializedObject.FindProperty("fruitScore");
         whatCollide = serializedObject.FindProperty("whatCollide");
+        whatIsGround = serializedObject.FindProperty("whatIsGround");
         pointsOwner = serializedObject.FindProperty("pointsOwner");
         velocity = serializedObject.FindProperty("velocity");
     }

@@ -7,7 +7,6 @@ public class PAF_Dalle : MonoBehaviour
     [SerializeField] MeshCollider collider = null;
     [SerializeField] Renderer renderer = null;
     [SerializeField, Range(1,10)] float speedDecay = 2;
-    [SerializeField] PAF_SoundData soundData = null;
     [SerializeField] AudioSource audioSource = null;
     [SerializeField] bool isShifting = true;
     [SerializeField] bool randomColor = true;
@@ -29,13 +28,12 @@ public class PAF_Dalle : MonoBehaviour
     public void Fall(bool _isLeft)
     {
         if (!collider) collider = GetComponent<MeshCollider>();
-        if (!soundData) soundData = (PAF_SoundData)Resources.Load("Data/Sounds");
         if (!renderer) renderer = GetComponent<Renderer>();
         if (!audioSource) audioSource = GetComponent<AudioSource>();
-        if (!collider || !audioSource || !soundData || ! renderer) return;
+        if (!collider || !audioSource || ! renderer) return;
         renderer.enabled = false;
         collider.enabled = false;
-        AudioClip _clip = soundData.GetDalleFalling();
+        AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetDalleFalling();
         if (_clip) audioSource.PlayOneShot(_clip);
         isFalling = true;
         isLeft = _isLeft;

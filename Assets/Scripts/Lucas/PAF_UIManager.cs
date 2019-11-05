@@ -179,6 +179,23 @@ public class PAF_UIManager : MonoBehaviour
         }
         PAF_GameManager.Instance.StartGame(); 
     }
+
+    private void DisplayEndMenu(int _playerOneScore, int _playerTwoScore)
+    {
+        int _diff = _playerOneScore - _playerTwoScore; 
+        if(_diff > 0)
+        {
+            // P1 Gagne
+        }
+        else if(_diff < 0)
+        {
+            // P2 Gagne
+        }
+        else
+        {
+            //Egalité
+        }
+    }
     #endregion
 
     #region Unity Methods
@@ -188,7 +205,8 @@ public class PAF_UIManager : MonoBehaviour
         PAF_GameManager.OnEndCinematic += HideMainMenu;
         PAF_GameManager.OnEndCinematic += StartCountDown; 
         PAF_GameManager.OnPlayerScored += SetPlayerScore;
-        PAF_GameManager.OnPlayerReady += SetPlayerReady; 
+        PAF_GameManager.OnPlayerReady += SetPlayerReady;
+        PAF_GameManager.OnGameEnd += DisplayEndMenu; 
     }
 
     private void Start()
@@ -210,6 +228,7 @@ public class PAF_UIManager : MonoBehaviour
         PAF_GameManager.OnEndCinematic -= StartCountDown;
         PAF_GameManager.OnPlayerScored -= SetPlayerScore;
         PAF_GameManager.OnPlayerReady -= SetPlayerReady;
+        PAF_GameManager.OnGameEnd -= DisplayEndMenu;
     }
     #endregion
 

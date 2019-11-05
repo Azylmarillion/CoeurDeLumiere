@@ -28,7 +28,6 @@ public class PAF_Player : MonoBehaviour
     #region Sounds
     [Header("Sounds")]
     [SerializeField] AudioSource audioPlayer = null;
-    [SerializeField] PAF_SoundData soundDataPlayer = null;
     #endregion
 
     #region Objects
@@ -37,7 +36,7 @@ public class PAF_Player : MonoBehaviour
     [SerializeField] PAF_PlayerAnimator playerAnimator = null;
     #endregion
 
-    public bool IsReady => moveArea && playerRenderer && playerAnimator && audioPlayer && soundDataPlayer;
+    public bool IsReady => moveArea && playerRenderer && playerAnimator && audioPlayer;
 
     #region Layers
     [Space, Header("Layers")]
@@ -114,7 +113,7 @@ public class PAF_Player : MonoBehaviour
                 !Physics.Raycast(transform.position + transform.right * fallDetectionSize, Vector3.down, 2, groundLayer) && !falling)
             {
                 falling = true;
-                AudioClip _clip = soundDataPlayer.GetFallPlayer();
+                AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetFallPlayer();
                 if(_clip) audioPlayer.PlayOneShot(_clip);
                 //PAF_SoundManager.I.PlayFallSound(transform.position);
                 playerAnimator.SetFalling();
@@ -132,7 +131,7 @@ public class PAF_Player : MonoBehaviour
     {
         if(!idle)
         {
-            AudioClip _clip = soundDataPlayer.GetStepsPlayer();
+            AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetStepsPlayer();
             if(_clip) audioPlayer.PlayOneShot(_clip);
             //PAF_SoundManager.I.PlaySteps(transform.position);
         }
@@ -147,7 +146,7 @@ public class PAF_Player : MonoBehaviour
             if (Physics.Raycast(transform.position, (Quaternion.Euler(0, i, 0) * transform.forward).normalized, sightRange, wallLayer))
             {
                 //_angle = i;
-                AudioClip _clip = soundDataPlayer.GetHitWall();
+                AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetHitWall();
                 if (_clip) audioPlayer.PlayOneShot(_clip);
                 //PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Wall);
                 break;
@@ -167,7 +166,7 @@ public class PAF_Player : MonoBehaviour
                     Vector3 _force = (_item.transform.position - transform.position) /** 2*//*Random.Range(0, .5f)*/;
                     _item.AddForce(_force.normalized, this);
                     Debug.Log(_force.normalized);
-                    AudioClip _clip = soundDataPlayer.GetHitFruit();
+                    AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetHitFruit();
                     if (_clip) audioPlayer.PlayOneShot(_clip);
                     //PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Fruit);
                 }
@@ -205,7 +204,7 @@ public class PAF_Player : MonoBehaviour
         }
         //if (!_hasHit)
         //{
-            AudioClip _clipSwipe = soundDataPlayer.GetHitNone();
+            AudioClip _clipSwipe = PAF_GameManager.Instance?.SoundDatas.GetHitNone();
             if (_clipSwipe) audioPlayer.PlayOneShot(_clipSwipe);
             //PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.None);
         //}
@@ -220,7 +219,7 @@ public class PAF_Player : MonoBehaviour
         transform.rotation = Quaternion.LookRotation(_from - transform.position);
         StartCoroutine(StunFlashTimer());
         InvokeRepeating("Flash", 0, .1f);
-        AudioClip _clip = soundDataPlayer.GetHitPlayer();
+        AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetHitPlayer();
         if (_clip) audioPlayer.PlayOneShot(_clip);
         //PAF_SoundManager.I.PlayHitPlayer(transform.position);
         playerAnimator.SetStunned();

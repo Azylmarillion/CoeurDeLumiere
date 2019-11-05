@@ -266,7 +266,7 @@ public class PAF_Fruit : MonoBehaviour
                     // Play bounce Sound
                     if (audioSource)
                     {
-                        AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetFruitBounce();
+                        AudioClip _clip = PAF_GameManager.Instance?.SoundDatas?.GetFruitBounce();
                         if (_clip) audioSource.PlayOneShot(_clip);
                     }
 

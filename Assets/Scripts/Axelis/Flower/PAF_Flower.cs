@@ -129,6 +129,9 @@ public class PAF_Flower : MonoBehaviour
     #endregion
 
     #region Void
+    /// <summary>
+    /// Set to the eating state
+    /// </summary>
     public void EatFruit()
     {
         if (m_followedFruit)
@@ -144,6 +147,9 @@ public class PAF_Flower : MonoBehaviour
         m_animator.SetInteger("BehaviourState", (int)m_currentState);
     }
 
+    /// <summary>
+    /// Eat the fruit and reset the state
+    /// </summary>
     public void Chomp()
     {
         if(m_followedFruit)
@@ -162,9 +168,13 @@ public class PAF_Flower : MonoBehaviour
         m_animator.SetInteger("BehaviourState", (int)m_currentState);
     }
 
+    /// <summary>
+    /// Reset the state to Searching
+    /// </summary>
     public void ResetState()
     {
-        
+        m_currentState = FlowerState.Searching;
+        m_animator.SetInteger("BehaviourState", (int)m_currentState);
     }
     #endregion
 
@@ -193,6 +203,12 @@ public class PAF_Flower : MonoBehaviour
             Gizmos.DrawLine(m_joints[i].BaseTransform.position, m_joints[i + 1].BaseTransform.position); 
         }
 
+        if(m_mouthTransform != null)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawSphere(m_mouthTransform.position, .15f); 
+        }
+        
         if(m_followedFruit != null)
         {
             Gizmos.color = Color.green;

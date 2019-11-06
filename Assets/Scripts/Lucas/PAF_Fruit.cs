@@ -7,9 +7,9 @@ public class PAF_Fruit : MonoBehaviour
 {
     /*
      * TO DO :
-     *      • Auto-guider pour manger
-     *      • Améliorer
+     *      • Auto-guider vers la plante
      *      • Velocité / seconde
+     *      • Améliorer l'accélération / décélération
     */
 
     #region Events

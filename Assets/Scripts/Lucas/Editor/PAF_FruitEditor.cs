@@ -32,6 +32,9 @@ public class PAF_FruitEditor : Editor
     SerializedProperty collider = null;
 
     /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="bool"/>.</summary>
+    SerializedProperty doFreezeXRotation = null;
+
+    /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="bool"/>.</summary>
     SerializedProperty isFalling = null;
 
     /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="float"/>.</summary>
@@ -174,6 +177,10 @@ public class PAF_FruitEditor : Editor
         GUI.enabled = true;
         GUILayout.Space(5);
 
+        EditorGUILayout.PropertyField(doFreezeXRotation, new GUIContent("Freeze X Rot.", "Should the X rotation of the obejct be frozenor not."));
+
+        GUILayout.Space(5);
+
         EditorGUILayout.PropertyField(fruitScore, new GUIContent("Fruit Score", "Amount of point this fruit gives to a player when eaten."));
         EditorGUILayout.PropertyField(weight, new GUIContent("Weight", "weight of the object, influencing its movements."));
 
@@ -202,6 +209,7 @@ public class PAF_FruitEditor : Editor
 
         renderer = serializedObject.FindProperty("renderer");
         collider = serializedObject.FindProperty("collider");
+        doFreezeXRotation = serializedObject.FindProperty("doFreezeXRotation");
         isFalling = serializedObject.FindProperty("isFalling");
         weight = serializedObject.FindProperty("weight");
         fruitScore = serializedObject.FindProperty("fruitScore");

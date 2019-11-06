@@ -360,6 +360,7 @@ MonoBehaviour:
   canAttack: 1
   isInvulnerable: 0
   attackDelay: 0.4
+  attackForce: 0.5
   invulnerableTime: 0.5
   stunTime: 0.5
   fallTime: 1
@@ -368,7 +369,6 @@ MonoBehaviour:
   sightAngle: 122
   sightRange: 3.5
   audioPlayer: {fileID: 8338223916140015523}
-  soundDataPlayer: {fileID: 11400000, guid: 0f1532b6b6bd9db4e9917bf5dc20602c, type: 2}
   moveArea: {fileID: 0}
   playerRenderer: {fileID: 8338223916006774665}
   playerAnimator: {fileID: 8338223916140015520}

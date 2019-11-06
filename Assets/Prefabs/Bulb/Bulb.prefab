@@ -304,19 +304,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulbAnimator: {fileID: 5664792578582752418}
   items: []
-  soundData: {fileID: 11400000, guid: 0f1532b6b6bd9db4e9917bf5dc20602c, type: 2}
   soundSource: {fileID: 7308732899696908981}
   fruitData: {fileID: 11400000, guid: ea003670eed99994e9320efa5cd04435, type: 2}
   isBigBulb: 0
-  bigBulbHitNeeded: 10
+  bigBulbHitNeeded: 5
   minItemsInBigBulb: 1
   maxItemsInBigBulb: 10
   minItemsInBulb: 1
   maxItemsInBulb: 3
-  minHitForce: 10
-  maxHitForce: 50
-  minHeightForce: 10
-  maxHeightForce: 50
+  minHitForce: 1
+  maxHitForce: 5
+  minHeightForce: 1
+  maxHeightForce: 5
 --- !u!1 &1782656249368542983
 GameObject:
   m_ObjectHideFlags: 0

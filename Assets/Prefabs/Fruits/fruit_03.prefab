@@ -265,7 +265,7 @@ GameObject:
   - component: {fileID: 3597960768558247011}
   - component: {fileID: 3597960768558247008}
   m_Layer: 11
-  m_Name: Fruit_03
+  m_Name: fruit_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -298,8 +298,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3665497634d6d3341b247198f4408a04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renderer: {fileID: 0}
+  renderer: {fileID: 8326263771196805142}
   collider: {fileID: 3597960768558247011}
+  doFreezeXRotation: 1
   isFalling: 0
   weight: 1
   fruitScore: 100
@@ -308,7 +309,7 @@ MonoBehaviour:
     m_Bits: 1024
   whatCollide:
     serializedVersion: 2
-    m_Bits: 6913
+    m_Bits: 6912
   pointsOwner: {fileID: 0}
   velocity: {x: 0, y: 0, z: 0}
   audioSource: {fileID: 3597960768558247008}
@@ -342,7 +343,8 @@ AudioSource:
   m_GameObject: {fileID: 3597960768558247009}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: ab95f4241408a654aa3c6d8323415645,
+    type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1

@@ -112,6 +112,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   renderer: {fileID: 1326085459590705847}
   collider: {fileID: 4412692343351390020}
+  doFreezeXRotation: 0
   isFalling: 0
   weight: 1
   fruitScore: 100
@@ -120,7 +121,7 @@ MonoBehaviour:
     m_Bits: 1024
   whatCollide:
     serializedVersion: 2
-    m_Bits: 6913
+    m_Bits: 6912
   pointsOwner: {fileID: 0}
   velocity: {x: 0, y: 0, z: 0}
   audioSource: {fileID: 4412692343351390023}

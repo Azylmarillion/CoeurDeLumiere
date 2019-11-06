@@ -13,6 +13,7 @@ public class PAF_Player : MonoBehaviour
     bool idle = false;
     bool falling = false;
     [SerializeField, Range(0, 5)] float attackDelay = .25f;
+    [SerializeField, Range(0, 2)] float attackForce = .5f;
     [SerializeField, Range(0, 5)] float invulnerableTime = .5f;
     [SerializeField, Range(0, 5)] float stunTime = .5f;
     [SerializeField, Range(0, 5)] float fallTime = .5f;
@@ -163,8 +164,8 @@ public class PAF_Player : MonoBehaviour
                 {
                     if (_fruitsHit.Contains(_item)) continue;
                     _fruitsHit.Add(_item);
-                    Vector3 _force = (_item.transform.position - transform.position) /** 2*//*Random.Range(0, .5f)*/;
-                    _item.AddForce(_force.normalized, this);
+                    //Vector3 _force = (_item.transform.position - transform.position) /** 2*//*Random.Range(0, .5f)*/;
+                    _item.AddForce(/*_force.normalized*/transform.forward * attackForce, this);
                     AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetHitFruit();
                     if (_clip) audioPlayer.PlayOneShot(_clip);
                     //PAF_SoundManager.I.PlayPlayerAttack(transform.position, AttackType.Fruit);

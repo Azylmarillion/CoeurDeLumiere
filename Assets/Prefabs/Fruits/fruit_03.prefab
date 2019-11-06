@@ -298,8 +298,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3665497634d6d3341b247198f4408a04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renderer: {fileID: 0}
+  renderer: {fileID: 8326263771196805142}
   collider: {fileID: 3597960768558247011}
+  doFreezeXRotation: 1
   isFalling: 0
   weight: 1
   fruitScore: 100
@@ -308,7 +309,7 @@ MonoBehaviour:
     m_Bits: 1024
   whatCollide:
     serializedVersion: 2
-    m_Bits: 6913
+    m_Bits: 6912
   pointsOwner: {fileID: 0}
   velocity: {x: 0, y: 0, z: 0}
   audioSource: {fileID: 3597960768558247008}

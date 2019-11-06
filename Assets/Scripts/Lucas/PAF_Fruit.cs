@@ -7,7 +7,6 @@ public class PAF_Fruit : MonoBehaviour
 {
     /*
      * TO DO :
-     *      • Enpêcher la rotation sur les axes désirés
      *      • Auto-guider pour manger
      *      • Améliorer
      *      • Velocité / seconde
@@ -51,6 +50,11 @@ public class PAF_Fruit : MonoBehaviour
     /// Indicates if the object is doomed or still interactable.
     /// </summary>
     private bool isDoomed = false;
+
+    /// <summary>
+    /// Indicates if freezing object rotation around the X axis.
+    /// </summary>
+    [SerializeField] private bool doFreezeXRotation = false;
 
     /// <summary>
     /// Is the fruit above ground or falling down ?
@@ -318,18 +322,12 @@ public class PAF_Fruit : MonoBehaviour
                         #endif
                     }
 
-                    // Push the touched fruit if one, or stun a player if hit one
-                    PAF_Fruit _fruit = _finalHit.collider.GetComponent<PAF_Fruit>();
-                    if (_fruit) _fruit.AddForce(_flatVelocity);
-                    else if (velocity.magnitude > .5f)
-                    {
-                        PAF_Player _player = _finalHit.collider.GetComponent<PAF_Player>();
-                        if (_player && !_player.Equals(pointsOwner)) _player.Stun(transform.position);
-                    }
-
                     #if UNITY_EDITOR
                     yield return new WaitForFixedUpdate();
                     #endif
+
+                    // Interact with touched collider
+                    InteractWith(_finalHit.collider);
 
                     // Calculate new position
                     _newPosition = transform.position + _nFlatVelocity * (Mathf.Min(_finalHit.distance, _flatVelocity.magnitude) - .015f);
@@ -353,6 +351,8 @@ public class PAF_Fruit : MonoBehaviour
 
                                 _newPosition += Vector3.Scale(_otherHit.normal, new Vector3(collider.bounds.extents.x - _distance.x, 0, collider.bounds.extents.z - _distance.z));
                             }
+
+                            if (_collider != _finalHit.collider) InteractWith(_collider);
                         }
                     }
 
@@ -378,6 +378,11 @@ public class PAF_Fruit : MonoBehaviour
                     velocity = new Vector3(_flatVelocity.x * .9875f, velocity.y, _flatVelocity.z * .9875f);
 
                     renderer.Rotate(_normal, Time.fixedDeltaTime * _flatVelocity.magnitude * 5000);
+
+                    if (doFreezeXRotation)
+                    {
+                        renderer.rotation = Quaternion.Euler(90, renderer.eulerAngles.y, renderer.eulerAngles.z);
+                    }
                 }
             }
             if (velocity.y != 0)
@@ -492,6 +497,22 @@ public class PAF_Fruit : MonoBehaviour
             Velocity = new Vector3(_newVelocity.x, velocity.y, _newVelocity.z);
 
             yield return null;
+        }
+    }
+
+    /// <summary>
+    /// Interact with a collider, with specific behaviour for Frutis & Players.
+    /// </summary>
+    /// <param name="_collider"></param>
+    private void InteractWith(Collider _collider)
+    {
+        // Push the touched fruit if one, or stun a player if hit one
+        PAF_Fruit _fruit = _collider.GetComponent<PAF_Fruit>();
+        if (_fruit) _fruit.AddForce(velocity);
+        else if (velocity.magnitude > .5f)
+        {
+            PAF_Player _player = _collider.GetComponent<PAF_Player>();
+            if (_player && !_player.Equals(pointsOwner)) _player.Stun(transform.position);
         }
     }
 

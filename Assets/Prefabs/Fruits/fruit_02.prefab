@@ -179,7 +179,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2393279040171839016}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.0333, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -190,7 +190,7 @@ Transform:
   - {fileID: 3848544325361882604}
   m_Father: {fileID: 5689821916381751299}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3350960873678110497
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,8 +345,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3665497634d6d3341b247198f4408a04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renderer: {fileID: 0}
+  renderer: {fileID: 8687980502086057991}
   collider: {fileID: 5689821916381751309}
+  doFreezeXRotation: 1
   isFalling: 0
   weight: 1
   fruitScore: 100
@@ -355,7 +356,7 @@ MonoBehaviour:
     m_Bits: 1024
   whatCollide:
     serializedVersion: 2
-    m_Bits: 6913
+    m_Bits: 6912
   pointsOwner: {fileID: 0}
   velocity: {x: 0, y: 0, z: 0}
   audioSource: {fileID: 5689821916381751310}
@@ -401,7 +402,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
+  MinDistance: 0.92881584
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0

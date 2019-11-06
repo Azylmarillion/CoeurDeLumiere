@@ -134,7 +134,7 @@ public class PAF_Bulb : MonoBehaviour
                 if (_clip) soundSource.PlayOneShot(_clip);
             }
             PAF_Fruit _fruit = Instantiate(items[Random.Range(0, items.Length)], transform.position, transform.rotation).GetComponent<PAF_Fruit>();
-            Vector3 _force = new Vector3(Random.Range(-2f, 2f), Random.Range(.05f, .25f), Random.Range(-2f, 2f));
+            Vector3 _force = new Vector3(Random.Range(-2f, 2f), Random.Range(.05f, .2f), Random.Range(-2f, 2f));
             _force = Vector3.ClampMagnitude(_force, Random.Range(.1f, 1));
             if (_fruit) _fruit.AddForce(_force);
         }
@@ -155,7 +155,7 @@ public class PAF_Bulb : MonoBehaviour
                 if (_clip) soundSource.PlayOneShot(_clip);
             }
             PAF_Fruit _fruit = Instantiate(items[Random.Range(0, items.Length)], transform.position, transform.rotation).GetComponent<PAF_Fruit>();
-            Vector3 _force = new Vector3(Random.Range(-2f, 2f), Random.Range(.05f, .25f), Random.Range(-2f, 2f));
+            Vector3 _force = new Vector3(Random.Range(-2f, 2f), Random.Range(.05f, .2f), Random.Range(-2f, 2f));
             _force = Vector3.ClampMagnitude(_force, Random.Range(.1f, 1));
             if (_fruit) _fruit.AddForce(_force);
         }

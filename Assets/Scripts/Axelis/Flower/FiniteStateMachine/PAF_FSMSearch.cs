@@ -30,6 +30,10 @@ public class PAF_FSMSearch : StateMachineBehaviour
             m_owner.StopCoroutine(m_owner.GetClosestFruit());
             m_behaviourCoroutine = null;
         }
+        if(!m_owner.HasFruitToFollow)
+        {
+            m_owner.ResetState(); 
+        }
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

@@ -54,6 +54,7 @@ public class PAF_Flower : MonoBehaviour
 
     private FlowerState m_currentState = FlowerState.Searching; 
     private PAF_Fruit m_followedFruit = null;
+    public bool HasFruitToFollow { get { return m_followedFruit != null;  } }
 
     [SerializeField] AudioSource audiosource = null;
 
@@ -72,9 +73,9 @@ public class PAF_Flower : MonoBehaviour
         {
             if(Vector3.Angle(transform.forward, m_followedFruit.transform.position - transform.position) > (m_fieldOfView/2))
             {
-                m_followedFruit = null;
                 m_currentState = FlowerState.Searching;
-                m_animator.SetInteger("BehaviourState", (int)m_currentState); 
+                m_animator.SetInteger("BehaviourState", (int)m_currentState);
+                m_followedFruit = null;
                 yield break; 
             }
 
@@ -136,8 +137,11 @@ public class PAF_Flower : MonoBehaviour
 
             m_currentState = FlowerState.Eating;
             m_animator.SetInteger("BehaviourState", (int)m_currentState);
+            return; 
         }
-        
+        //RESET THE STATE
+        m_currentState = FlowerState.Searching;
+        m_animator.SetInteger("BehaviourState", (int)m_currentState);
     }
 
     public void Chomp()
@@ -156,6 +160,11 @@ public class PAF_Flower : MonoBehaviour
         //RESET THE STATE
         m_currentState = FlowerState.Searching;
         m_animator.SetInteger("BehaviourState", (int)m_currentState);
+    }
+
+    public void ResetState()
+    {
+        
     }
     #endregion
 
@@ -178,11 +187,16 @@ public class PAF_Flower : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(transform.position, .5f); 
 
-        Gizmos.color = Color.red;
         for (int i = 0; i < m_joints.Length - 1; i++)
         {
             Gizmos.DrawSphere(m_joints[i].BaseTransform.position, .25f); 
             Gizmos.DrawLine(m_joints[i].BaseTransform.position, m_joints[i + 1].BaseTransform.position); 
+        }
+
+        if(m_followedFruit != null)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(m_mouthTransform.position, m_followedFruit.transform.position); 
         }
     }
     #endregion

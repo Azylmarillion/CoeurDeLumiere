@@ -585,73 +585,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 470fa6bfa5754c74ba180f4389a4e197, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allDallesToFall:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  allDallesToFall: []
   allRespawnableDalles: []
   center: {fileID: 4779515516874671242}
   fallDelay: 0.5
@@ -957,7 +891,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4779515518184433006
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1230,14 +1164,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1083334219, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -154.99988
+      value: -154.99957
       objectReference: {fileID: 0}
-    - target: {fileID: 1608088771717384167, guid: b3e2bb847c086334b8caaf5211d6e25d,
-        type: 3}
-      propertyPath: m_Camera
-      value: 
-      objectReference: {fileID: 4779515518049371725}
-    - target: {fileID: 225714399, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}
+    - target: {fileID: 1134044651, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2037259806}
@@ -1245,10 +1174,20 @@ PrefabInstance:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2037259806}
-    - target: {fileID: 1134044651, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}
+    - target: {fileID: 225714399, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2037259806}
+    - target: {fileID: 1608088771717384167, guid: b3e2bb847c086334b8caaf5211d6e25d,
+        type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 4779515518049371725}
+    - target: {fileID: 4755905411888769611, guid: b3e2bb847c086334b8caaf5211d6e25d,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 110.00006
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}
 --- !u!4 &6054337898439957217 stripped

@@ -54,6 +54,7 @@ public class PAF_Flower : MonoBehaviour
 
     private FlowerState m_currentState = FlowerState.Searching; 
     private PAF_Fruit m_followedFruit = null;
+    public bool HasFruitToFollow { get { return m_followedFruit != null;  } }
 
     [SerializeField] AudioSource audiosource = null;
 
@@ -72,9 +73,9 @@ public class PAF_Flower : MonoBehaviour
         {
             if(Vector3.Angle(transform.forward, m_followedFruit.transform.position - transform.position) > (m_fieldOfView/2))
             {
-                m_followedFruit = null;
                 m_currentState = FlowerState.Searching;
-                m_animator.SetInteger("BehaviourState", (int)m_currentState); 
+                m_animator.SetInteger("BehaviourState", (int)m_currentState);
+                m_followedFruit = null;
                 yield break; 
             }
 
@@ -128,6 +129,9 @@ public class PAF_Flower : MonoBehaviour
     #endregion
 
     #region Void
+    /// <summary>
+    /// Set to the eating state
+    /// </summary>
     public void EatFruit()
     {
         if (m_followedFruit)
@@ -136,10 +140,16 @@ public class PAF_Flower : MonoBehaviour
 
             m_currentState = FlowerState.Eating;
             m_animator.SetInteger("BehaviourState", (int)m_currentState);
+            return; 
         }
-        
+        //RESET THE STATE
+        m_currentState = FlowerState.Searching;
+        m_animator.SetInteger("BehaviourState", (int)m_currentState);
     }
 
+    /// <summary>
+    /// Eat the fruit and reset the state
+    /// </summary>
     public void Chomp()
     {
         if(m_followedFruit)
@@ -154,6 +164,15 @@ public class PAF_Flower : MonoBehaviour
             // CALL VFX AND SOUND HERE
         }
         //RESET THE STATE
+        m_currentState = FlowerState.Searching;
+        m_animator.SetInteger("BehaviourState", (int)m_currentState);
+    }
+
+    /// <summary>
+    /// Reset the state to Searching
+    /// </summary>
+    public void ResetState()
+    {
         m_currentState = FlowerState.Searching;
         m_animator.SetInteger("BehaviourState", (int)m_currentState);
     }
@@ -178,11 +197,22 @@ public class PAF_Flower : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(transform.position, .5f); 
 
-        Gizmos.color = Color.red;
         for (int i = 0; i < m_joints.Length - 1; i++)
         {
             Gizmos.DrawSphere(m_joints[i].BaseTransform.position, .25f); 
             Gizmos.DrawLine(m_joints[i].BaseTransform.position, m_joints[i + 1].BaseTransform.position); 
+        }
+
+        if(m_mouthTransform != null)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawSphere(m_mouthTransform.position, .15f); 
+        }
+        
+        if(m_followedFruit != null)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(m_mouthTransform.position, m_followedFruit.transform.position); 
         }
     }
     #endregion

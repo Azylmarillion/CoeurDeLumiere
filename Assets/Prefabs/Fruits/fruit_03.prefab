@@ -265,7 +265,7 @@ GameObject:
   - component: {fileID: 3597960768558247011}
   - component: {fileID: 3597960768558247008}
   m_Layer: 11
-  m_Name: Fruit_03
+  m_Name: fruit_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -343,7 +343,8 @@ AudioSource:
   m_GameObject: {fileID: 3597960768558247009}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: ab95f4241408a654aa3c6d8323415645,
+    type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1

@@ -128,7 +128,7 @@ public class PAF_GameManager : MonoBehaviour
     {
         OnGameStart?.Invoke();
         PAF_Event[] _events = null; 
-        while (m_currentGameTime < m_gameDuration)
+        while (m_currentGameTime <= m_gameDuration)
         {
             OnNextSecond?.Invoke(m_gameDuration - m_currentGameTime);
             _events = null;
@@ -140,7 +140,9 @@ public class PAF_GameManager : MonoBehaviour
             yield return new WaitForSeconds(1.0f);
             m_currentGameTime++;
         }
-        OnGameEnd?.Invoke(m_playerOneScore, m_playerTwoScore); 
+        OnGameEnd?.Invoke(m_playerOneScore, m_playerTwoScore);
+        m_playerOneIsReady = false;
+        m_playerTwoIsReady = false; 
     }
 
     /// <summary>

@@ -23,7 +23,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8338223914847460449}
-  m_LocalRotation: {x: 1, y: 0, z: 0, w: -6.123234e-17}
+  m_LocalRotation: {x: 1, y: 0.000000022136094, z: 0.00000004374998, w: -1.0296861e-15}
   m_LocalPosition: {x: 0.40995598, y: -0.3837502, z: -0.29554227}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -53,7 +53,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8338223915044301709}
-  m_LocalRotation: {x: -0.7024547, y: 0.7117285, z: -8.6593747e-17, w: -5.678583e-19}
+  m_LocalRotation: {x: -0.7024547, y: 0.7117285, z: -0.0000000013098025, w: 0.0000000012927357}
   m_LocalPosition: {x: -0.007957771, y: 0.11583281, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -150,8 +150,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8338223915687704633}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.8923944, y: 0.5563365, z: 0}
+  m_LocalRotation: {x: 0.054925304, y: -0.05941622, z: -0.005784279, w: 0.99670434}
+  m_LocalPosition: {x: -0.7915152, y: 0.5563365, z: 0.16324714}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8338223916632492270}
@@ -211,8 +211,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8338223915859676494}
-  m_LocalRotation: {x: -0.7024547, y: 0.7117285, z: -8.6593747e-17, w: -5.678583e-19}
-  m_LocalPosition: {x: -1.0340523, y: 7.494005e-17, z: 0.105119064}
+  m_LocalRotation: {x: 0.74711347, y: -0.658592, z: -0.059433848, w: 0.06742237}
+  m_LocalPosition: {x: -1.0340523, y: 0.0000000030800587, z: 0.10511906}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8338223915044301706}
@@ -365,31 +365,47 @@ MonoBehaviour:
   stunTime: 0.5
   fallTime: 1
   fallDetectionSize: 0.5
+  accelerationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.5
+      inSlope: 1.8244966
+      outSlope: 1.8244966
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.0377193
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.04824561
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   playerSpeed: 4
-  sightAngle: 122
-  sightRange: 3.5
+  sightRange: 3.75
+  fieldOfView: 90
+  closeRange: 2.5
   audioPlayer: {fileID: 8338223916140015523}
   moveArea: {fileID: 0}
   playerRenderer: {fileID: 8338223916006774665}
   playerAnimator: {fileID: 8338223916140015520}
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  fruitLayer:
-    serializedVersion: 2
-    m_Bits: 2048
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 512
-  bulbLayer:
-    serializedVersion: 2
-    m_Bits: 4096
   groundLayer:
     serializedVersion: 2
     m_Bits: 1024
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 4864
+  interactLayer:
+    serializedVersion: 2
+    m_Bits: 6656
 --- !u!114 &8338223916140015520
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -561,7 +577,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 6034957751646507721, guid: 2935c415878000e42a5b450e188feda2, type: 3}
+  - {fileID: 2100000, guid: 4dd5e542f107e0f47bd0e7aea58f110c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -653,8 +669,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8338223916389856635}
-  m_LocalRotation: {x: 1, y: 0, z: 0, w: -6.123234e-17}
-  m_LocalPosition: {x: 0.8923949, y: 0.55633646, z: 0}
+  m_LocalRotation: {x: 1, y: -0.00000008274684, z: -0.00000005302099, w: -4.4485514e-15}
+  m_LocalPosition: {x: 0.7410761, y: 0.52712035, z: -0.086636394}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8338223916365200519}

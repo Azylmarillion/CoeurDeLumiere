@@ -93,11 +93,11 @@ public class PAF_Player : MonoBehaviour
             }
             Vector3 _nextPos = transform.position + _dir;
             _nextPos.y = moveArea.bounds.center.y;
-            if (moveArea.bounds.Contains(_nextPos)
-                && !Physics.Raycast(transform.position, transform.forward, 1.5f, obstacleLayer) 
-                && !Physics.Raycast(transform.position, transform.forward + transform.right * .5f, 1.5f, obstacleLayer) 
-                && !Physics.Raycast(transform.position, transform.forward + -transform.right * .5f, 1.5f, obstacleLayer) 
-                && !falling)
+            if (moveArea.bounds.Contains(_nextPos) &&
+                !Physics.Raycast(transform.position, transform.forward, 1.5f, obstacleLayer) &&
+                !Physics.Raycast(transform.position, transform.forward + transform.right * .5f, 1.5f, obstacleLayer) &&
+                !Physics.Raycast(transform.position, transform.forward + -transform.right * .5f, 1.5f, obstacleLayer) &&
+                !falling)
             {
                 accelerationTimer += Time.deltaTime;
                 accelerationTimer = Mathf.Clamp(accelerationTimer, 0, 1); 

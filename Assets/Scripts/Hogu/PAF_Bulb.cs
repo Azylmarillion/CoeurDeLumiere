@@ -82,12 +82,22 @@ public class PAF_Bulb : MonoBehaviour
         animateBigBulb = false;
         initScale = transform.localScale;
         yield return new WaitForSeconds(2);
+        if (soundSource)
+        {
+            AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetBulbExploding();
+            if (_clip) soundSource.PlayOneShot(_clip);
+        }
         animateBigBulb = true;
         bulbAnimator.SetTrigger("spawn");
         yield return new WaitForSeconds(.5f);
         animateBigBulb = false;
         initScale = transform.localScale;
         yield return new WaitForSeconds(2);
+        if (soundSource)
+        {
+            AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetBulbExploding();
+            if (_clip) soundSource.PlayOneShot(_clip);
+        }
         animateBigBulb = true;
         bulbAnimator.SetTrigger("spawn");
         yield return new WaitForSeconds(.5f);
@@ -145,7 +155,6 @@ public class PAF_Bulb : MonoBehaviour
     {
         if (items.Length < 0 || !bulbAnimator || !fruitData) return;
         int _itemsToSpawn = Random.Range(isBigBulb ? minItemsInBigBulb : minItemsInBulb, isBigBulb ? maxItemsInBigBulb : maxItemsInBulb);
-        //if (!_spawnItems) _itemsToSpawn = 0;
         items = fruitData.GetRandomFruit(Random.Range(isBigBulb ? minItemsInBigBulb : minItemsInBulb, isBigBulb ? maxItemsInBigBulb : maxItemsInBulb));
         for (int i = 0; i < _itemsToSpawn; i++)
         {

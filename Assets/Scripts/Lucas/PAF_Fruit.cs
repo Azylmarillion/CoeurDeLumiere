@@ -232,7 +232,7 @@ public class PAF_Fruit : MonoBehaviour
         {
             yield return new WaitForFixedUpdate();
 
-            _flatVelocity = flatVelocity;
+            _flatVelocity = flatVelocity * Time.fixedDeltaTime;
 
             if (_flatVelocity != Vector3.zero)
             {
@@ -360,7 +360,7 @@ public class PAF_Fruit : MonoBehaviour
                     transform.position = _newPosition;
 
                     _flatVelocity = Vector3.Reflect(_flatVelocity, _finalHit.normal) * .8f;
-                    velocity = new Vector3(_flatVelocity.x, velocity.y, _flatVelocity.z);
+                    velocity = new Vector3(_flatVelocity.x / Time.fixedDeltaTime, velocity.y, _flatVelocity.z / Time.fixedDeltaTime);
 
                     #if UNITY_EDITOR
                     AddCollisionPoint();
@@ -375,9 +375,9 @@ public class PAF_Fruit : MonoBehaviour
                     transform.position += _flatVelocity;
 
                     if (_flatVelocity.magnitude < .5f) _flatVelocity *= .975f;
-                    velocity = new Vector3(_flatVelocity.x * .9875f, velocity.y, _flatVelocity.z * .9875f);
+                    velocity = new Vector3((_flatVelocity.x * .99f) / Time.fixedDeltaTime, velocity.y, (_flatVelocity.z * .99f) / Time.fixedDeltaTime);
 
-                    renderer.Rotate(_normal, Time.fixedDeltaTime * _flatVelocity.magnitude * 5000);
+                    renderer.Rotate(_normal, Time.fixedDeltaTime * (_flatVelocity.magnitude / Time.fixedDeltaTime) * 75);
 
                     if (doFreezeXRotation)
                     {
@@ -387,16 +387,16 @@ public class PAF_Fruit : MonoBehaviour
             }
             if (velocity.y != 0)
             {
-                renderer.position = new Vector3(renderer.position.x, renderer.position.y + velocity.y, renderer.position.z);
+                renderer.position = new Vector3(renderer.position.x, renderer.position.y + (velocity.y * Time.fixedDeltaTime), renderer.position.z);
 
                 if (velocity.y > 0)
                 {
 
-                    _newScale = renderer.localScale * (1 + (velocity.y / 10));
-                    if (velocity.y < .02f) velocity.y *= .9f;
-                    else velocity.y *= .95f;
+                    _newScale = renderer.localScale * (1 + (velocity.y / 100));
+                    if (velocity.y < .5f) velocity.y *= .875f;
+                    else velocity.y *= .925f;
 
-                    if (velocity.y < .01f) velocity.y *= -1;
+                    if (velocity.y < .2f) velocity.y *= -1;
                 }
                 else
                 {
@@ -409,11 +409,11 @@ public class PAF_Fruit : MonoBehaviour
                         continue;
                     }
 
-                    _newScale = renderer.localScale / (-1 + (velocity.y / 10));
+                    _newScale = renderer.localScale / (-1 + (velocity.y / 100));
                     if (velocity.y > -100)
                     {
-                        if (velocity.y > -1) velocity.y *= 1.05f;
-                        else velocity.y *= 1.02f;
+                        if (velocity.y > -1) velocity.y *= 1.1f;
+                        else velocity.y *= 1.05f;
                     }
                 }
                 renderer.localScale = new Vector3(Mathf.Abs(_newScale.x), Mathf.Abs(_newScale.y), Mathf.Abs(_newScale.z));

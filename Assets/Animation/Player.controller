@@ -552,6 +552,63 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8651b396a669726429273ffaa0068434, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_fallingCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  m_zCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0.0025230953
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.19926324
+    - serializedVersion: 3
+      time: 0.45
+      value: 0.05
+      inSlope: 0.4545031
+      outSlope: 0.4545031
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.1793372
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1.7272726
+      outSlope: 1.7272726
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1102 &7252596520450978157
 AnimatorState:
   serializedVersion: 5

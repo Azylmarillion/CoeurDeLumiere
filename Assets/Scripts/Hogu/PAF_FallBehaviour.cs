@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class PAF_FallBehaviour : StateMachineBehaviour
 {
-    [SerializeField] private Transform m_parentTransform;  
+    private Transform m_parentTransform;  
     private float m_time = 0;
     private Vector3 m_targetedPosition;
-    private Vector3 m_basePosition; 
+    private Vector3 m_basePosition;
+
+    [SerializeField] private AnimationCurve m_fallingCurve = null;
+    [SerializeField] private AnimationCurve m_zCurve = null; 
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -26,7 +29,7 @@ public class PAF_FallBehaviour : StateMachineBehaviour
     {
         if (!m_parentTransform) return;
         m_time += Time.deltaTime;
-        m_parentTransform.transform.position = Vector3.Lerp(m_basePosition, m_targetedPosition, m_time);
+        m_parentTransform.transform.position = new Vector3(m_basePosition.x, Mathf.Lerp(m_basePosition.y, m_targetedPosition.y, m_fallingCurve.Evaluate(m_time)), Mathf.Lerp(m_basePosition.z, m_targetedPosition.z, m_zCurve.Evaluate(m_time)));
         animator.transform.localScale = Vector3.Lerp(Vector3.one, Vector3.one * .5f, m_time); 
     }
 

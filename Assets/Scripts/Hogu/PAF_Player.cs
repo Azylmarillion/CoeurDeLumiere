@@ -108,10 +108,10 @@ public class PAF_Player : MonoBehaviour
                 _nextPos.y = transform.position.y;
                 transform.position = Vector3.MoveTowards(transform.position, _nextPos, Time.deltaTime * (playerSpeed * 3));
             }
-            if (!Physics.Raycast(transform.position - transform.forward * fallDetectionSize, Vector3.down, 2, groundLayer) &&
-                !Physics.Raycast(transform.position + transform.forward * fallDetectionSize, Vector3.down, 2, groundLayer) &&
-                !Physics.Raycast(transform.position - transform.right * fallDetectionSize, Vector3.down, 2, groundLayer) &&
-                !Physics.Raycast(transform.position + transform.right * fallDetectionSize, Vector3.down, 2, groundLayer) && !falling)
+            if (!Physics.Raycast(transform.position + (transform.forward + transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) &&
+                !Physics.Raycast(transform.position + (transform.forward - transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) &&
+                !Physics.Raycast(transform.position - (transform.forward + transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) &&
+                !Physics.Raycast(transform.position - (transform.forward - transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) && !falling)
             {
                 falling = true;
                 AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetFallPlayer();

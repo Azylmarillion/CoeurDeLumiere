@@ -642,7 +642,7 @@ PrefabInstance:
     - target: {fileID: 7702343025045107163, guid: b662d4460f2d1ab4e9987d1dab2a951b,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.127
       objectReference: {fileID: 0}
     - target: {fileID: 7702343025045107163, guid: b662d4460f2d1ab4e9987d1dab2a951b,
         type: 3}
@@ -703,25 +703,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Fruit_03
       objectReference: {fileID: 0}
-    - target: {fileID: 3597960768558247009, guid: e42e0078e3bf9b0448e1f422e21b9953,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3597960768558247005, guid: e42e0078e3bf9b0448e1f422e21b9953,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 7.72
       objectReference: {fileID: 0}
     - target: {fileID: 3597960768558247005, guid: e42e0078e3bf9b0448e1f422e21b9953,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.35
+      value: 0.32
       objectReference: {fileID: 0}
     - target: {fileID: 3597960768558247005, guid: e42e0078e3bf9b0448e1f422e21b9953,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.797
+      value: -4.147
       objectReference: {fileID: 0}
     - target: {fileID: 3597960768558247005, guid: e42e0078e3bf9b0448e1f422e21b9953,
         type: 3}

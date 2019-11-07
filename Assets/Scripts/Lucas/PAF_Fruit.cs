@@ -8,7 +8,6 @@ public class PAF_Fruit : MonoBehaviour
     /*
      * TO DO :
      *      • Auto-guider vers la plante
-     *      • Velocité / seconde
      *      • Améliorer l'accélération / décélération
     */
 
@@ -77,6 +76,11 @@ public class PAF_Fruit : MonoBehaviour
     public float Weight { get { return weight; } }
 
     /// <summary>
+    /// Index of the autom aim curve array indicating current progress (0 is no curve used).
+    /// </summary>
+    [SerializeField] private int autoAimCurveIndex = 0;
+
+    /// <summary>
     /// Score value of the fruit, determining by how many a players score is increased when this fruit is eaten.
     /// </summary>
     [SerializeField] private int fruitScore = 100;
@@ -120,6 +124,8 @@ public class PAF_Fruit : MonoBehaviour
             value = new Vector3(Mathf.Clamp(value.x, -999, 999), Mathf.Clamp(value.y, -999, 999), Mathf.Clamp(value.z, -999, 999));
 
             velocity = value;
+            autoAimCurveIndex = 0;
+
             if (applyForceCoroutine != null) StopCoroutine(applyForceCoroutine);
             if (value != Vector3.zero)
             {
@@ -127,6 +133,11 @@ public class PAF_Fruit : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// All positions used for the auto aim Bézier curve.
+    /// </summary>
+    private Vector3[] autoAimCurve = new Vector3[16];
     #endregion
 
     #region Sounds
@@ -192,13 +203,26 @@ public class PAF_Fruit : MonoBehaviour
         if (collisionPos.Count > 15) collisionPos.RemoveAt(0);
         collisionPos.Add(collider.bounds.center);
     }
-    #endif
+#endif
 
     /// <summary>
     /// Adds a force to the fruit, making it go in this direction.
     /// </summary>
     /// <param name="_force">Force to apply.</param>
-    public void AddForce(Vector3 _force) => Velocity += _force;
+    public void AddForce(Vector3 _force)
+    {
+        Velocity += _force;
+
+        // Auto aim closest flower in near enough
+        foreach (PAF_Flower _flower in PAF_Flower.Flowers)
+        {
+            if ((_flower.MouthTransform.position - transform.position).magnitude < 10)
+            {
+                TargetPosition(_flower.MouthTransform.position);
+                break;
+            }
+        }
+    }
 
     /// <summary>
     /// Adds a force to the fruit, making it go in this direction.
@@ -210,6 +234,17 @@ public class PAF_Fruit : MonoBehaviour
 
         pointsOwner = _player;
         AddForce(_force);
+
+        // Auto aim closest flower in near enough
+        foreach (PAF_Flower _flower in PAF_Flower.Flowers)
+        {
+            if ((_flower.MouthTransform.position - transform.position).magnitude < 10)
+            {
+                Debug.Log("Target");
+                TargetPosition(_flower.MouthTransform.position);
+                break;
+            }
+        }
     }
 
     /// <summary>
@@ -232,6 +267,37 @@ public class PAF_Fruit : MonoBehaviour
         {
             yield return new WaitForFixedUpdate();
 
+            // If following a curve, recalculate path
+            if (autoAimCurveIndex > 0)
+            {
+                //Debug.Log("In => " + autoAimCurveIndex);
+                float _distance = flatVelocity.magnitude * Time.fixedDeltaTime;
+                float _length;
+                Vector3 _lastPos = collider.bounds.center;
+                while (autoAimCurveIndex > 0)
+                {
+                    _length = (autoAimCurve[autoAimCurveIndex] - _lastPos).magnitude;
+                    if (_length < _distance)
+                    {
+                        if (autoAimCurveIndex < 15)
+                        {
+                            _distance -= _length;
+                            _lastPos = autoAimCurve[autoAimCurveIndex];
+
+                            autoAimCurveIndex++;
+                        }
+                        else autoAimCurveIndex = 0;
+                    }
+                    else break;
+                }
+                
+                if (autoAimCurveIndex > 0)
+                {
+                    // Set new velocity
+                    Vector3 _newVelocity = (autoAimCurve[autoAimCurveIndex] - collider.bounds.center).normalized * flatVelocity.magnitude;
+                    //velocity = new Vector3(_newVelocity.x, velocity.y, _newVelocity.z);
+                }
+            }
             _flatVelocity = flatVelocity * Time.fixedDeltaTime;
 
             if (_flatVelocity != Vector3.zero)
@@ -362,6 +428,9 @@ public class PAF_Fruit : MonoBehaviour
                     _flatVelocity = Vector3.Reflect(_flatVelocity, _finalHit.normal) * .8f;
                     velocity = new Vector3(_flatVelocity.x / Time.fixedDeltaTime, velocity.y, _flatVelocity.z / Time.fixedDeltaTime);
 
+                    // Stop following curve if doing so
+                    autoAimCurveIndex = 0;
+
                     #if UNITY_EDITOR
                     AddCollisionPoint();
 
@@ -385,6 +454,7 @@ public class PAF_Fruit : MonoBehaviour
                     }
                 }
             }
+            // Verticality calculs
             if (velocity.y != 0)
             {
                 renderer.position = new Vector3(renderer.position.x, renderer.position.y + (velocity.y * Time.fixedDeltaTime), renderer.position.z);
@@ -529,6 +599,29 @@ public class PAF_Fruit : MonoBehaviour
         isDoomed = true;
         StartCoroutine(FollowTransform(_toFollow));
     }
+
+    /// <summary>
+    /// Targets a position for modifying trajectory to get there with a Bézier curve.
+    /// </summary>
+    private void TargetPosition(Vector3 _position)
+    {
+        Vector3 _p0 = collider.bounds.center;
+        Vector3 _p2 = _position;
+        Vector3 _p1 = _p0 + (flatVelocity.normalized * ((_p2 - _p0).magnitude / 1.25f) * (1 + (flatVelocity.magnitude * Time.fixedDeltaTime * .5f)));
+        float _t;
+
+        autoAimCurve[0] = _p0;
+        autoAimCurve[15] = _p2;
+
+        for (int _i = 1; _i < 15; _i++)
+        {
+            _t = _i / 15f;
+            autoAimCurve[_i] = (Mathf.Pow(1f - _t, 2f) * _p0) + (2f * (1f - _t) * _t * _p1) + ((_t * _t) * _p2);
+            autoAimCurve[_i].y = 0;
+        }
+
+        autoAimCurveIndex = 1;
+    }
     #endregion
 
     #region Unity Methods
@@ -611,21 +704,21 @@ public class PAF_Fruit : MonoBehaviour
             Gizmos.DrawSphere(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), .1f);
 
             Gizmos.color = Color.blue;
-            Gizmos.DrawSphere(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x) + flatVelocity, .1f);
-            Gizmos.DrawLine(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x), collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x) + flatVelocity);
+            Gizmos.DrawSphere(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x) + (flatVelocity * Time.fixedDeltaTime), .1f);
+            Gizmos.DrawLine(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x), collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x) + (flatVelocity * Time.fixedDeltaTime));
 
-            Gizmos.DrawSphere(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity + (flatVelocity.normalized * collider.bounds.extents.x), .1f);
-            Gizmos.DrawLine(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity + (flatVelocity.normalized * collider.bounds.extents.x));
+            Gizmos.DrawSphere(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity * Time.fixedDeltaTime) + (flatVelocity.normalized * collider.bounds.extents.x), .1f);
+            Gizmos.DrawLine(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity * Time.fixedDeltaTime) + (flatVelocity.normalized * collider.bounds.extents.x));
 
-            Gizmos.DrawSphere(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity + (flatVelocity.normalized * collider.bounds.extents.x), .1f);
-            Gizmos.DrawLine(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity + (flatVelocity.normalized * collider.bounds.extents.x));
+            Gizmos.DrawSphere(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity * Time.fixedDeltaTime) + (flatVelocity.normalized * collider.bounds.extents.x), .1f);
+            Gizmos.DrawLine(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity * Time.fixedDeltaTime) + (flatVelocity.normalized * collider.bounds.extents.x));
         }
 
         Gizmos.color = Color.green;
 
         Vector3 _p0 = transform.position;
-        Vector3 _p1 = _p0 + (flatVelocity.normalized * 5);
-        Vector3 _p2 = FindObjectOfType<PAF_Flower>().transform.position;
+        Vector3 _p2 = FindObjectOfType<PAF_Flower>().MouthTransform.position;
+        Vector3 _p1 = _p0 + (flatVelocity.normalized * ((_p2 - _p0).magnitude / 1.25f) * (1 + (flatVelocity.magnitude  * Time.fixedDeltaTime * .5f)));
 
         Vector3[] _positions = new Vector3[16];
         _positions[0] = _p0;

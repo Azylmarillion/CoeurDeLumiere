@@ -232,7 +232,7 @@ public class PAF_Fruit : MonoBehaviour
         {
             yield return new WaitForFixedUpdate();
 
-            _flatVelocity = flatVelocity;
+            _flatVelocity = flatVelocity * Time.fixedDeltaTime;
 
             if (_flatVelocity != Vector3.zero)
             {
@@ -360,7 +360,7 @@ public class PAF_Fruit : MonoBehaviour
                     transform.position = _newPosition;
 
                     _flatVelocity = Vector3.Reflect(_flatVelocity, _finalHit.normal) * .8f;
-                    velocity = new Vector3(_flatVelocity.x, velocity.y, _flatVelocity.z);
+                    velocity = new Vector3(_flatVelocity.x / Time.fixedDeltaTime, velocity.y, _flatVelocity.z / Time.fixedDeltaTime);
 
                     #if UNITY_EDITOR
                     AddCollisionPoint();
@@ -375,9 +375,9 @@ public class PAF_Fruit : MonoBehaviour
                     transform.position += _flatVelocity;
 
                     if (_flatVelocity.magnitude < .5f) _flatVelocity *= .975f;
-                    velocity = new Vector3(_flatVelocity.x * .9875f, velocity.y, _flatVelocity.z * .9875f);
+                    velocity = new Vector3((_flatVelocity.x * .99f) / Time.fixedDeltaTime, velocity.y, (_flatVelocity.z * .99f) / Time.fixedDeltaTime);
 
-                    renderer.Rotate(_normal, Time.fixedDeltaTime * _flatVelocity.magnitude * 5000);
+                    renderer.Rotate(_normal, Time.fixedDeltaTime * (_flatVelocity.magnitude / Time.fixedDeltaTime) * 75);
 
                     if (doFreezeXRotation)
                     {
@@ -387,16 +387,16 @@ public class PAF_Fruit : MonoBehaviour
             }
             if (velocity.y != 0)
             {
-                renderer.position = new Vector3(renderer.position.x, renderer.position.y + velocity.y, renderer.position.z);
+                renderer.position = new Vector3(renderer.position.x, renderer.position.y + (velocity.y * Time.fixedDeltaTime), renderer.position.z);
 
                 if (velocity.y > 0)
                 {
 
-                    _newScale = renderer.localScale * (1 + (velocity.y / 10));
-                    if (velocity.y < .02f) velocity.y *= .9f;
-                    else velocity.y *= .95f;
+                    _newScale = renderer.localScale * (1 + (velocity.y / 100));
+                    if (velocity.y < .5f) velocity.y *= .875f;
+                    else velocity.y *= .925f;
 
-                    if (velocity.y < .01f) velocity.y *= -1;
+                    if (velocity.y < .2f) velocity.y *= -1;
                 }
                 else
                 {
@@ -409,11 +409,11 @@ public class PAF_Fruit : MonoBehaviour
                         continue;
                     }
 
-                    _newScale = renderer.localScale / (-1 + (velocity.y / 10));
+                    _newScale = renderer.localScale / (-1 + (velocity.y / 100));
                     if (velocity.y > -100)
                     {
-                        if (velocity.y > -1) velocity.y *= 1.05f;
-                        else velocity.y *= 1.02f;
+                        if (velocity.y > -1) velocity.y *= 1.1f;
+                        else velocity.y *= 1.05f;
                     }
                 }
                 renderer.localScale = new Vector3(Mathf.Abs(_newScale.x), Mathf.Abs(_newScale.y), Mathf.Abs(_newScale.z));
@@ -619,6 +619,24 @@ public class PAF_Fruit : MonoBehaviour
 
             Gizmos.DrawSphere(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity + (flatVelocity.normalized * collider.bounds.extents.x), .1f);
             Gizmos.DrawLine(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + flatVelocity + (flatVelocity.normalized * collider.bounds.extents.x));
+        }
+
+        Gizmos.color = Color.green;
+
+        Vector3 _p0 = transform.position;
+        Vector3 _p1 = _p0 + (flatVelocity.normalized * 5);
+        Vector3 _p2 = FindObjectOfType<PAF_Flower>().transform.position;
+
+        Vector3[] _positions = new Vector3[16];
+        _positions[0] = _p0;
+        _positions[15] = _p2;
+
+        for (int _i = 1; _i < 15; _i++)
+        {
+            float _t = _i / 15f;
+            _positions[_i] = (Mathf.Pow(1f - _t, 2f) * _p0) + (2f * (1f - _t) * _t * _p1) + ((_t * _t) * _p2);
+
+            Gizmos.DrawLine(_positions[_i], _positions[_i - 1]);
         }
     }
     #endif

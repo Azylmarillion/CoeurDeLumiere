@@ -10,22 +10,19 @@ public class PAF_Dalle : MonoBehaviour
     [SerializeField] AudioSource audioSource = null;
     [SerializeField] bool isShifting = true;
     [SerializeField] bool randomColor = true;
-    [SerializeField] Material[] materials = new Material[] { };
-    bool isFalling = false;
-    bool isLeft = false;
     public bool Fell { get; private set; } = false;
 
 
     private void Start()
     {
         if (isShifting) transform.position += Vector3.up * Random.Range(-PAF_DalleManager.I.Shift * 2, -PAF_DalleManager.I.Shift);
-        if (materials.Length <= 0 ||!randomColor) return;
+        if (!PAF_DalleManager.I || PAF_DalleManager.I.DalleMaterials.Length <= 0 ||!randomColor) return;
         if (!renderer) renderer = GetComponent<Renderer>();
-        if (renderer) renderer.material = materials[Random.Range(0, materials.Length)];
+        if (renderer) renderer.material = PAF_DalleManager.I.DalleMaterials[Random.Range(0, PAF_DalleManager.I.DalleMaterials.Length)];
     }
 
 
-    public void Fall(bool _isLeft)
+    public void Fall()
     {
         if (!collider) collider = GetComponent<MeshCollider>();
         if (!renderer) renderer = GetComponent<Renderer>();
@@ -35,8 +32,6 @@ public class PAF_Dalle : MonoBehaviour
         collider.enabled = false;
         AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetDalleFalling();
         if (_clip) audioSource.PlayOneShot(_clip);
-        isFalling = true;
-        isLeft = _isLeft;
         Fell = true;
     }
 

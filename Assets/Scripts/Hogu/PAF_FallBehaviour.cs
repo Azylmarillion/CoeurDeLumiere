@@ -4,22 +4,37 @@ using UnityEngine;
 
 public class PAF_FallBehaviour : StateMachineBehaviour
 {
+    [SerializeField] private Transform m_parentTransform;  
+    private float m_time = 0;
+    private Vector3 m_targetedPosition;
+    private Vector3 m_basePosition; 
+
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
-    //override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
+    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        if (!m_parentTransform) m_parentTransform = animator.transform.parent;
+        m_time = 0;
+        if (m_parentTransform)
+        {
+            m_targetedPosition = m_parentTransform.position + new Vector3(0, -10f, 5f);
+            m_basePosition = m_parentTransform.position; 
+        }
+    }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
+    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        if (!m_parentTransform) return;
+        m_time += Time.deltaTime;
+        m_parentTransform.transform.position = Vector3.Lerp(m_basePosition, m_targetedPosition, m_time);
+        animator.transform.localScale = Vector3.Lerp(Vector3.one, Vector3.one * .5f, m_time); 
+    }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animator.GetComponentInParent<PAF_Player>().Respawn();
+        animator.transform.localScale = Vector3.one; 
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

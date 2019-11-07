@@ -201,7 +201,12 @@ public class PAF_Player : MonoBehaviour
     public void Respawn()
     {
         if (!falling) return;
-        if (PAF_DalleManager.I.AllUpDalles.Count <= 0) return;
+        if (PAF_DalleManager.I.AllUpDalles.Count <= 0)
+        {
+            transform.position = Vector3.zero;
+            falling = false;
+            return;
+        }
         MeshCollider _dalle = PAF_DalleManager.I.AllUpDalles[Random.Range(0, PAF_DalleManager.I.AllUpDalles.Count)].GetComponent<MeshCollider>();
         Vector3 _spawnPos = new Vector3(Random.Range(_dalle.bounds.min.x, _dalle.bounds.max.x), 0, Random.Range(_dalle.bounds.min.z, _dalle.bounds.max.z));
         transform.position = _spawnPos;

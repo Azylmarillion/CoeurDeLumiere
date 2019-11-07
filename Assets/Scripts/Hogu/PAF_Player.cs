@@ -19,10 +19,14 @@ public class PAF_Player : MonoBehaviour
     [SerializeField, Range(0, 5)] float fallTime = .5f;
     [SerializeField, Range(.1f, 1)] float fallDetectionSize = .5f;
 
+    [SerializeField] private AnimationCurve accelerationCurve = null;
+    private float accelerationTimer = 0; 
     [SerializeField, Range(0, 10)] float playerSpeed = 5;
 
     [Header("Sight")]
     [SerializeField, Range(0, 10)] float sightRange = 1.5f;
+    [SerializeField, Range(0, 360)] int fieldOfView = 60;
+    [SerializeField, Range(0, 10.0f)] float closeRange = 1.0f; 
     #endregion
 
     #region Sounds
@@ -75,14 +79,6 @@ public class PAF_Player : MonoBehaviour
             canAttack && !stunned) Interact();
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.magenta;
-        Gizmos.DrawSphere(transform.position + transform.forward * .5f, sightRange);
-    }
-
-
-
     void Move()
     {
         if (!IsReady) return;
@@ -92,6 +88,7 @@ public class PAF_Player : MonoBehaviour
             if (idle = _dir.magnitude < .1f)
             {
                 playerAnimator.SetMoving(idle);
+                accelerationTimer = 0; 
                 return;
             }
             Vector3 _nextPos = transform.position + _dir;
@@ -102,8 +99,10 @@ public class PAF_Player : MonoBehaviour
                 && !Physics.Raycast(transform.position, transform.forward + -transform.right * .5f, 1.5f, obstacleLayer) 
                 && !falling)
             {
+                accelerationTimer += Time.deltaTime;
+                accelerationTimer = Mathf.Clamp(accelerationTimer, 0, 1); 
                 _nextPos.y = transform.position.y;
-                transform.position = Vector3.MoveTowards(transform.position, _nextPos, Time.deltaTime * (playerSpeed * 3));
+                transform.position = Vector3.MoveTowards(transform.position, _nextPos, Time.deltaTime * (playerSpeed * 3 * accelerationCurve.Evaluate(accelerationTimer)));
             }
             if (!Physics.Raycast(transform.position + (transform.forward + transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) &&
                 !Physics.Raycast(transform.position + (transform.forward - transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) &&
@@ -124,15 +123,16 @@ public class PAF_Player : MonoBehaviour
         else idle = true;
         if(!falling) playerAnimator.SetMoving(idle);
     }
-
-     
+   
     void Interact()
     {
         if (!canAttack || !IsReady) return; 
         List<PAF_Fruit> _fruitsHit = new List<PAF_Fruit>();
-        Collider[] _hitItems = Physics.OverlapSphere(transform.position + transform.forward * .5f, sightRange, interactLayer);
+        Collider[] _hitItems = Physics.OverlapSphere(transform.position, sightRange, interactLayer);
         foreach (Collider _hit in _hitItems)
         {
+            if (Vector3.Angle(transform.forward, (_hit.transform.position - transform.position).normalized) > (fieldOfView / 2) && Vector3.Distance(_hit.transform.position, transform.position) > closeRange)
+                continue;
             PAF_Fruit _item = _hit.transform.GetComponent<PAF_Fruit>();
             if (_item)
             {

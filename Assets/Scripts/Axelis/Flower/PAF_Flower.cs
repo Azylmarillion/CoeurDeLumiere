@@ -51,6 +51,7 @@ public class PAF_Flower : MonoBehaviour
     [SerializeField] private PAF_FlowerJoint[] m_joints = new PAF_FlowerJoint[] { };
 
     [SerializeField] private Transform m_mouthTransform = null; 
+    public Transform MouthTransform { get { return m_mouthTransform; } }
 
     private FlowerState m_currentState = FlowerState.Searching; 
     private PAF_Fruit m_followedFruit = null;

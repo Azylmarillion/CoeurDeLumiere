@@ -133,9 +133,10 @@ public class PAF_Bulb : MonoBehaviour
     public void Explode(bool _spawnItems)
     {
         if (items.Length < 0 || !bulbAnimator || !fruitData) return;
-        int _itemsToSpawn = Random.Range(isBigBulb ? minItemsInBigBulb : minItemsInBulb, isBigBulb ? maxItemsInBigBulb : maxItemsInBulb);
-        if (!_spawnItems) _itemsToSpawn = 0;
-        items = fruitData.GetRandomFruit(Random.Range(isBigBulb ? minItemsInBigBulb : minItemsInBulb, isBigBulb ? maxItemsInBigBulb : maxItemsInBulb));
+        int _itemsToSpawn = 0;
+        if (_spawnItems) _itemsToSpawn = Random.Range(isBigBulb ? minItemsInBigBulb : minItemsInBulb, (isBigBulb ? maxItemsInBigBulb : maxItemsInBulb) + 1);
+
+        items = fruitData.GetRandomFruit(_itemsToSpawn);
         for (int i = 0; i < _itemsToSpawn; i++)
         {
             if (soundSource)
@@ -143,33 +144,19 @@ public class PAF_Bulb : MonoBehaviour
                 AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetFruitSpawn();
                 if (_clip) soundSource.PlayOneShot(_clip);
             }
+
+            float _range = isBigBulb ? 20 : 15;
+            float _height = isBigBulb ? 5 : 3;
+
             PAF_Fruit _fruit = Instantiate(items[Random.Range(0, items.Length)], transform.position, transform.rotation).GetComponent<PAF_Fruit>();
-            Vector3 _force = new Vector3(Random.Range(-5, 5f), Random.Range(.1f, 5f), Random.Range(-5, 5f));
+            Vector3 _force = new Vector3(Random.Range(-_range, _range), Random.Range(.25f, _height), Random.Range(_range, _range));
             //_force = Vector3.ClampMagnitude(_force, Random.Range(.1f, 1));
             if (_fruit) _fruit.AddForce(_force);
         }
         bulbAnimator.SetTrigger("explode");
     }
     
-    public void ExplodeWithoutBool()
-    {
-        if (items.Length < 0 || !bulbAnimator || !fruitData) return;
-        int _itemsToSpawn = Random.Range(isBigBulb ? minItemsInBigBulb : minItemsInBulb, isBigBulb ? maxItemsInBigBulb : maxItemsInBulb);
-        items = fruitData.GetRandomFruit(Random.Range(isBigBulb ? minItemsInBigBulb : minItemsInBulb, isBigBulb ? maxItemsInBigBulb : maxItemsInBulb));
-        for (int i = 0; i < _itemsToSpawn; i++)
-        {
-            if (soundSource)
-            {
-                AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetFruitSpawn();
-                if (_clip) soundSource.PlayOneShot(_clip);
-            }
-            PAF_Fruit _fruit = Instantiate(items[Random.Range(0, items.Length)], transform.position, transform.rotation).GetComponent<PAF_Fruit>();
-            Vector3 _force = new Vector3(Random.Range(-50, 50f), Random.Range(.1f, 5f), Random.Range(-50, 50f));
-            //_force = Vector3.ClampMagnitude(_force, Random.Range(.1f, 1));
-            if (_fruit) _fruit.AddForce(_force);
-        }
-        bulbAnimator.SetTrigger("explode");
-    }
+    public void ExplodeWithoutBool() => Explode(true);
 
 
     public void SetCanHit(bool _state) => canHit = _state;

@@ -308,7 +308,7 @@ MonoBehaviour:
   fruitData: {fileID: 11400000, guid: ea003670eed99994e9320efa5cd04435, type: 2}
   isBigBulb: 0
   bigBulbHitNeeded: 5
-  minItemsInBigBulb: 1
+  minItemsInBigBulb: 7
   maxItemsInBigBulb: 10
   minItemsInBulb: 1
   maxItemsInBulb: 3

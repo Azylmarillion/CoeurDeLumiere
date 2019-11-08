@@ -588,11 +588,11 @@ public class PAF_Fruit : MonoBehaviour
         // Push the touched fruit if one, or stun a player if hit one
         PAF_Fruit _fruit = _collider.GetComponent<PAF_Fruit>();
         if (_fruit) _fruit.AddForce(flatVelocity);
-        else if (velocity.magnitude > 10f)
+        /*else if (velocity.magnitude > 10f)
         {
             PAF_Player _player = _collider.GetComponent<PAF_Player>();
             if (_player && !_player.Equals(pointsOwner)) _player.Stun(transform.position);
-        }
+        }*/
     }
 
     /// <summary>
@@ -719,24 +719,6 @@ public class PAF_Fruit : MonoBehaviour
 
             Gizmos.DrawSphere(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity * Time.fixedDeltaTime) + (flatVelocity.normalized * collider.bounds.extents.x), .1f);
             Gizmos.DrawLine(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity * Time.fixedDeltaTime) + (flatVelocity.normalized * collider.bounds.extents.x));
-        }
-
-        Gizmos.color = Color.green;
-
-        Vector3 _p0 = transform.position;
-        Vector3 _p2 = FindObjectOfType<PAF_Flower>().MouthTransform.position;
-        Vector3 _p1 = _p0 + (flatVelocity.normalized * ((_p2 - _p0).magnitude / 1.25f) * (1 + (flatVelocity.magnitude  * Time.fixedDeltaTime * .5f)));
-
-        Vector3[] _positions = new Vector3[16];
-        _positions[0] = _p0;
-        _positions[15] = _p2;
-
-        for (int _i = 1; _i < 15; _i++)
-        {
-            float _t = _i / 15f;
-            _positions[_i] = (Mathf.Pow(1f - _t, 2f) * _p0) + (2f * (1f - _t) * _t * _p1) + ((_t * _t) * _p2);
-
-            Gizmos.DrawLine(_positions[_i], _positions[_i - 1]);
         }
     }
     #endif

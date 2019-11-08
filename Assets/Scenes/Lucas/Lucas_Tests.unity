@@ -772,11 +772,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Fruit_01
       objectReference: {fileID: 0}
-    - target: {fileID: 4412692343351390022, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4412692343351390074, guid: 5af142f6eb446074f8473ed6198ad5c4,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -845,11 +840,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Fruit_02
-      objectReference: {fileID: 0}
-    - target: {fileID: 5689821916381751311, guid: d07a64600beadac4a915316315375343,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5689821916381751299, guid: d07a64600beadac4a915316315375343,
         type: 3}

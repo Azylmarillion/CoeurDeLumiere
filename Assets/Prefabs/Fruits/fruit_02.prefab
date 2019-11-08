@@ -350,13 +350,14 @@ MonoBehaviour:
   doFreezeXRotation: 1
   isFalling: 0
   weight: 1
+  autoAimCurveIndex: 0
   fruitScore: 100
   whatIsGround:
     serializedVersion: 2
     m_Bits: 1024
   whatCollide:
     serializedVersion: 2
-    m_Bits: 6912
+    m_Bits: 6400
   pointsOwner: {fileID: 0}
   velocity: {x: 0, y: 0, z: 0}
   audioSource: {fileID: 5689821916381751310}

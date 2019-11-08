@@ -19,6 +19,8 @@ public class PAF_Player : MonoBehaviour
     [SerializeField, Range(0, 5)] float fallTime = .5f;
     [SerializeField, Range(.1f, 1)] float fallDetectionSize = .5f;
 
+    private const float colliderRadius = .5f;
+
     [SerializeField] private AnimationCurve accelerationCurve = null;
     private float accelerationTimer = 0; 
     [SerializeField, Range(0, 10)] float playerSpeed = 5;
@@ -51,8 +53,14 @@ public class PAF_Player : MonoBehaviour
 
     private void Start()
     {
+        PAF_GameManager.OnGameEnd += EndGame;
         playerAnimator.Init(playerSpeed);
         //InvokeRepeating("StepSounds", 1, .5f); // Gaffe à  ça! Autant le mettre dans l'anim! 
+    }
+
+    private void OnDestroy()
+    {
+        PAF_GameManager.OnGameEnd -= EndGame;
     }
 
     private void Update()
@@ -81,7 +89,7 @@ public class PAF_Player : MonoBehaviour
 
     void Move()
     {
-        if (!IsReady) return;
+        if (!IsReady || falling) return;
         if (!stunned)
         {
             Vector3 _dir = new Vector3(Input.GetAxis(isPlayerOne ? "Horizontal1" : "Horizontal2"), 0, Input.GetAxis(isPlayerOne ? "Vertical1" : "Vertical2"));
@@ -91,23 +99,42 @@ public class PAF_Player : MonoBehaviour
                 accelerationTimer = 0; 
                 return;
             }
+            transform.rotation = Quaternion.LookRotation(_dir);
             Vector3 _nextPos = transform.position + _dir;
-            _nextPos.y = moveArea.bounds.center.y;
-            if (moveArea.bounds.Contains(_nextPos) &&
+            /*if (moveArea.bounds.Contains(_nextPos) &&
                 !Physics.Raycast(transform.position, transform.forward, 1.5f, obstacleLayer) &&
                 !Physics.Raycast(transform.position, transform.forward + transform.right * .5f, 1.5f, obstacleLayer) &&
-                !Physics.Raycast(transform.position, transform.forward + -transform.right * .5f, 1.5f, obstacleLayer) &&
-                !falling)
+                !Physics.Raycast(transform.position, transform.forward + -transform.right * .5f, 1.5f, obstacleLayer)
+                && !falling)*/
+            //{
+            accelerationTimer += Time.deltaTime;
+            accelerationTimer = Mathf.Clamp(accelerationTimer, 0, 1);
+            Vector3 _movement = _dir * Time.deltaTime * playerSpeed * 3 * accelerationCurve.Evaluate(accelerationTimer);
+            //transform.position = Vector3.MoveTowards(transform.position, _nextPos, Time.deltaTime * (playerSpeed * 3 * accelerationCurve.Evaluate(accelerationTimer)));
+
+            RaycastHit _hit;
+            Vector3[] _from = new Vector3[] { transform.position, new Vector3(transform.position.x, transform.position.y, transform.position.z + (transform.forward.z * colliderRadius)), new Vector3(transform.position.x, transform.position.y, transform.position.z - (transform.forward.z * colliderRadius)) };
+            for (int _i = 0; _i < 3; _i++)
             {
-                accelerationTimer += Time.deltaTime;
-                accelerationTimer = Mathf.Clamp(accelerationTimer, 0, 1); 
-                _nextPos.y = transform.position.y;
-                transform.position = Vector3.MoveTowards(transform.position, _nextPos, Time.deltaTime * (playerSpeed * 3 * accelerationCurve.Evaluate(accelerationTimer)));
+                if (Physics.Raycast(_from[_i], new Vector3(transform.forward.x, 0, 0), out _hit, Mathf.Abs(_movement.x) + colliderRadius, obstacleLayer))
+                {
+                    _movement.x = (_hit.distance - colliderRadius) * Mathf.Sign(_movement.x);
+                }
             }
+            _from = new Vector3[] { transform.position, new Vector3(transform.position.x + (transform.forward.x * colliderRadius), transform.position.y, transform.position.z), new Vector3(transform.position.x - (transform.forward.z * colliderRadius), transform.position.y, transform.position.z) };
+            for (int _i = 0; _i < 3; _i++)
+            {
+                if (Physics.Raycast(_from[_i], new Vector3(0, 0, transform.forward.z), out _hit, Mathf.Abs(_movement.z) + colliderRadius, obstacleLayer))
+                {
+                    _movement.z = (_hit.distance - colliderRadius) * Mathf.Sign(_movement.z);
+                }
+            }
+            transform.position += _movement;
+            //}
             if (!Physics.Raycast(transform.position + (transform.forward + transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) &&
                 !Physics.Raycast(transform.position + (transform.forward - transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) &&
                 !Physics.Raycast(transform.position - (transform.forward + transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) &&
-                !Physics.Raycast(transform.position - (transform.forward - transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) && !falling)
+                !Physics.Raycast(transform.position - (transform.forward - transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) /*&& !falling*/)
             {
                 falling = true;
                 AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetFallPlayer();
@@ -115,15 +142,15 @@ public class PAF_Player : MonoBehaviour
                 //PAF_SoundManager.I.PlayFallSound(transform.position);
                 playerAnimator.SetFalling();
                 playerAnimator.SetMoving(false);
-                transform.rotation = Quaternion.LookRotation(_dir);
+                //transform.rotation = Quaternion.LookRotation(_dir);
                 return;
             }
-            transform.rotation = Quaternion.LookRotation(_dir);
+            //transform.rotation = Quaternion.LookRotation(_dir);
         }
         else idle = true;
-        if(!falling) playerAnimator.SetMoving(idle);
+        /*if(!falling)*/ playerAnimator.SetMoving(idle);
     }
-   
+
     void Interact()
     {
         if (!canAttack || !IsReady) return; 
@@ -211,5 +238,18 @@ public class PAF_Player : MonoBehaviour
         Vector3 _spawnPos = new Vector3(Random.Range(_dalle.bounds.min.x, _dalle.bounds.max.x), 0, Random.Range(_dalle.bounds.min.z, _dalle.bounds.max.z));
         transform.position = _spawnPos;
         falling = false;
+    }
+
+    public void EndGame(int _one, int _two)
+    {
+        playerAnimator.SetMoving(true); 
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawSphere(transform.position + (transform.forward * .5f), .25f);
+        Gizmos.DrawSphere(transform.position + ((transform.forward * .5f) + transform.right * .5f), .25f);
+        Gizmos.DrawSphere(transform.position + ((transform.forward * .5f) - transform.right * .5f), .25f);
     }
 }

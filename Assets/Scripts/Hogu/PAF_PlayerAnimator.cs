@@ -37,7 +37,4 @@ public class PAF_PlayerAnimator : MonoBehaviour
         if (!playerAnimator) return;
         playerAnimator.SetTrigger("fall");
     }
-
-
-
 }

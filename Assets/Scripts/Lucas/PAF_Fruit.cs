@@ -448,11 +448,16 @@ public class PAF_Fruit : MonoBehaviour
             // Verticality calculs
             if (velocity.y != 0)
             {
-                renderer.position = new Vector3(renderer.position.x, renderer.position.y + (velocity.y * Time.fixedDeltaTime), renderer.position.z);
+                renderer.position = new Vector3(renderer.position.x, renderer.position.y + (velocity.y * Time.fixedDeltaTime * 5), renderer.position.z);
 
                 if (velocity.y > 0)
                 {
-
+                    if (renderer.position.y > 10f)
+                    {
+                        // This is the sky
+                        velocity.y *= -.75f;
+                        continue;
+                    }
                     _newScale = renderer.localScale * (1 + (velocity.y / 100));
                     if (velocity.y < .5f) velocity.y *= .875f;
                     else velocity.y *= .925f;
@@ -461,6 +466,12 @@ public class PAF_Fruit : MonoBehaviour
                 }
                 else
                 {
+                    if (renderer.position.y < -7.5f)
+                    {
+                        // Instantiate plouf FX
+                        Destroy(gameObject);
+                        yield break;
+                    }
                     if (!isFalling && (renderer.position.y < originalPivotHeight))
                     {
                         renderer.position = new Vector3(renderer.position.x, renderer.position.y + (originalPivotHeight - renderer.position.y), renderer.position.z);
@@ -572,14 +583,16 @@ public class PAF_Fruit : MonoBehaviour
     /// <param name="_collider"></param>
     private void InteractWith(Collider _collider)
     {
+        if (!_collider) return;
+
         // Push the touched fruit if one, or stun a player if hit one
         PAF_Fruit _fruit = _collider.GetComponent<PAF_Fruit>();
-        if (_fruit) _fruit.AddForce(velocity);
-        else if (velocity.magnitude > .5f)
+        if (_fruit) _fruit.AddForce(flatVelocity);
+        /*else if (velocity.magnitude > 10f)
         {
             PAF_Player _player = _collider.GetComponent<PAF_Player>();
-            //if (_player && !_player.Equals(pointsOwner)) _player.Stun(transform.position);
-        }
+            if (_player && !_player.Equals(pointsOwner)) _player.Stun(transform.position);
+        }*/
     }
 
     /// <summary>

@@ -310,7 +310,7 @@ MonoBehaviour:
     m_Bits: 1024
   whatCollide:
     serializedVersion: 2
-    m_Bits: 6912
+    m_Bits: 6400
   pointsOwner: {fileID: 0}
   velocity: {x: 0, y: 0, z: 0}
   audioSource: {fileID: 3597960768558247008}

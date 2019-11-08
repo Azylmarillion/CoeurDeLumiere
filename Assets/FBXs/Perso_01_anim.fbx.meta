@@ -5,19 +5,22 @@ ModelImporter:
   internalIDToNameTable:
   - first:
       74: 1827226128182048838
-    second: Run n
+    second: Run
   - first:
       74: -3100369314251171874
-    second: Idle n
+    second: Idle
   - first:
       74: 6720303635017113406
-    second: Attack n
+    second: Attack
   - first:
       74: 6707165195522328632
-    second: Hit 1 n
+    second: Hit 1
   - first:
       74: -123713421209989393
-    second: Hit 2 n
+    second: Hit 2
+  - first:
+      74: -1500354584072067147
+    second: Falling
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -62,7 +65,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Run n
+      name: Run
       takeName: Take 001
       internalID: 0
       firstFrame: 1
@@ -105,7 +108,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Idle n
+      name: Idle
       takeName: Take 001
       internalID: 0
       firstFrame: 14
@@ -134,7 +137,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Attack n
+      name: Attack
       takeName: Take 001
       internalID: 0
       firstFrame: 51
@@ -163,7 +166,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Hit 1 n
+      name: Hit 1
       takeName: Take 001
       internalID: 0
       firstFrame: 60
@@ -192,11 +195,40 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Hit 2 n
+      name: Hit 2
       takeName: Take 001
       internalID: 0
       firstFrame: 70
       lastFrame: 90
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Falling
+      takeName: Take 001
+      internalID: 0
+      firstFrame: 91
+      lastFrame: 104
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

@@ -3120,13 +3120,19 @@ PrefabInstance:
     - target: {fileID: 4779515518184433002, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4779515516688734041, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: m_Color.a
-      value: 0.4117647
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4779515516688734041, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 5b862f71271c7e44db9a2dd20f6e75bf,
+        type: 3}
     - target: {fileID: 4779515516406342827, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: m_fontAsset

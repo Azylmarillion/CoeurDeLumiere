@@ -66,7 +66,8 @@ public class PAF_GameManager : MonoBehaviour
 
     [SerializeField]private bool m_playerOneIsReady = false;
     [SerializeField]private bool m_playerTwoIsReady = false;
-    private bool m_gameIsReadyToStart = false; 
+    private bool m_gameIsReadyToStart = false;
+    private bool m_gameIsOver = false; 
     public bool PlayersAreReadyToStart { get { return m_playerOneIsReady && m_playerTwoIsReady;  } }
     public bool GameIsReadyToStart { get { return m_playerOneIsReady && m_playerTwoIsReady && m_gameIsReadyToStart; } }
 
@@ -112,10 +113,14 @@ public class PAF_GameManager : MonoBehaviour
     /// <returns></returns>
     private IEnumerator StartVideoPlayer()
     {
-        m_videoPlayer.Play();
-        while (m_videoPlayer.isPlaying)
+        yield return new WaitForSeconds(1.0f); 
+        if (m_videoPlayer)
         {
-            yield return new WaitForSeconds(.1f); 
+            m_videoPlayer.Play();
+            while (m_videoPlayer.isPlaying)
+            {
+                yield return new WaitForSeconds(.1f);
+            }
         }
         OnEndCinematic?.Invoke(); 
     }
@@ -140,11 +145,10 @@ public class PAF_GameManager : MonoBehaviour
             yield return new WaitForSeconds(1.0f);
             m_currentGameTime++;
         }
-        Debug.Log("Out");
         OnGameEnd?.Invoke(m_playerOneScore, m_playerTwoScore);
         m_playerOneIsReady = false;
         m_playerTwoIsReady = false;
-        Debug.Log("End");
+        m_gameIsOver = true; 
     }
 
     /// <summary>
@@ -171,6 +175,7 @@ public class PAF_GameManager : MonoBehaviour
     /// <param name="_isPlayerOne"></param>
     public void SetPlayerReady(bool _isPlayerOne)
     {
+        if (m_gameIsOver) return; 
         if (_isPlayerOne)
         {
             m_playerOneIsReady = true;
@@ -183,13 +188,8 @@ public class PAF_GameManager : MonoBehaviour
         OnPlayerReady?.Invoke(_isPlayerOne); 
 
         if(PlayersAreReadyToStart)
-        {
-            if(m_videoPlayer)
-            {
-                StartCoroutine(StartVideoPlayer());
-                return; 
-            }
-            OnEndCinematic?.Invoke();
+        { 
+            StartCoroutine(StartVideoPlayer());
         }
     }
 

@@ -7,7 +7,6 @@ public class PAF_Fruit : MonoBehaviour
 {
     /*
      * TO DO :
-     *      • Auto-guider vers la plante
      *      • Améliorer l'accélération / décélération
     */
 
@@ -203,7 +202,7 @@ public class PAF_Fruit : MonoBehaviour
         if (collisionPos.Count > 15) collisionPos.RemoveAt(0);
         collisionPos.Add(collider.bounds.center);
     }
-#endif
+    #endif
 
     /// <summary>
     /// Adds a force to the fruit, making it go in this direction.
@@ -216,7 +215,7 @@ public class PAF_Fruit : MonoBehaviour
         // Auto aim closest flower in near enough
         foreach (PAF_Flower _flower in PAF_Flower.Flowers)
         {
-            if ((_flower.MouthTransform.position - transform.position).magnitude < 10)
+            if ((Vector3.Angle(collider.bounds.center + flatVelocity, collider.bounds.center + (_flower.MouthTransform.position - collider.bounds.center)) < 45) && ((_flower.MouthTransform.position - transform.position).magnitude < 10))
             {
                 TargetPosition(_flower.MouthTransform.position);
                 break;
@@ -238,9 +237,8 @@ public class PAF_Fruit : MonoBehaviour
         // Auto aim closest flower in near enough
         foreach (PAF_Flower _flower in PAF_Flower.Flowers)
         {
-            if ((_flower.MouthTransform.position - transform.position).magnitude < 10)
+            if ((Vector3.Angle(collider.bounds.center + flatVelocity, collider.bounds.center + (_flower.MouthTransform.position - collider.bounds.center)) < 35) && ((_flower.MouthTransform.position - transform.position).magnitude < 10))
             {
-                Debug.Log("Target");
                 TargetPosition(_flower.MouthTransform.position);
                 break;
             }
@@ -267,41 +265,44 @@ public class PAF_Fruit : MonoBehaviour
         {
             yield return new WaitForFixedUpdate();
 
-            // If following a curve, recalculate path
-            if (autoAimCurveIndex > 0)
-            {
-                //Debug.Log("In => " + autoAimCurveIndex);
-                float _distance = flatVelocity.magnitude * Time.fixedDeltaTime;
-                float _length;
-                Vector3 _lastPos = collider.bounds.center;
-                while (autoAimCurveIndex > 0)
-                {
-                    _length = (autoAimCurve[autoAimCurveIndex] - _lastPos).magnitude;
-                    if (_length < _distance)
-                    {
-                        if (autoAimCurveIndex < 15)
-                        {
-                            _distance -= _length;
-                            _lastPos = autoAimCurve[autoAimCurveIndex];
-
-                            autoAimCurveIndex++;
-                        }
-                        else autoAimCurveIndex = 0;
-                    }
-                    else break;
-                }
-                
-                if (autoAimCurveIndex > 0)
-                {
-                    // Set new velocity
-                    Vector3 _newVelocity = (autoAimCurve[autoAimCurveIndex] - collider.bounds.center).normalized * flatVelocity.magnitude;
-                    //velocity = new Vector3(_newVelocity.x, velocity.y, _newVelocity.z);
-                }
-            }
             _flatVelocity = flatVelocity * Time.fixedDeltaTime;
 
             if (_flatVelocity != Vector3.zero)
             {
+                // If following a curve, recalculate path
+                if (autoAimCurveIndex > 0)
+                {
+                    //Debug.Log("Curve => " + autoAimCurveIndex);
+                    float _force = _flatVelocity.magnitude;
+                    float _distance;
+                    Vector3 _lastPos = collider.bounds.center;
+                    while (autoAimCurveIndex > 0)
+                    {
+                        _distance = (autoAimCurve[autoAimCurveIndex] - _lastPos).magnitude;
+                        if (_distance < _force)
+                        {
+                            if (autoAimCurveIndex < 15)
+                            {
+                                _force -= _distance;
+                                _lastPos = autoAimCurve[autoAimCurveIndex];
+
+                                autoAimCurveIndex++;
+                            }
+                            else autoAimCurveIndex = 0;
+                        }
+                        else break;
+                    }
+
+                    if (autoAimCurveIndex > 0)
+                    {
+                        // Set new velocity
+                        Vector3 _newVelocity = (autoAimCurve[autoAimCurveIndex] - collider.bounds.center).normalized * flatVelocity.magnitude;
+                        velocity = new Vector3(_newVelocity.x, velocity.y, _newVelocity.z);
+
+                        _flatVelocity = _newVelocity * Time.fixedDeltaTime;
+                    }
+                }
+
                 // Calculate normal & raycasts position
                 _nFlatVelocity = _flatVelocity.normalized;
                 _normal = new Vector3(_nFlatVelocity.z, 0, -_nFlatVelocity.x);
@@ -539,6 +540,7 @@ public class PAF_Fruit : MonoBehaviour
     private void DoomFruit()
     {
         collider.enabled = false;
+        autoAimCurveIndex = 0;
         isDoomed = true;
     }
 
@@ -563,8 +565,8 @@ public class PAF_Fruit : MonoBehaviour
         {
             Vector3 _newVelocity = _toFollow.position - transform.position;
             float _magnitude = flatVelocity.magnitude;
-            if (_magnitude > 1) _magnitude *= .9f;
-            else if ((_magnitude < .2f) && (_newVelocity.magnitude > .1f)) _magnitude = .2f;
+            if (_magnitude > 25) _magnitude *= .975f;
+            else if ((_magnitude < 5f) && (_newVelocity.magnitude > .25f)) _magnitude = 5f;
 
             _newVelocity = _newVelocity.normalized * _magnitude;
 
@@ -596,7 +598,9 @@ public class PAF_Fruit : MonoBehaviour
     /// <param name="_toFollow">Transform of the plant mouth to follow.</param>
     public void StartToEat(Transform _toFollow)
     {
-        isDoomed = true;
+        if (isDoomed) return;
+
+        DoomFruit();
         StartCoroutine(FollowTransform(_toFollow));
     }
 

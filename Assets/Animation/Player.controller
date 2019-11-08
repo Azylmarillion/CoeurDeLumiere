@@ -67,7 +67,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.25
+  m_TransitionDuration: 0
   m_TransitionOffset: 0
   m_ExitTime: 0.75
   m_HasExitTime: 0
@@ -206,7 +206,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.25
+  m_TransitionDuration: 0
   m_TransitionOffset: 0
   m_ExitTime: 0.8333334
   m_HasExitTime: 1
@@ -434,7 +434,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Move
-  m_Speed: 0.14
+  m_Speed: 0.25
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -2658207668183585838}
@@ -476,7 +476,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 4854180139978558704, guid: 42aef5f8a0219ca4ea03ccbd4bc0110f,
+  m_Motion: {fileID: 6720303635017113406, guid: 2935c415878000e42a5b450e188feda2,
     type: 3}
   m_Tag: 
   m_SpeedParameter: 
@@ -609,6 +609,30 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  m_scaleCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.5
+      inSlope: 1.8244966
+      outSlope: 1.8244966
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.0377193
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.04824561
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1102 &7252596520450978157
 AnimatorState:
   serializedVersion: 5
@@ -631,7 +655,8 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 7093575097fc2ff43bf4c543444d616c, type: 2}
+  m_Motion: {fileID: -1500354584072067147, guid: 2935c415878000e42a5b450e188feda2,
+    type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

@@ -10,7 +10,8 @@ public class PAF_FallBehaviour : StateMachineBehaviour
     private Vector3 m_basePosition;
 
     [SerializeField] private AnimationCurve m_fallingCurve = null;
-    [SerializeField] private AnimationCurve m_zCurve = null; 
+    [SerializeField] private AnimationCurve m_zCurve = null;
+    [SerializeField] private AnimationCurve m_scaleCurve = null;
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -30,7 +31,7 @@ public class PAF_FallBehaviour : StateMachineBehaviour
         if (!m_parentTransform) return;
         m_time += Time.deltaTime;
         m_parentTransform.transform.position = new Vector3(m_basePosition.x, Mathf.Lerp(m_basePosition.y, m_targetedPosition.y, m_fallingCurve.Evaluate(m_time)), Mathf.Lerp(m_basePosition.z, m_targetedPosition.z, m_zCurve.Evaluate(m_time)));
-        animator.transform.localScale = Vector3.Lerp(Vector3.one, Vector3.one * .5f, m_time); 
+        animator.transform.localScale = Vector3.Lerp(Vector3.one, Vector3.one * .5f, m_scaleCurve.Evaluate(m_time)); 
     }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state

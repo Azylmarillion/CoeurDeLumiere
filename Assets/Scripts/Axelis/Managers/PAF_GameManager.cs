@@ -140,9 +140,11 @@ public class PAF_GameManager : MonoBehaviour
             yield return new WaitForSeconds(1.0f);
             m_currentGameTime++;
         }
+        Debug.Log("Out");
         OnGameEnd?.Invoke(m_playerOneScore, m_playerTwoScore);
         m_playerOneIsReady = false;
-        m_playerTwoIsReady = false; 
+        m_playerTwoIsReady = false;
+        Debug.Log("End");
     }
 
     /// <summary>

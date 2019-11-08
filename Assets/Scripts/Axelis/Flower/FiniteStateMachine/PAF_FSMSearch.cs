@@ -13,16 +13,21 @@ public class PAF_FSMSearch : StateMachineBehaviour
     {
         if (!m_owner) m_owner = animator.GetComponent<PAF_Flower>();
         if (!m_owner) return;
+        if (m_behaviourCoroutine != null)
+        {
+            m_owner.StopCoroutine(m_owner.GetClosestFruit());
+            m_behaviourCoroutine = null;
+        }
         m_behaviourCoroutine = m_owner.StartCoroutine(m_owner.GetClosestFruit()); 
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (m_behaviourCoroutine == null && !m_owner.HasFruitToFollow)
-        {
-            animator.SetTrigger("ResetSearch");
-        }
+        //if (m_behaviourCoroutine == null && !m_owner.HasFruitToFollow)
+        //{
+        //    animator.SetTrigger("ResetSearch");
+        //}
     }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state

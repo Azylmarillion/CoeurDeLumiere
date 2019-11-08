@@ -166,7 +166,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8687980502086057991}
   m_Layer: 0
-  m_Name: Pivot
+  m_Name: Renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

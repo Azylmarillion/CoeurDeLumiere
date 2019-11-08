@@ -113,16 +113,26 @@ public class PAF_Flower : MonoBehaviour
         while (m_followedFruit == null)
         {
             yield return null;
-            if (PAF_Fruit.ArenaFruits.Length == 0) continue;
+            if (PAF_Fruit.ArenaFruits.Length == 0)
+            {
+                //Debug.Log("Zero");
+                continue;
+            }
             PAF_Fruit[] _fruits = PAF_Fruit.ArenaFruits.ToList().Where(f => Vector3.Distance(transform.position, f.transform.position) <= m_detectionRange
                                                                          && Vector3.Angle(transform.forward, f.transform.position - transform.position) < (m_fieldOfView / 2)).ToArray();
-            if (_fruits.Length == 0) continue;
+            if (_fruits.Length == 0)
+            {
+                //Debug.Log("Too Far");
+                continue;
+            }
             m_followedFruit = _fruits.OrderBy(f => Vector3.Distance(transform.position, f.transform.position)).FirstOrDefault(); 
             if(Vector3.Distance(transform.position, m_followedFruit.transform.position) <= m_eatingRange)
             {
                 EatFruit();
                 yield break; 
             }
+
+            //Debug.Log("Nik");
         }
         m_currentState = FlowerState.Following;
         m_animator.SetInteger("BehaviourState", (int)m_currentState);
@@ -135,7 +145,7 @@ public class PAF_Flower : MonoBehaviour
     /// </summary>
     public void EatFruit()
     {
-        if (m_followedFruit)
+        if (m_followedFruit != null)
         {
             m_followedFruit.StartToEat(m_mouthTransform);
 
@@ -144,8 +154,7 @@ public class PAF_Flower : MonoBehaviour
             return; 
         }
         //RESET THE STATE
-        m_currentState = FlowerState.Searching;
-        m_animator.SetInteger("BehaviourState", (int)m_currentState);
+        ResetState(); 
     }
 
     /// <summary>
@@ -153,7 +162,7 @@ public class PAF_Flower : MonoBehaviour
     /// </summary>
     public void Chomp()
     {
-        if(m_followedFruit)
+        if(m_followedFruit != null)
         {
             // EAT THE FRUIT
             m_followedFruit.Eat();
@@ -165,8 +174,7 @@ public class PAF_Flower : MonoBehaviour
             // CALL VFX AND SOUND HERE
         }
         //RESET THE STATE
-        m_currentState = FlowerState.Searching;
-        m_animator.SetInteger("BehaviourState", (int)m_currentState);
+        ResetState(); 
     }
 
     /// <summary>
@@ -175,6 +183,7 @@ public class PAF_Flower : MonoBehaviour
     public void ResetState()
     {
         m_currentState = FlowerState.Searching;
+        m_animator.SetTrigger("ResetSearch");
         m_animator.SetInteger("BehaviourState", (int)m_currentState);
     }
     #endregion

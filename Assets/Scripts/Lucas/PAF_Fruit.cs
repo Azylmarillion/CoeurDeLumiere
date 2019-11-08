@@ -211,16 +211,6 @@ public class PAF_Fruit : MonoBehaviour
     public void AddForce(Vector3 _force)
     {
         Velocity += _force;
-
-        // Auto aim closest flower in near enough
-        foreach (PAF_Flower _flower in PAF_Flower.Flowers)
-        {
-            if ((Vector3.Angle(collider.bounds.center + flatVelocity, collider.bounds.center + (_flower.MouthTransform.position - collider.bounds.center)) < 45) && ((_flower.MouthTransform.position - transform.position).magnitude < 10))
-            {
-                TargetPosition(_flower.MouthTransform.position);
-                break;
-            }
-        }
     }
 
     /// <summary>
@@ -588,7 +578,7 @@ public class PAF_Fruit : MonoBehaviour
         else if (velocity.magnitude > .5f)
         {
             PAF_Player _player = _collider.GetComponent<PAF_Player>();
-            if (_player && !_player.Equals(pointsOwner)) _player.Stun(transform.position);
+            //if (_player && !_player.Equals(pointsOwner)) _player.Stun(transform.position);
         }
     }
 

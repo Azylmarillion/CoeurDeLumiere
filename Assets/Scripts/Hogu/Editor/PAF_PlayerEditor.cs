@@ -1,7 +1,7 @@
 ﻿using UnityEngine; 
 using UnityEditor; 
 
-[CustomEditor(typeof(PAF_Player))]
+[CustomEditor(typeof(PAF_Player)), CanEditMultipleObjects]
 public class PAF_PlayerEditor : Editor
 {
 
@@ -20,7 +20,7 @@ public class PAF_PlayerEditor : Editor
     private void OnSceneGUI()
     {
         Handles.color = new Color(1, 0, 1, .25f); 
-        PAF_FlowerEditor.DrawFieldOfView((serializedObject.targetObject as PAF_Player).transform.position, (serializedObject.targetObject as PAF_Player).transform.forward, sightRange.floatValue, fieldOfView.intValue);
-        Handles.DrawSolidDisc((serializedObject.targetObject as PAF_Player).transform.position, Vector3.up, closeRange.floatValue);
+        PAF_FlowerEditor.DrawFieldOfView((target as PAF_Player).transform.position, (target as PAF_Player).transform.forward, sightRange.floatValue, fieldOfView.intValue);
+        Handles.DrawSolidDisc((target as PAF_Player).transform.position, Vector3.up, closeRange.floatValue);
     }
 }

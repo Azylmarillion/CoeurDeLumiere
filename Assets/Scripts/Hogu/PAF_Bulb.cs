@@ -144,7 +144,7 @@ public class PAF_Bulb : MonoBehaviour
                 if (_clip) soundSource.PlayOneShot(_clip);
             }
             PAF_Fruit _fruit = Instantiate(items[Random.Range(0, items.Length)], transform.position, transform.rotation).GetComponent<PAF_Fruit>();
-            Vector3 _force = new Vector3(Random.Range(-50, 50f), Random.Range(.1f, 5f), Random.Range(-50, 50f));
+            Vector3 _force = new Vector3(Random.Range(-5, 5f), Random.Range(.1f, 5f), Random.Range(-5, 5f));
             //_force = Vector3.ClampMagnitude(_force, Random.Range(.1f, 1));
             if (_fruit) _fruit.AddForce(_force);
         }

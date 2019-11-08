@@ -19,6 +19,8 @@ public class PAF_Player : MonoBehaviour
     [SerializeField, Range(0, 5)] float fallTime = .5f;
     [SerializeField, Range(.1f, 1)] float fallDetectionSize = .5f;
 
+    private const float colliderRadius = .5f;
+
     [SerializeField] private AnimationCurve accelerationCurve = null;
     private float accelerationTimer = 0; 
     [SerializeField, Range(0, 10)] float playerSpeed = 5;
@@ -81,7 +83,7 @@ public class PAF_Player : MonoBehaviour
 
     void Move()
     {
-        if (!IsReady) return;
+        if (!IsReady || falling) return;
         if (!stunned)
         {
             Vector3 _dir = new Vector3(Input.GetAxis(isPlayerOne ? "Horizontal1" : "Horizontal2"), 0, Input.GetAxis(isPlayerOne ? "Vertical1" : "Vertical2"));
@@ -91,13 +93,14 @@ public class PAF_Player : MonoBehaviour
                 accelerationTimer = 0; 
                 return;
             }
+            transform.rotation = Quaternion.LookRotation(_dir);
             Vector3 _nextPos = transform.position + _dir;
             _nextPos.y = moveArea.bounds.center.y;
             if (moveArea.bounds.Contains(_nextPos) &&
                 !Physics.Raycast(transform.position, transform.forward, 1.5f, obstacleLayer) &&
                 !Physics.Raycast(transform.position, transform.forward + transform.right * .5f, 1.5f, obstacleLayer) &&
-                !Physics.Raycast(transform.position, transform.forward + -transform.right * .5f, 1.5f, obstacleLayer) &&
-                !falling)
+                !Physics.Raycast(transform.position, transform.forward + -transform.right * .5f, 1.5f, obstacleLayer)
+                /*&& !falling*/)
             {
                 accelerationTimer += Time.deltaTime;
                 accelerationTimer = Mathf.Clamp(accelerationTimer, 0, 1); 
@@ -107,7 +110,7 @@ public class PAF_Player : MonoBehaviour
             if (!Physics.Raycast(transform.position + (transform.forward + transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) &&
                 !Physics.Raycast(transform.position + (transform.forward - transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) &&
                 !Physics.Raycast(transform.position - (transform.forward + transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) &&
-                !Physics.Raycast(transform.position - (transform.forward - transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) && !falling)
+                !Physics.Raycast(transform.position - (transform.forward - transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) /*&& !falling*/)
             {
                 falling = true;
                 AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetFallPlayer();
@@ -115,13 +118,13 @@ public class PAF_Player : MonoBehaviour
                 //PAF_SoundManager.I.PlayFallSound(transform.position);
                 playerAnimator.SetFalling();
                 playerAnimator.SetMoving(false);
-                transform.rotation = Quaternion.LookRotation(_dir);
+                //transform.rotation = Quaternion.LookRotation(_dir);
                 return;
             }
-            transform.rotation = Quaternion.LookRotation(_dir);
+            //transform.rotation = Quaternion.LookRotation(_dir);
         }
         else idle = true;
-        if(!falling) playerAnimator.SetMoving(idle);
+        /*if(!falling)*/ playerAnimator.SetMoving(idle);
     }
    
     void Interact()
@@ -211,5 +214,18 @@ public class PAF_Player : MonoBehaviour
         Vector3 _spawnPos = new Vector3(Random.Range(_dalle.bounds.min.x, _dalle.bounds.max.x), 0, Random.Range(_dalle.bounds.min.z, _dalle.bounds.max.z));
         transform.position = _spawnPos;
         falling = false;
+    }
+
+    public void EndGame()
+    {
+        playerAnimator.SetMoving(true); 
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawSphere(transform.position + (transform.forward * .5f), .25f);
+        Gizmos.DrawSphere(transform.position + ((transform.forward * .5f) + transform.right * .5f), .25f);
+        Gizmos.DrawSphere(transform.position + ((transform.forward * .5f) - transform.right * .5f), .25f);
     }
 }

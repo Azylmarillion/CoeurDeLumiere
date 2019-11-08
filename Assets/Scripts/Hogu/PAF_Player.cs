@@ -13,7 +13,7 @@ public class PAF_Player : MonoBehaviour
     bool idle = false;
     bool falling = false;
     [SerializeField, Range(0, 5)] float attackDelay = .25f;
-    [SerializeField, Range(0, 2)] float attackForce = .5f;
+    [SerializeField, Range(0, 50)] float attackForce = 25;
     [SerializeField, Range(0, 5)] float invulnerableTime = .5f;
     [SerializeField, Range(0, 5)] float stunTime = .5f;
     [SerializeField, Range(0, 5)] float fallTime = .5f;
@@ -201,13 +201,13 @@ public class PAF_Player : MonoBehaviour
     public void Respawn()
     {
         if (!falling) return;
-        if (PAF_DalleManager.I.AllUpDalles.Count <= 0)
+        if (PAF_DalleManager.I.AllRespawnableDalles.Count <= 0)
         {
             transform.position = Vector3.zero;
             falling = false;
             return;
         }
-        MeshCollider _dalle = PAF_DalleManager.I.AllUpDalles[Random.Range(0, PAF_DalleManager.I.AllUpDalles.Count)].GetComponent<MeshCollider>();
+        MeshCollider _dalle = PAF_DalleManager.I.AllRespawnableDalles[Random.Range(0, PAF_DalleManager.I.AllRespawnableDalles.Count)].GetComponent<MeshCollider>();
         Vector3 _spawnPos = new Vector3(Random.Range(_dalle.bounds.min.x, _dalle.bounds.max.x), 0, Random.Range(_dalle.bounds.min.z, _dalle.bounds.max.z));
         transform.position = _spawnPos;
         falling = false;

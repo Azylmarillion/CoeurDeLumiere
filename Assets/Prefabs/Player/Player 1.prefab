@@ -380,8 +380,8 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 0
-      outSlope: 0
+      inSlope: 2
+      outSlope: 2
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.04824561
@@ -390,7 +390,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   playerSpeed: 4
-  sightRange: 3.75
+  sightRange: 4.2
   fieldOfView: 90
   closeRange: 2
   audioPlayer: {fileID: 8338223916140015523}

@@ -71,6 +71,8 @@ public class PAF_UIManager : MonoBehaviour
     [Header("Credits")]
     [SerializeField] private TextMeshProUGUI creditsDialogBox = null;
 
+    [SerializeField] private GameObject creditsAnchor = null;
+
     [SerializeField] private GameObject equalityPresentator = null;
     [SerializeField] private GameObject winnerPresentator = null;
 
@@ -222,6 +224,7 @@ public class PAF_UIManager : MonoBehaviour
             }
         }
 
+        creditsAnchor.SetActive(true);
         Invoke("UpdateCreditsText", 10);
     }
 

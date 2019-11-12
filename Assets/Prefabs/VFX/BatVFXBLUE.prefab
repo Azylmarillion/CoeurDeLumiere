@@ -25,13 +25,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3893279133218620743}
-  m_LocalRotation: {x: 0.024390176, y: -0.6985066, z: 0.11319502, w: 0.70617324}
-  m_LocalPosition: {x: 0.185, y: 0.014, z: 0.07}
+  m_LocalRotation: {x: -0.5885972, y: 0.47130984, z: 0.5131807, w: 0.40995857}
+  m_LocalPosition: {x: -0.886, y: 0.7880002, z: 0.96199995}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3893279133922623263}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 11.104, y: -88.658005, z: 7.3650002}
+  m_LocalEulerAnglesHint: {x: -75.091, y: -122.215004, z: 211.402}
 --- !u!198 &3893279133218620744
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -1361,8 +1361,8 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0.764151, g: 0.28377602, b: 0, a: 1}
-        key1: {r: 1, g: 0.54365414, b: 0, a: 0}
+        key0: {r: 0, g: 0.07179499, b: 1, a: 1}
+        key1: {r: 0, g: 0.29627657, b: 1, a: 0}
         key2: {r: 0, g: 0, b: 0, a: 0}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -1390,8 +1390,8 @@ ParticleSystem:
         m_NumAlphaKeys: 2
       minGradient:
         serializedVersion: 2
-        key0: {r: 1, g: 0.7405458, b: 0, a: 1}
-        key1: {r: 1, g: 0.94640625, b: 0.495283, a: 0}
+        key0: {r: 0, g: 0.45992398, b: 1, a: 1}
+        key1: {r: 0, g: 0.8805101, b: 1, a: 0}
         key2: {r: 0, g: 0, b: 0, a: 0}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -4821,7 +4821,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3893279133922623263}
   m_Layer: 0
-  m_Name: BatVFX
+  m_Name: BatVFXBLUE
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

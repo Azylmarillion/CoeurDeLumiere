@@ -64,6 +64,7 @@
                 return (col * _Color) * (light + unity_AmbientSky);
             }
             ENDCG
-        }
-    }
+        }        
+    }    
+    Fallback "Diffuse"
 }

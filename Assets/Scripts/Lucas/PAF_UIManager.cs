@@ -67,6 +67,16 @@ public class PAF_UIManager : MonoBehaviour
 
     }
     [SerializeField] private Slider m_volumeSlider = null;
+
+    [Header("Credits")]
+    [SerializeField] private TextMeshProUGUI creditsDialogBox = null;
+
+    [SerializeField] private GameObject creditsAnchor = null;
+
+    [SerializeField] private GameObject equalityPresentator = null;
+    [SerializeField] private GameObject winnerPresentator = null;
+
+    [SerializeField] private GameObject newRecordFeedback = null;
     #endregion
 
     #region Methods
@@ -183,18 +193,44 @@ public class PAF_UIManager : MonoBehaviour
     private void DisplayEndMenu(int _playerOneScore, int _playerTwoScore)
     {
         int _diff = _playerOneScore - _playerTwoScore; 
-        if(_diff > 0)
+        if (_diff == 0)
         {
-            // P1 Gagne
-        }
-        else if(_diff < 0)
-        {
-            // P2 Gagne
+            //Egalité
+            creditsDialogBox.text = "Egalité...";
+            equalityPresentator.SetActive(true);
         }
         else
         {
-            //Egalité
+            string _text = string.Empty;
+            int _highScore = 0;
+            if (_diff > 0)
+            {
+                // P1 Gagne
+                _text = "ROUGE";
+                _highScore = _playerOneScore;
+            }
+            else
+            {
+                // P2 Gagne
+                _text = "BLEU";
+                _highScore = _playerTwoScore;
+            }
+            creditsDialogBox.text = _text + " gagne !!";
+            winnerPresentator.SetActive(true);
+
+            if (_highScore >= PAF_GameManager.HighScore)
+            {
+                newRecordFeedback.SetActive(true);
+            }
         }
+
+        creditsAnchor.SetActive(true);
+        Invoke("UpdateCreditsText", 10);
+    }
+
+    void UpdateCreditsText()
+    {
+        creditsDialogBox.text = "Remerciements :";
     }
     #endregion
 

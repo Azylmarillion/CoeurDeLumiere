@@ -1361,8 +1361,8 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0.764151, g: 0.28377602, b: 0, a: 1}
-        key1: {r: 1, g: 0.54365414, b: 0, a: 0}
+        key0: {r: 0.7647059, g: 0.17653786, b: 0, a: 1}
+        key1: {r: 1, g: 0.15842558, b: 0, a: 0}
         key2: {r: 0, g: 0, b: 0, a: 0}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -1390,8 +1390,8 @@ ParticleSystem:
         m_NumAlphaKeys: 2
       minGradient:
         serializedVersion: 2
-        key0: {r: 1, g: 0.7405458, b: 0, a: 1}
-        key1: {r: 1, g: 0.94640625, b: 0.495283, a: 0}
+        key0: {r: 0.754717, g: 0, b: 0.01109897, a: 1}
+        key1: {r: 1, g: 0.04651168, b: 0, a: 0}
         key2: {r: 0, g: 0, b: 0, a: 0}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -4821,7 +4821,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3893279133922623263}
   m_Layer: 0
-  m_Name: BatVFX
+  m_Name: BatVFXRED
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

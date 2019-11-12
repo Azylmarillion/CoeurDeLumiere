@@ -31,7 +31,7 @@ public class PAF_Dalle : MonoBehaviour
         renderer.enabled = false;
         collider.enabled = false;
         AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetDalleFalling();
-        if (_clip) audioSource.PlayOneShot(_clip);
+        if (_clip) audioSource.PlayOneShot(_clip, .7f);
         Fell = true;
     }
 

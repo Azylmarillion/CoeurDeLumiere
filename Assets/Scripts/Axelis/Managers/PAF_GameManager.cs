@@ -98,9 +98,18 @@ public class PAF_GameManager : MonoBehaviour
     [Header("Video")]
     [SerializeField] private UnityEngine.Video.VideoPlayer m_videoPlayer = null;
     [SerializeField] private PAF_SoundData m_soundDatas = null;
+    [SerializeField] private PAF_VFXData m_vfxDatas = null;
+
     public PAF_SoundData SoundDatas
     {
         get { return m_soundDatas;  }
+    }
+    public PAF_VFXData VFXDatas
+    {
+        get
+        {
+            return m_vfxDatas; 
+        }
     }
     #endregion
 

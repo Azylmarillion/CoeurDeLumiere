@@ -55,7 +55,6 @@ public class PAF_Player : MonoBehaviour
     {
         PAF_GameManager.OnGameEnd += EndGame;
         playerAnimator.Init(playerSpeed);
-        //InvokeRepeating("StepSounds", 1, .5f); // Gaffe à  ça! Autant le mettre dans l'anim! 
     }
 
     private void OnDestroy()
@@ -100,17 +99,9 @@ public class PAF_Player : MonoBehaviour
                 return;
             }
             transform.rotation = Quaternion.LookRotation(_dir);
-            Vector3 _nextPos = transform.position + _dir;
-            /*if (moveArea.bounds.Contains(_nextPos) &&
-                !Physics.Raycast(transform.position, transform.forward, 1.5f, obstacleLayer) &&
-                !Physics.Raycast(transform.position, transform.forward + transform.right * .5f, 1.5f, obstacleLayer) &&
-                !Physics.Raycast(transform.position, transform.forward + -transform.right * .5f, 1.5f, obstacleLayer)
-                && !falling)*/
-            //{
             accelerationTimer += Time.deltaTime;
             accelerationTimer = Mathf.Clamp(accelerationTimer, 0, 1);
             Vector3 _movement = _dir * Time.deltaTime * playerSpeed * 3 * accelerationCurve.Evaluate(accelerationTimer);
-            //transform.position = Vector3.MoveTowards(transform.position, _nextPos, Time.deltaTime * (playerSpeed * 3 * accelerationCurve.Evaluate(accelerationTimer)));
 
             RaycastHit _hit;
             Vector3[] _from = new Vector3[] { transform.position, new Vector3(transform.position.x, transform.position.y, transform.position.z + (transform.forward.z * colliderRadius)), new Vector3(transform.position.x, transform.position.y, transform.position.z - (transform.forward.z * colliderRadius)) };
@@ -130,25 +121,21 @@ public class PAF_Player : MonoBehaviour
                 }
             }
             transform.position += _movement;
-            //}
             if (!Physics.Raycast(transform.position + (transform.forward + transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) &&
                 !Physics.Raycast(transform.position + (transform.forward - transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) &&
                 !Physics.Raycast(transform.position - (transform.forward + transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) &&
-                !Physics.Raycast(transform.position - (transform.forward - transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) /*&& !falling*/)
+                !Physics.Raycast(transform.position - (transform.forward - transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer))
             {
                 falling = true;
                 AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetFallPlayer();
-                if(_clip) audioPlayer.PlayOneShot(_clip);
-                //PAF_SoundManager.I.PlayFallSound(transform.position);
+                if(_clip) audioPlayer.PlayOneShot(_clip, .8f);
                 playerAnimator.SetFalling();
                 playerAnimator.SetMoving(false);
-                //transform.rotation = Quaternion.LookRotation(_dir);
                 return;
             }
-            //transform.rotation = Quaternion.LookRotation(_dir);
         }
         else idle = true;
-        /*if(!falling)*/ playerAnimator.SetMoving(idle);
+        playerAnimator.SetMoving(idle);
     }
 
     void Interact()
@@ -167,17 +154,23 @@ public class PAF_Player : MonoBehaviour
                 _fruitsHit.Add(_item);
                 _item.AddForce(transform.forward * attackForce, this);
                 AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetHitFruit();
-                if (_clip) audioPlayer.PlayOneShot(_clip);
+                if (_clip) audioPlayer.PlayOneShot(_clip, .9f);
+                ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas.HitFX;
+                if (_system) Instantiate(_system.gameObject, _hit.ClosestPointOnBounds(transform.position), Quaternion.identity); 
             }
             PAF_Bulb _bulb = _hit.transform.GetComponent<PAF_Bulb>();
             if(_bulb)
             {
-                _bulb.Hit();
+                _bulb.Hit(this);
+                ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas.HitFX;
+                if (_system) Instantiate(_system.gameObject, _hit.ClosestPointOnBounds(transform.position), Quaternion.identity);
             }
             PAF_Player _player = _hit.transform.GetComponent<PAF_Player>();
             if (_player && _player != this)
             {
                 _player.Stun(transform.position);
+                ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas.HitFX;
+                if (_system) Instantiate(_system.gameObject, _hit.ClosestPointOnBounds(transform.position), Quaternion.identity);
             }
             if(_hit.gameObject.layer == LayerMask.NameToLayer("Wall"))
             {
@@ -194,12 +187,12 @@ public class PAF_Player : MonoBehaviour
     public void Stun(Vector3 _from)
     {
         if (!IsReady || isInvulnerable) return;
+        isInvulnerable = true;
         transform.rotation = Quaternion.LookRotation(_from - transform.position);
         StartCoroutine(StunFlashTimer());
         InvokeRepeating("Flash", 0, .1f);
         AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetHitPlayer();
         if (_clip) audioPlayer.PlayOneShot(_clip);
-        //PAF_SoundManager.I.PlayHitPlayer(transform.position);
         playerAnimator.SetStunned();
     }
 
@@ -207,7 +200,6 @@ public class PAF_Player : MonoBehaviour
 
     IEnumerator StunFlashTimer()
     {
-        isInvulnerable = true;
         stunned = true;
         StartCoroutine(InvertBoolDelay((state) => { isInvulnerable = !state; }, invulnerableTime + stunTime));
         yield return new WaitForSeconds(stunTime + invulnerableTime);

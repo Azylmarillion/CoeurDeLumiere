@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class PAF_PlayerAnimation : MonoBehaviour
 {
-    [SerializeField] private ParticleSystem m_system = null; 
+    [SerializeField] private GameObject m_vfxObject = null; 
 
 
     public void StepSounds()
     {
         AudioSource _audio = GetComponentInParent<AudioSource>();
-        if (_audio) _audio.PlayOneShot(PAF_GameManager.Instance?.SoundDatas.GetStepsPlayer());
+        if (_audio) _audio.PlayOneShot(PAF_GameManager.Instance?.SoundDatas.GetStepsPlayer(), .25f);
     }
 
     public void CastTrail()
     {
-        if (m_system == null) return;
-        m_system.Play(); 
+        if (m_vfxObject == null) return;
+        m_vfxObject.SetActive(!m_vfxObject.activeInHierarchy); 
     }
 }

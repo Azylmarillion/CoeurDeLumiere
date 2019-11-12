@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PAF_PlayerAnimation : MonoBehaviour
 {
-    [SerializeField] private GameObject m_vfxObject = null; 
-
+    [SerializeField] private GameObject m_vfxObject = null;
+    [SerializeField] private PAF_Player m_player = null;
 
     public void StepSounds()
     {
@@ -17,5 +17,16 @@ public class PAF_PlayerAnimation : MonoBehaviour
     {
         if (m_vfxObject == null) return;
         m_vfxObject.SetActive(!m_vfxObject.activeInHierarchy); 
+    }
+
+    public void Interact()
+    {
+        if (!m_player)
+        {
+            m_player = GetComponentInParent<PAF_Player>();
+            if (!m_player) return;
+        }
+
+        m_player.Interact();
     }
 }

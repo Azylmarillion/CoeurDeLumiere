@@ -83,7 +83,7 @@ public class PAF_Player : MonoBehaviour
             Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button1 : KeyCode.Joystick2Button1) ||
             Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button2 : KeyCode.Joystick2Button2) ||
             Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button3 : KeyCode.Joystick2Button3) &&
-            canAttack && !stunned) Interact();
+            canAttack && !stunned) playerAnimator.SetAttack();
     }
 
     void Move()
@@ -138,7 +138,7 @@ public class PAF_Player : MonoBehaviour
         playerAnimator.SetMoving(idle);
     }
 
-    void Interact()
+    public void Interact()
     {
         if (!canAttack || !IsReady) return; 
         List<PAF_Fruit> _fruitsHit = new List<PAF_Fruit>();
@@ -155,22 +155,19 @@ public class PAF_Player : MonoBehaviour
                 _item.AddForce(transform.forward * attackForce, this);
                 AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetHitFruit();
                 if (_clip) audioPlayer.PlayOneShot(_clip, .9f);
-                ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas.HitFX;
-                if (_system) Instantiate(_system.gameObject, _hit.ClosestPointOnBounds(transform.position), Quaternion.identity); 
+                InstantiateHitFX(_hit);
             }
             PAF_Bulb _bulb = _hit.transform.GetComponent<PAF_Bulb>();
             if(_bulb)
             {
                 _bulb.Hit(this);
-                ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas.HitFX;
-                if (_system) Instantiate(_system.gameObject, _hit.ClosestPointOnBounds(transform.position), Quaternion.identity);
+                InstantiateHitFX(_hit);
             }
             PAF_Player _player = _hit.transform.GetComponent<PAF_Player>();
             if (_player && _player != this)
             {
                 _player.Stun(transform.position);
-                ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas.HitFX;
-                if (_system) Instantiate(_system.gameObject, _hit.ClosestPointOnBounds(transform.position), Quaternion.identity);
+                InstantiateHitFX(_hit);
             }
             if(_hit.gameObject.layer == LayerMask.NameToLayer("Wall"))
             {
@@ -180,8 +177,14 @@ public class PAF_Player : MonoBehaviour
         }
         AudioClip _clipSwipe = PAF_GameManager.Instance?.SoundDatas.GetHitNone();
         if (_clipSwipe) audioPlayer.PlayOneShot(_clipSwipe);
-        playerAnimator.SetAttack();
+        
         StartCoroutine(InvertBoolDelay((state) => { canAttack = state; }, attackDelay));
+    }
+
+    void InstantiateHitFX(Collider _collider)
+    {
+        ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.HitFX;
+        if (_system) Instantiate(_system.gameObject, _collider.ClosestPointOnBounds(transform.position), Quaternion.identity);
     }
 
     public void Stun(Vector3 _from)

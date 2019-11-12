@@ -172,12 +172,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.39215687}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 32beecc1fe37957409900ba959ac0133, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5b862f71271c7e44db9a2dd20f6e75bf, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -585,12 +585,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 470fa6bfa5754c74ba180f4389a4e197, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allDallesToFall: []
+  allDallesToFall:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   allRespawnableDalles: []
   center: {fileID: 4779515516874671242}
   fallDelay: 0.5
-  shift: 0.05
-  dalleMaterials: []
+  shift: 0.1
+  dalleMaterials:
+  - {fileID: 2100000, guid: 65bcd7890fd300542928f09c7eb1e8bc, type: 2}
+  - {fileID: 2100000, guid: cad886b7e68633c4999ba27109cc5390, type: 2}
+  - {fileID: 2100000, guid: 0e1fe8984aca7bf4e901df1b4abb1507, type: 2}
+  - {fileID: 2100000, guid: 759a3e1b6ba1dc648a80d07149bb45cb, type: 2}
+  - {fileID: 2100000, guid: 2cdefc4028341884785581670607899d, type: 2}
 --- !u!114 &2037259806
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -877,7 +890,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3.25, y: 5, z: 10.98}
+  m_Size: {x: 4, y: 5, z: 10.98}
   m_Center: {x: 0, y: 0, z: 0.6090696}
 --- !u!1 &4779515518184433002
 GameObject:
@@ -1113,11 +1126,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
-    - target: {fileID: 1608088771717384167, guid: b3e2bb847c086334b8caaf5211d6e25d,
-        type: 3}
-      propertyPath: m_Camera
-      value: 
-      objectReference: {fileID: 4779515518049371725}
     - target: {fileID: 1608088771609336901, guid: b3e2bb847c086334b8caaf5211d6e25d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1181,19 +1189,15 @@ PrefabInstance:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2037259806}
-    - target: {fileID: 1083334219, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -154.99957
-      objectReference: {fileID: 0}
     - target: {fileID: 225714399, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2037259806}
-    - target: {fileID: 4755905411888769611, guid: b3e2bb847c086334b8caaf5211d6e25d,
+    - target: {fileID: 1608088771717384167, guid: b3e2bb847c086334b8caaf5211d6e25d,
         type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 110.00006
-      objectReference: {fileID: 0}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 4779515518049371725}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}
 --- !u!4 &6054337898439957217 stripped

@@ -30,6 +30,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 581894bbb8533114a9b9557c9f92c939, type: 3}
   - {fileID: 8300000, guid: d59514090461aa14cb06fd75a4c399f3, type: 3}
   - {fileID: 8300000, guid: 2fdaca8cabbf9d848bd9ad7968be0103, type: 3}
+  - {fileID: 8300000, guid: fcca653ad902824438b981ffbe385f78, type: 3}
   hitFruit:
   - {fileID: 8300000, guid: 7dff699a7ada95240bb7ad15c89f89e8, type: 3}
   - {fileID: 8300000, guid: 9b4f2565f629076458d59588ddba3ad6, type: 3}
@@ -41,8 +42,12 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 47b9e0415bd74534da4269d09b6eb0e7, type: 3}
   hitWall:
   - {fileID: 8300000, guid: ea68be1a068a18644ad9ebdc4d1161cc, type: 3}
+  - {fileID: 8300000, guid: 78b250addea50f04c887645f89e52e40, type: 3}
+  - {fileID: 8300000, guid: f5e2eaf7e451fd243b26606f03b6c8b3, type: 3}
   fallPlayer:
   - {fileID: 8300000, guid: 0549e33b4bc3738478a198a28e73f419, type: 3}
+  - {fileID: 8300000, guid: 57a8b3b2d18d8c443bfb7de5b4e834fa, type: 3}
+  - {fileID: 8300000, guid: 475d27f61825b40489c201320e259d37, type: 3}
   fruitBounce:
   - {fileID: 8300000, guid: 957cc5e8e72b81d489177834de0d5529, type: 3}
   - {fileID: 8300000, guid: 80d3225ec0b99f944a18e3b8b1da91eb, type: 3}
@@ -52,10 +57,17 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2f9bd42cd212fd44c8d9b100c032d0b7, type: 3}
   bulbExplode:
   - {fileID: 8300000, guid: 5bbe338b725e1244d89fd80f7194be60, type: 3}
-  dalleFalling: []
+  dalleFalling:
+  - {fileID: 8300000, guid: 45a55664ebe365a42bb1061f3dad8afb, type: 3}
+  - {fileID: 8300000, guid: 38c89b729fc8d984db24560d58f14ac8, type: 3}
+  - {fileID: 8300000, guid: a11c34551a2b8e24c973c6912b69292c, type: 3}
+  - {fileID: 8300000, guid: d5b8da2bd96b6c7438d67b34b4dc5fef, type: 3}
+  - {fileID: 8300000, guid: 3302432fa5119be4482a56c853a8a05b, type: 3}
   plantEating:
   - {fileID: 8300000, guid: 888a79d86901bd54ca309e816945cc3e, type: 3}
   - {fileID: 8300000, guid: 279e47f94169be1418f343fee5ed48fb, type: 3}
+  - {fileID: 8300000, guid: d64812a1da0248544ae7c4824b5442f2, type: 3}
+  - {fileID: 8300000, guid: 424432292ffef3749ba009f86a2b98dd, type: 3}
   moveMenu: {fileID: 0}
   selectMenu: {fileID: 0}
   crowdCheer: {fileID: 0}

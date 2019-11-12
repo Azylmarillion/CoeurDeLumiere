@@ -31,7 +31,6 @@ public class PAF_DalleManager : MonoBehaviour
     private void Start()
     {
         InitDalle();
-        //StartFalling();
     }
 
 

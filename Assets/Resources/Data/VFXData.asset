@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d4aec97d207b654cb77511d363c2ff9, type: 3}
   m_Name: VFXData
   m_EditorClassIdentifier: 
-  m_hitFX: {fileID: 0}
+  m_hitFX: {fileID: 4926424866207911111, guid: 17b406f4365b1834e87f132bfae6d810, type: 3}
   m_splashFX: {fileID: 0}
   m_fruitFX: {fileID: 0}

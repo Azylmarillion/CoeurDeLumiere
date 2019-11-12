@@ -33,7 +33,7 @@ public class PAF_Bulb : MonoBehaviour
     [SerializeField, Range(0, 100)] float minHeightForce = 10; 
     [SerializeField, Range(1, 100)] float maxHeightForce = 50;
 
-
+    private PAF_Player m_lastHitPlayer = null; 
 
     Vector3 initScale = Vector3.zero;
     bool animateBigBulb = false;
@@ -104,10 +104,11 @@ public class PAF_Bulb : MonoBehaviour
         canHit = true;
     }
     
-    public void Hit()
+    public void Hit(PAF_Player _player)
     {
         if (!bulbAnimator || !canHit) return;
         bulbAnimator.SetTrigger("hit");
+        m_lastHitPlayer = _player; 
         if (soundSource)
         {
             AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetHitBulb();
@@ -147,7 +148,7 @@ public class PAF_Bulb : MonoBehaviour
 
             PAF_Fruit _fruit = Instantiate(items[Random.Range(0, items.Length)], transform.position, transform.rotation).GetComponent<PAF_Fruit>();
             Vector3 _force = new Vector3(Random.Range(-_range, _range), Random.Range(.25f, _height), Random.Range(_range, _range));
-            if (_fruit) _fruit.AddForce(_force);
+            if (_fruit) _fruit.AddForce(_force, m_lastHitPlayer);
         }
         bulbAnimator.SetTrigger("explode");
     }

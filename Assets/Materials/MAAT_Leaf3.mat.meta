@@ -1,6 +1,16 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Assets/Materials/MAAT_Leaf3.mat.meta
 guid: 6a7cd5fbd6713934592c82e0330239a0
 NativeFormatImporter:
+=======
+<<<<<<< HEAD
+guid: 9249d538830276a4690e43dfefb9d1fe
+=======
+guid: 30f010a38fb15cf46902d8c7c6789380
+>>>>>>> master
+folderAsset: yes
+DefaultImporter:
+>>>>>>> master:Assets/Animation/Player.meta
   externalObjects: {}
   mainObjectFileID: 2100000
   userData: 

@@ -5,21 +5,21 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "SoundData", menuName = "ScriptableObjects/SoundDataScriptableObject", order = 1)]
 public class PAF_SoundData : ScriptableObject
 {
-    [SerializeField] AudioClip[] steps = null;// plugged
-    [SerializeField] AudioClip[] hitPlayer = null; // plugged
-    [SerializeField] AudioClip[] hitBulb = null;// plugged
-    [SerializeField] AudioClip[] hitFruit = null;// plugged
-    [SerializeField] AudioClip[] hitNone = null;// plugged
-    [SerializeField] AudioClip[] hitWall = null;// plugged
-    [SerializeField] AudioClip[] fallPlayer = null;// plugged
-    [SerializeField] AudioClip[] fruitBounce = null;// plugged
-    [SerializeField] AudioClip[] fruitSpawn = null;// plugged
-    [SerializeField] AudioClip[] bulbExplode = null;// plugged
-    [SerializeField] AudioClip[] dalleFalling = null;// plugged
-    [SerializeField] AudioClip[] plantEating = null;// plugged
+    [SerializeField] AudioClip[] steps = null;
+    [SerializeField] AudioClip[] hitPlayer = null;
+    [SerializeField] AudioClip[] hitBulb = null;
+    [SerializeField] AudioClip[] hitFruit = null;
+    [SerializeField] AudioClip[] hitNone = null;
+    [SerializeField] AudioClip[] hitWall = null;
+    [SerializeField] AudioClip[] fallPlayer = null;
+    [SerializeField] AudioClip[] fruitBounce = null;
+    [SerializeField] AudioClip[] fruitSpawn = null;
+    [SerializeField] AudioClip[] bulbExplode = null;
+    [SerializeField] AudioClip[] dalleFalling = null;
+    [SerializeField] AudioClip[] plantEating = null;
     [SerializeField] AudioClip moveMenu = null;
     [SerializeField] AudioClip selectMenu = null;
-    [SerializeField] AudioClip crowdCheer = null;// plugged
+    [SerializeField] AudioClip crowdCheer = null;
 
 
 

@@ -24,10 +24,8 @@ public class PAF_Bulb : MonoBehaviour
     [SerializeField, Header("Bulb stats"), Range(0, 10)] int minItemsInBulb = 1;
     [SerializeField, Range(1, 20)] int maxItemsInBulb = 10;
 
-    Coroutine delayHitCoroutine = null;
-
     int hits = 0;
-    bool canHit = false;
+    [SerializeField] bool canHit = false;
 
     [Header("Hit force")]
     [SerializeField, Range(0, 100)] float minHitForce = 10; 
@@ -103,20 +101,19 @@ public class PAF_Bulb : MonoBehaviour
         yield return new WaitForSeconds(.5f);
         animateBigBulb = false;
         initScale = transform.localScale;
-        yield return new WaitForSeconds(2);
         canHit = true;
     }
     
     public void Hit()
     {
-        if (!bulbAnimator) return;
+        if (!bulbAnimator || !canHit) return;
         bulbAnimator.SetTrigger("hit");
         if (soundSource)
         {
             AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetHitBulb();
             if (_clip) soundSource.PlayOneShot(_clip);
         }
-        if (isBigBulb && canHit)
+        if (isBigBulb)
         {
             hits++;
             if (hits >= bigBulbHitNeeded)
@@ -124,7 +121,7 @@ public class PAF_Bulb : MonoBehaviour
                 bulbAnimator.SetTrigger("spit");
             }
         }
-        else if (canHit)
+        else
         {
             bulbAnimator.SetTrigger("spit");
         }
@@ -150,7 +147,6 @@ public class PAF_Bulb : MonoBehaviour
 
             PAF_Fruit _fruit = Instantiate(items[Random.Range(0, items.Length)], transform.position, transform.rotation).GetComponent<PAF_Fruit>();
             Vector3 _force = new Vector3(Random.Range(-_range, _range), Random.Range(.25f, _height), Random.Range(_range, _range));
-            //_force = Vector3.ClampMagnitude(_force, Random.Range(.1f, 1));
             if (_fruit) _fruit.AddForce(_force);
         }
         bulbAnimator.SetTrigger("explode");
@@ -159,7 +155,11 @@ public class PAF_Bulb : MonoBehaviour
     public void ExplodeWithoutBool() => Explode(true);
 
 
-    public void SetCanHit(bool _state) => canHit = _state;
+    public void SetCanHit(bool _state)
+    {
+        if (isBigBulb) return;
+        canHit = _state;
+    }
 
     public void DestroyBulb()
     {

@@ -204,6 +204,20 @@ PrefabInstance:
       propertyPath: moveArea
       value: 
       objectReference: {fileID: 1685672600}
+    - target: {fileID: 2916782158257233576, guid: e34f7f4c21e616d4ba6b637ee55234e8,
+        type: 3}
+      propertyPath: fallDetectionSize
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2916782158257233578, guid: e34f7f4c21e616d4ba6b637ee55234e8,
+        type: 3}
+      propertyPath: m_Volume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 21922623, guid: e34f7f4c21e616d4ba6b637ee55234e8, type: 3}
+      propertyPath: m_vfxObject
+      value: 
+      objectReference: {fileID: 942269170}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e34f7f4c21e616d4ba6b637ee55234e8, type: 3}
 --- !u!114 &288102489 stripped
@@ -245,7 +259,7 @@ PrefabInstance:
     - target: {fileID: 4343869438442711192, guid: be0edf943dfecf64d9527ff7cab508d0,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.02
+      value: 0.045
       objectReference: {fileID: 0}
     - target: {fileID: 4343869438442711192, guid: be0edf943dfecf64d9527ff7cab508d0,
         type: 3}
@@ -295,6 +309,36 @@ PrefabInstance:
     - target: {fileID: 4343869438442711192, guid: be0edf943dfecf64d9527ff7cab508d0,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8647625923060208734, guid: be0edf943dfecf64d9527ff7cab508d0,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.63
+      objectReference: {fileID: 0}
+    - target: {fileID: 8647625923060208734, guid: be0edf943dfecf64d9527ff7cab508d0,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.99
+      objectReference: {fileID: 0}
+    - target: {fileID: 3473357426208716828, guid: be0edf943dfecf64d9527ff7cab508d0,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7663439382836057201, guid: be0edf943dfecf64d9527ff7cab508d0,
+        type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8733098650728552924, guid: be0edf943dfecf64d9527ff7cab508d0,
+        type: 3}
+      propertyPath: isShifting
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8733098650728552924, guid: be0edf943dfecf64d9527ff7cab508d0,
+        type: 3}
+      propertyPath: randomColor
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -483,6 +527,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &942269170 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3893279134954776424, guid: e34f7f4c21e616d4ba6b637ee55234e8,
+    type: 3}
+  m_PrefabInstance: {fileID: 194823746}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1096467599 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8733098649138824237, guid: be0edf943dfecf64d9527ff7cab508d0,
@@ -1042,7 +1092,7 @@ PrefabInstance:
     - target: {fileID: 4779515517769943192, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: m_gameEvents.Array.data[2].m_callingTime
-      value: 90
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4779515517769943199, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
@@ -1082,7 +1132,7 @@ PrefabInstance:
     - target: {fileID: 4779515517769943199, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: shift
-      value: 0.1
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 4779515517769943199, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
@@ -1124,6 +1174,11 @@ PrefabInstance:
       propertyPath: allDallesToFall.Array.data[7]
       value: 
       objectReference: {fileID: 473186939}
+    - target: {fileID: 4779515517769943199, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: fallDelay
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4779515516688734041, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: m_Color.a
@@ -1380,6 +1435,11 @@ PrefabInstance:
       propertyPath: moveArea
       value: 
       objectReference: {fileID: 1685672600}
+    - target: {fileID: 8338223916140015521, guid: 2ec9871d3515db542a90ef5be60f5f54,
+        type: 3}
+      propertyPath: fallDetectionSize
+      value: 0.25
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2ec9871d3515db542a90ef5be60f5f54, type: 3}
 --- !u!1001 &199825446997130342

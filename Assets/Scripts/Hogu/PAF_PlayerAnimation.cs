@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PAF_PlayerAnimation : MonoBehaviour
 {
-    [SerializeField] private ParticleSystem m_system = null; 
+    [SerializeField] private GameObject m_vfxObject = null; 
 
 
     public void StepSounds()
@@ -15,7 +15,7 @@ public class PAF_PlayerAnimation : MonoBehaviour
 
     public void CastTrail()
     {
-        if (m_system == null) return;
-        m_system.Play(); 
+        if (m_vfxObject == null) return;
+        m_vfxObject.SetActive(!m_vfxObject.activeInHierarchy); 
     }
 }

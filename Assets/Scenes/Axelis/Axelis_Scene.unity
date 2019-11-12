@@ -6831,7 +6831,7 @@ PrefabInstance:
     - target: {fileID: 3431334871492258783, guid: b662d4460f2d1ab4e9987d1dab2a951b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 3431334871492258783, guid: b662d4460f2d1ab4e9987d1dab2a951b,
         type: 3}
@@ -6851,7 +6851,7 @@ PrefabInstance:
     - target: {fileID: 3431334871492258783, guid: b662d4460f2d1ab4e9987d1dab2a951b,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.84
       objectReference: {fileID: 0}
     - target: {fileID: 3431334871492258783, guid: b662d4460f2d1ab4e9987d1dab2a951b,
         type: 3}
@@ -7534,6 +7534,12 @@ PrefabInstance:
       propertyPath: m_gameEvents.Array.data[2].m_callingTime
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 4779515517769943192, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: m_vfxDatas
+      value: 
+      objectReference: {fileID: 11400000, guid: 4239ec0007d6c3b438c48e39bfd99799,
+        type: 2}
     - target: {fileID: 4779515517769943199, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: allDallesToFall.Array.size

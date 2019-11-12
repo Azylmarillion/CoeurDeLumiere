@@ -548,6 +548,7 @@ MonoBehaviour:
     m_callingTime: 90
   m_videoPlayer: {fileID: 0}
   m_soundDatas: {fileID: 11400000, guid: 0f1532b6b6bd9db4e9917bf5dc20602c, type: 2}
+  m_vfxDatas: {fileID: 0}
 --- !u!114 &4779515517769943198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -604,6 +605,8 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 0e1fe8984aca7bf4e901df1b4abb1507, type: 2}
   - {fileID: 2100000, guid: 759a3e1b6ba1dc648a80d07149bb45cb, type: 2}
   - {fileID: 2100000, guid: 2cdefc4028341884785581670607899d, type: 2}
+  m_screenshakeDuration: 0.1
+  m_screenshakeForce: 0.1
 --- !u!114 &2037259806
 MonoBehaviour:
   m_ObjectHideFlags: 0

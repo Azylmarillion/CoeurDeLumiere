@@ -80,6 +80,9 @@ public class PAF_GameManager : MonoBehaviour
     /// </summary>
     private int m_currentGameTime = 0;
 
+    private static int m_highScore = 0;
+    public static int HighScore { get { return m_highScore; } }
+
     /// <summary>
     /// Score of player One
     /// </summary>

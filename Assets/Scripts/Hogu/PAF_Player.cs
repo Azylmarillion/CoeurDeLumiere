@@ -155,21 +155,21 @@ public class PAF_Player : MonoBehaviour
                 _item.AddForce(transform.forward * attackForce, this);
                 AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetHitFruit();
                 if (_clip) audioPlayer.PlayOneShot(_clip, .9f);
-                ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas.HitFX;
+                ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.HitFX;
                 if (_system) Instantiate(_system.gameObject, _hit.ClosestPointOnBounds(transform.position), Quaternion.identity); 
             }
             PAF_Bulb _bulb = _hit.transform.GetComponent<PAF_Bulb>();
             if(_bulb)
             {
                 _bulb.Hit(this);
-                ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas.HitFX;
+                ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.HitFX;
                 if (_system) Instantiate(_system.gameObject, _hit.ClosestPointOnBounds(transform.position), Quaternion.identity);
             }
             PAF_Player _player = _hit.transform.GetComponent<PAF_Player>();
             if (_player && _player != this)
             {
                 _player.Stun(transform.position);
-                ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas.HitFX;
+                ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.HitFX;
                 if (_system) Instantiate(_system.gameObject, _hit.ClosestPointOnBounds(transform.position), Quaternion.identity);
             }
             if(_hit.gameObject.layer == LayerMask.NameToLayer("Wall"))

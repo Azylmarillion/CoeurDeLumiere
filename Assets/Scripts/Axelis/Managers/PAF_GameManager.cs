@@ -125,9 +125,18 @@ public class PAF_GameManager : MonoBehaviour
         yield return new WaitForSeconds(1.0f); 
         if (m_videoPlayer)
         {
+            m_videoPlayer.Prepare();
+            while(!m_videoPlayer.isPrepared)
+            {
+                yield return new WaitForSeconds(.1f);
+            }
             m_videoPlayer.Play();
             while (m_videoPlayer.isPlaying)
             {
+                if (Input.GetKey(KeyCode.Keypad1) && Input.GetKey(KeyCode.Keypad2) && Input.GetKey(KeyCode.Keypad3))
+                {
+                    m_videoPlayer.Stop();
+                }
                 yield return new WaitForSeconds(.1f);
             }
         }
@@ -210,6 +219,17 @@ public class PAF_GameManager : MonoBehaviour
         m_gameIsReadyToStart = true;
         StartCoroutine(IncreasePlayingTime());
     }
+
+    /// <summary>
+    /// Disable the cinematic if it exists
+    /// </summary>
+    void HideCinematic()
+    {
+        if (!m_videoPlayer) return;
+        m_videoPlayer.Stop();
+        m_videoPlayer.enabled = false;
+        m_videoPlayer.enabled = true;
+    }
     #endregion
 
     #region Unity Methods
@@ -228,12 +248,14 @@ public class PAF_GameManager : MonoBehaviour
 
     private void Start()
     {
-        PAF_Fruit.OnFruitEaten += IncreasePlayerScore; 
+        PAF_Fruit.OnFruitEaten += IncreasePlayerScore;
+        OnEndCinematic += HideCinematic;
     }
 
     private void OnDestroy()
     {
-        PAF_Fruit.OnFruitEaten -= IncreasePlayerScore; 
+        PAF_Fruit.OnFruitEaten -= IncreasePlayerScore;
+        OnEndCinematic -= HideCinematic;
     }
     #endregion
 

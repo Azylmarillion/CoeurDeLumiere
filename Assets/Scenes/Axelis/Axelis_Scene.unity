@@ -7532,7 +7532,7 @@ PrefabInstance:
     - target: {fileID: 4779515517769943192, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: m_gameEvents.Array.data[2].m_callingTime
-      value: 2
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 4779515517769943199, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
@@ -7765,6 +7765,11 @@ PrefabInstance:
     - target: {fileID: 3893279135298782925, guid: 2ec9871d3515db542a90ef5be60f5f54,
         type: 3}
       propertyPath: ShapeModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6376990667313912198, guid: 2ec9871d3515db542a90ef5be60f5f54,
+        type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

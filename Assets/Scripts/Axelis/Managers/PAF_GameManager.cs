@@ -100,6 +100,8 @@ public class PAF_GameManager : MonoBehaviour
 
     [Header("Video")]
     [SerializeField] private UnityEngine.Video.VideoPlayer m_videoPlayer = null;
+    [SerializeField] private Material m_introMaterial = null;
+    [SerializeField] private float m_speedFadeCinematic = 2;
     [SerializeField] private PAF_SoundData m_soundDatas = null;
     [SerializeField] private PAF_VFXData m_vfxDatas = null;
 
@@ -126,13 +128,15 @@ public class PAF_GameManager : MonoBehaviour
     private IEnumerator StartVideoPlayer()
     {
         yield return new WaitForSeconds(1.0f); 
-        if (m_videoPlayer)
+        if (m_videoPlayer && m_introMaterial)
         {
+            m_introMaterial.color = new Color(m_introMaterial.color.r, m_introMaterial.color.g, m_introMaterial.color.b, 1);
             m_videoPlayer.Prepare();
             while(!m_videoPlayer.isPrepared)
             {
                 yield return new WaitForSeconds(.1f);
             }
+            PAF_UIManager.Instance?.HideMainMenu();
             m_videoPlayer.Play();
             while (m_videoPlayer.isPlaying)
             {
@@ -232,6 +236,18 @@ public class PAF_GameManager : MonoBehaviour
         m_videoPlayer.Stop();
         m_videoPlayer.enabled = false;
         m_videoPlayer.enabled = true;
+        StartCoroutine(FadeCinematic());
+    }
+
+    IEnumerator FadeCinematic()
+    {
+        if (!m_introMaterial) yield break;
+        while (m_introMaterial.color.a > 0)
+        {
+            m_introMaterial.color = Color.Lerp(m_introMaterial.color, new Color(m_introMaterial.color.r, m_introMaterial.color.g, m_introMaterial.color.b, 0), Time.deltaTime * m_speedFadeCinematic);
+            yield return new WaitForSeconds(.1f);
+        }
+        yield return null;
     }
     #endregion
 

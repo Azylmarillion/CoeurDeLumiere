@@ -721,16 +721,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_bulbsPositions:
-  - {x: 12, y: 0, z: -6.5}
-  - {x: 6, y: 0, z: 3.3}
-  - {x: -6, y: 0, z: 3.3}
-  - {x: -12, y: 0, z: -6.5}
-  - {x: -12, y: 0, z: 3.3}
-  - {x: 0, y: 0, z: 3.3}
-  - {x: 12, y: 0, z: 3.3}
+  - {x: 12, y: 0, z: -7}
+  - {x: 6, y: 0, z: 3}
+  - {x: -6, y: 0, z: 3}
+  - {x: -12, y: 0, z: -7}
+  - {x: -12, y: 0, z: 3}
+  - {x: 0, y: 0, z: 3}
+  - {x: 12, y: 0, z: 3}
   m_centerPosition: {x: 0, y: 0, z: 3.3}
-  m_bulbLimit: 1
-  m_bulbDelay: 2
+  m_bulbLimit: 2
+  m_bulbDelay: 1
   m_bulbPrefab: {fileID: 7308732899696908980, guid: ee2284df65ae88b4ea76d73252167a07,
     type: 3}
 --- !u!114 &4779515517769943199
@@ -1045,8 +1045,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 4, y: 5, z: 10.98}
-  m_Center: {x: 0, y: 0, z: 0.6090696}
+  m_Size: {x: 4, y: 5, z: 9.5}
+  m_Center: {x: 0, y: 0, z: 0.65}
 --- !u!1 &4779515518184433002
 GameObject:
   m_ObjectHideFlags: 0

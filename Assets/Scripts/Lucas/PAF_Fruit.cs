@@ -120,7 +120,7 @@ public class PAF_Fruit : MonoBehaviour
         get { return velocity; }
         set
         {
-            value = new Vector3(Mathf.Clamp(value.x, -999, 999), Mathf.Clamp(value.y, -999, 999), Mathf.Clamp(value.z, -999, 999));
+            value = new Vector3(Mathf.Clamp(value.x, -500, 500), Mathf.Clamp(value.y, -500, 500), Mathf.Clamp(value.z, -500, 500));
 
             velocity = value;
             autoAimCurveIndex = 0;

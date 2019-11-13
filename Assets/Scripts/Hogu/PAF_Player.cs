@@ -1,9 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class PAF_Player : MonoBehaviour
 {
+    #region Events
+    public static event Action<bool, int> OnFall = null;
+    #endregion
+
     #region Fields
     [SerializeField] bool isPlayerOne = true;
     public bool IsPlayerOne { get { return isPlayerOne; } }
@@ -20,6 +26,7 @@ public class PAF_Player : MonoBehaviour
     [SerializeField, Range(.1f, 1)] float fallDetectionSize = .5f;
 
     private const float colliderRadius = .5f;
+    private const int fallScoreIncrease = -10;
 
     [SerializeField] private AnimationCurve accelerationCurve = null;
     private float accelerationTimer = 0; 
@@ -126,16 +133,23 @@ public class PAF_Player : MonoBehaviour
                 !Physics.Raycast(transform.position - (transform.forward + transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer) &&
                 !Physics.Raycast(transform.position - (transform.forward - transform.right) * fallDetectionSize, Vector3.down, 2, groundLayer))
             {
-                falling = true;
-                AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetFallPlayer();
-                if(_clip) audioPlayer.PlayOneShot(_clip, .8f);
-                playerAnimator.SetFalling();
-                playerAnimator.SetMoving(false);
+                Fall();
                 return;
             }
         }
         else idle = true;
         playerAnimator.SetMoving(idle);
+    }
+
+    private void Fall()
+    {
+        falling = true;
+        AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetFallPlayer();
+        if (_clip) audioPlayer.PlayOneShot(_clip, .8f);
+        playerAnimator.SetFalling();
+        playerAnimator.SetMoving(false);
+
+        OnFall?.Invoke(isPlayerOne, fallScoreIncrease);
     }
 
     public void Interact()

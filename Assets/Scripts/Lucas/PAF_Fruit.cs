@@ -120,7 +120,7 @@ public class PAF_Fruit : MonoBehaviour
         get { return velocity; }
         set
         {
-            value = new Vector3(Mathf.Clamp(value.x, -500, 500), Mathf.Clamp(value.y, -500, 500), Mathf.Clamp(value.z, -500, 500));
+            value = new Vector3(Mathf.Clamp(value.x, -350, 350), Mathf.Clamp(value.y, -350, 350), Mathf.Clamp(value.z, -350, 350));
 
             velocity = value;
             autoAimCurveIndex = 0;
@@ -510,12 +510,12 @@ public class PAF_Fruit : MonoBehaviour
 
         for (int _i = 0; _i < 4; _i++)
         {
-            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + .05f, transform.position.z) + (_raycastPos[_i] * collider.bounds.extents.x), Vector3.down, 1, whatIsGround, QueryTriggerInteraction.Ignore))
+            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + .05f, transform.position.z) + (_raycastPos[_i] * collider.bounds.extents.x * .8f), Vector3.down, 1, whatIsGround, QueryTriggerInteraction.Ignore))
             {
                 if (isFalling)
                 {
                     Velocity = new Vector3(velocity.x, 0, velocity.z);
-                    if (renderer.position.y < originalPivotHeight) renderer.position = new Vector3(renderer.position.x, renderer.position.y + (originalPivotHeight - renderer.position.y), renderer.position.z);
+                    if (renderer.position.y != originalPivotHeight) renderer.position = new Vector3(renderer.position.x, renderer.position.y + (originalPivotHeight - renderer.position.y), renderer.position.z);
                     renderer.localScale = originalSize;
 
                     isFalling = false;
@@ -532,7 +532,7 @@ public class PAF_Fruit : MonoBehaviour
 
             if (velocity.y == 0) Velocity -= new Vector3(0, .0001f, 0);
         }
-        else if (flatVelocity.magnitude < .3f)
+        else if (flatVelocity.magnitude < 2f)
         {
             Velocity -= new Vector3(0, .01f, 0);
 

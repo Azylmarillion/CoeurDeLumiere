@@ -190,6 +190,10 @@ public class PAF_GameManager : MonoBehaviour
         m_playerTwoIsReady = false;
         m_gameIsOver = true;
 
+        // Une avalanche de confettis
+        if (playerOneConfettis) playerOneConfettis.Play();
+        if (playerTwoConfettis) playerTwoConfettis?.Play();
+
         credits.Play();
         credits.stopped += (PlayableDirector _a) => SceneManager.LoadScene(0);
     }
@@ -351,9 +355,11 @@ public class PAF_GameManager : MonoBehaviour
         PAF_Player.OnFall += IncreasePlayerScore;
         OnEndCinematic += HideCinematic;
 
+        #if !UNITY_EDITOR
         // Hide cursor
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        #endif
     }
 
     private void OnDestroy()
@@ -362,9 +368,9 @@ public class PAF_GameManager : MonoBehaviour
         PAF_Player.OnFall -= IncreasePlayerScore;
         OnEndCinematic -= HideCinematic;
     }
-    #endregion
+#endregion
 
-    #endregion
+#endregion
 
 
 

@@ -73,6 +73,8 @@ public class PAF_Player : MonoBehaviour
     {
         if(PAF_GameManager.Instance && !PAF_GameManager.Instance.GameIsReadyToStart)
         {
+            if (PAF_GameManager.Instance.PlayersAreReadyToStart) return;
+
             #if UNITY_EDITOR
             // * DEBUG POUR UNE SEULE MANETTE
             if(Input.GetKeyDown(KeyCode.A))
@@ -215,7 +217,7 @@ public class PAF_Player : MonoBehaviour
 
         // Confused FX
         GameObject _system = PAF_GameManager.Instance?.VFXDatas?.ConfusedFX;
-        if (_system) Instantiate(_system, new Vector3(transform.position.x - transform.forward.x, transform.position.y + 1, transform.position.z - transform.forward.z), Quaternion.identity);
+        if (_system) Instantiate(_system, new Vector3(transform.position.x - (transform.forward.x * .75f), transform.position.y + 1, transform.position.z - (transform.forward.z * .75f)), Quaternion.identity);
     }
 
     void Flash() => playerRenderer.enabled = !playerRenderer.enabled;
@@ -242,6 +244,7 @@ public class PAF_Player : MonoBehaviour
     public void Respawn()
     {
         if (!falling) return;
+        transform.GetChild(0).localScale = Vector3.one;
 
         // Spash FX
         ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.SplashFX;

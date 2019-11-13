@@ -98,10 +98,10 @@ public class PAF_Bulb : MonoBehaviour
         }
         animateBigBulb = true;
         bulbAnimator.SetTrigger("spawn");
+        canHit = true;
         yield return new WaitForSeconds(.5f);
         animateBigBulb = false;
         initScale = transform.localScale;
-        canHit = true;
     }
     
     public void Hit(PAF_Player _player)

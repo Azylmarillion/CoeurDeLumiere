@@ -18,6 +18,8 @@ public class PAF_UIManager : MonoBehaviour
      * 
     */
 
+        public static PAF_UIManager Instance { get; private set; }
+
     #region Fields / Properties
     [Header("Animators")]
     /// <summary>
@@ -136,7 +138,7 @@ public class PAF_UIManager : MonoBehaviour
     /// <summary>
     /// Hide the main menu object if it exists
     /// </summary>
-    private void HideMainMenu()
+    public void HideMainMenu()
     {
         if (!m_mainMenuObject) return;
         m_mainMenuObject.SetActive(false); 
@@ -238,6 +240,7 @@ public class PAF_UIManager : MonoBehaviour
     // Awake is called when the script instance is being loaded
     private void Awake()
     {
+        Instance = this;
         PAF_GameManager.OnEndCinematic += HideMainMenu;
         PAF_GameManager.OnEndCinematic += StartCountDown; 
         PAF_GameManager.OnPlayerScored += SetPlayerScore;

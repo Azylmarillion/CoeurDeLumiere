@@ -180,8 +180,8 @@ public class PAF_UIManager : MonoBehaviour
         m_optionMenuParent.SetActive(!m_optionMenuParent.activeInHierarchy);
 
         // Hide cursor
-        Cursor.visible = !m_optionMenuParent.activeInHierarchy;
-        Cursor.lockState = Cursor.visible ? CursorLockMode.Confined : CursorLockMode.Locked;
+        Cursor.visible = m_optionMenuParent.activeInHierarchy;
+        Cursor.lockState = Cursor.visible ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
     /// <summary>

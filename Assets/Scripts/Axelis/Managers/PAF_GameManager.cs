@@ -121,6 +121,8 @@ public class PAF_GameManager : MonoBehaviour
     [SerializeField] private PAF_SoundData m_soundDatas = null;
     [SerializeField] private PAF_VFXData m_vfxDatas = null;
 
+    [SerializeField] private AudioSource m_gameMusic = null;
+
     public PAF_SoundData SoundDatas
     {
         get { return m_soundDatas;  }
@@ -224,6 +226,7 @@ public class PAF_GameManager : MonoBehaviour
     private IEnumerator DelayHideMenu()
     {
         yield return new WaitForSeconds(.3f);
+        if (m_gameMusic) m_gameMusic.Play();
         PAF_UIManager.Instance?.HideMainMenu();
     }
 
@@ -362,4 +365,7 @@ public class PAF_GameManager : MonoBehaviour
     #endregion
 
     #endregion
+
+
+
 }

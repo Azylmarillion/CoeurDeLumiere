@@ -37,8 +37,7 @@ public class PAF_FallBehaviour : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        animator.GetComponentInParent<PAF_Player>().Respawn();
-        animator.transform.localScale = Vector3.one; 
+        animator.GetComponentInParent<PAF_Player>().Invoke("Respawn", .5f);
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

@@ -42,6 +42,9 @@ public class PAF_UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playerTwoScore = null;
     [SerializeField] private TextMeshProUGUI playerTwoReadyText = null;
 
+    [SerializeField] private TextMeshProUGUI playerOneTotalScore = null;
+    [SerializeField] private TextMeshProUGUI playerTwoTotalScore = null;
+
     [Header("Images")]
     [SerializeField] private Image m_playerOneReadyImage = null; 
     [SerializeField] private Image m_playerTwoReadyImage = null; 
@@ -94,11 +97,13 @@ public class PAF_UIManager : MonoBehaviour
         string _text = _score > 0 ? "+" : string.Empty;
         if (_isPlayerOne)
         {
+            playerOneTotalScore.text = (int.Parse(playerOneTotalScore.text) + _score).ToString();
             playerOneScore.text = _text + _score.ToString();
             //worldAnimator.SetTrigger("Score P1");
             screenAnimator.SetTrigger("P1 Score");
             return;
         }
+        playerTwoTotalScore.text = (int.Parse(playerTwoTotalScore.text) + _score).ToString();
         playerTwoScore.text = _text + _score.ToString();
         //worldAnimator.SetTrigger("Score P2");
         screenAnimator.SetTrigger("P2 Score");
@@ -109,12 +114,12 @@ public class PAF_UIManager : MonoBehaviour
         if(_isPlayerOne)
         {
             m_playerOneReadyImage.color = Color.green; 
-            playerOneReadyText.text = "Waiting for other player!"; 
+            playerOneReadyText.text = "En attente de l'autre Joueur !"; 
             screenAnimator.SetTrigger("P1 Ready");
             return;
         }
         screenAnimator.SetTrigger("P2 Ready");
-        playerTwoReadyText.text = "Waiting for other player!";
+        playerTwoReadyText.text = "En attente de l'autre Joueur !";
         m_playerTwoReadyImage.color = Color.green;
     }
 
@@ -179,9 +184,11 @@ public class PAF_UIManager : MonoBehaviour
         if (m_optionMenuParent == null) return;
         m_optionMenuParent.SetActive(!m_optionMenuParent.activeInHierarchy);
 
+        #if !UNITY_EDITOR
         // Hide cursor
         Cursor.visible = m_optionMenuParent.activeInHierarchy;
         Cursor.lockState = Cursor.visible ? CursorLockMode.None : CursorLockMode.Locked;
+        #endif
     }
 
     /// <summary>
@@ -191,6 +198,9 @@ public class PAF_UIManager : MonoBehaviour
     {
         if(screenAnimator)
         {
+            playerOneTotalScore.gameObject.SetActive(true);
+            playerTwoTotalScore.gameObject.SetActive(true);
+
             screenAnimator.SetTrigger("StartCountDown"); 
             return; 
         }
@@ -234,9 +244,9 @@ public class PAF_UIManager : MonoBehaviour
             newRecordFeedback.SetActive(true);
         }
     }
-    #endregion
+#endregion
 
-    #region Unity Methods
+#region Unity Methods
     // Awake is called when the script instance is being loaded
     private void Awake()
     {
@@ -268,7 +278,7 @@ public class PAF_UIManager : MonoBehaviour
         PAF_GameManager.OnPlayerScored -= SetPlayerScore;
         PAF_GameManager.OnPlayerReady -= SetPlayerReady;
     }
-    #endregion
+#endregion
 
-    #endregion
+#endregion
 }

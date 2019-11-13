@@ -227,10 +227,16 @@ public class PAF_Fruit : MonoBehaviour
         // Auto aim closest flower in near enough
         foreach (PAF_Flower _flower in PAF_Flower.Flowers)
         {
-            if ((Vector3.Angle(collider.bounds.center + flatVelocity, collider.bounds.center + (_flower.MouthTransform.position - collider.bounds.center)) < 35) && ((_flower.MouthTransform.position - transform.position).magnitude < 10))
+            Vector3 _direction = _flower.MouthTransform.position - collider.bounds.center;
+            float _angle = Vector3.Angle(collider.bounds.center + flatVelocity, collider.bounds.center + _direction);
+
+            if ((_angle < 15) || ((_angle < 30) && (_direction.magnitude < 12)) || (_direction.magnitude < 1))
             {
-                TargetPosition(_flower.MouthTransform.position);
-                break;
+                if (!Physics.Raycast(collider.bounds.center, _direction, _direction.magnitude, whatCollide))
+                {
+                    TargetPosition(_flower.MouthTransform.position);
+                    break;
+                }
             }
         }
     }

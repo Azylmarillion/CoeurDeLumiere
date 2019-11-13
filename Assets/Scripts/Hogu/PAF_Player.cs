@@ -213,8 +213,8 @@ public class PAF_Player : MonoBehaviour
         playerAnimator.SetStunned();
 
         // Confused FX
-        ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.ConfusedFX;
-        if (_system) Instantiate(_system.gameObject, transform.position + Vector3.up, Quaternion.identity);
+        GameObject _system = PAF_GameManager.Instance?.VFXDatas?.ConfusedFX;
+        if (_system) Instantiate(_system, transform.position + Vector3.up, Quaternion.identity);
     }
 
     void Flash() => playerRenderer.enabled = !playerRenderer.enabled;
@@ -243,7 +243,7 @@ public class PAF_Player : MonoBehaviour
         if (!falling) return;
 
         // Spash FX
-        ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.ConfusedFX;
+        ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.SplashFX;
         if (_system) Instantiate(_system.gameObject, new Vector3(transform.position.x, transform.position.y - 5, transform.position.z + 5), Quaternion.identity);
 
         if (PAF_DalleManager.I.AllRespawnableDalles.Count <= 0)

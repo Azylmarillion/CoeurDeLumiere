@@ -15,3 +15,8 @@ MonoBehaviour:
   m_hitFX: {fileID: 4926424866207911111, guid: 17b406f4365b1834e87f132bfae6d810, type: 3}
   m_splashFX: {fileID: 0}
   m_fruitFX: {fileID: 0}
+  m_bulbFX: {fileID: 0}
+  m_partyFX: {fileID: 0}
+  m_confusedFX: {fileID: 6825052972874526631, guid: 0fb48070277ac164bae5a1fdf6842905,
+    type: 3}
+  m_stepSmokeFX: {fileID: 0}

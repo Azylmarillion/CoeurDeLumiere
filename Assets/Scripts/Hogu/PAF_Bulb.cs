@@ -126,6 +126,10 @@ public class PAF_Bulb : MonoBehaviour
         {
             bulbAnimator.SetTrigger("spit");
         }
+
+        // Bulb FX
+        ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.BulbFX;
+        if (_system) Instantiate(_system.gameObject, transform.position + Vector3.up, Quaternion.identity);
     }
 
     public void Explode(bool _spawnItems)

@@ -4,13 +4,22 @@ using UnityEngine;
 
 public class PAF_PlayerAnimation : MonoBehaviour
 {
+    [SerializeField] private AudioSource audio = null;
     [SerializeField] private GameObject m_vfxObject = null;
     [SerializeField] private PAF_Player m_player = null;
 
     public void StepSounds()
     {
-        AudioSource _audio = GetComponentInParent<AudioSource>();
-        if (_audio) _audio.PlayOneShot(PAF_GameManager.Instance?.SoundDatas.GetStepsPlayer(), .25f);
+        // Run FX
+        ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.StepSmokeFX;
+        if (_system) Instantiate(_system.gameObject, transform.position, Quaternion.identity);
+
+        if (!audio)
+        {
+            audio = GetComponentInParent<AudioSource>();
+            if (!audio) return;
+        }
+        audio.PlayOneShot(PAF_GameManager.Instance?.SoundDatas.GetStepsPlayer(), .25f);
     }
 
     public void CastTrail()

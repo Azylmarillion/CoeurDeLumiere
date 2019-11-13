@@ -8,7 +8,7 @@ public class PAF_VFXData : ScriptableObject
     [SerializeField] private ParticleSystem m_fruitFX = null;
     [SerializeField] private ParticleSystem m_bulbFX = null;
     [SerializeField] private ParticleSystem m_partyFX = null;
-    [SerializeField] private ParticleSystem m_confusedFX = null;
+    [SerializeField] private GameObject m_confusedFX = null;
     [SerializeField] private ParticleSystem m_stepSmokeFX = null;
 
     public ParticleSystem HitFX { get { return m_hitFX; } }
@@ -16,6 +16,6 @@ public class PAF_VFXData : ScriptableObject
     public ParticleSystem FruitFX { get { return m_fruitFX; } }
     public ParticleSystem BulbFX { get { return m_bulbFX; } }
     public ParticleSystem PartyFX { get { return m_partyFX; } }
-    public ParticleSystem ConfusedFX { get { return m_confusedFX; } }
+    public GameObject ConfusedFX { get { return m_confusedFX; } }
     public ParticleSystem StepSmokeFX { get { return m_stepSmokeFX; } }
 }

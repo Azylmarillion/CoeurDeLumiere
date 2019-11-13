@@ -211,6 +211,10 @@ public class PAF_Player : MonoBehaviour
         AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetHitPlayer();
         if (_clip) audioPlayer.PlayOneShot(_clip);
         playerAnimator.SetStunned();
+
+        // Confused FX
+        ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.ConfusedFX;
+        if (_system) Instantiate(_system.gameObject, transform.position + Vector3.up, Quaternion.identity);
     }
 
     void Flash() => playerRenderer.enabled = !playerRenderer.enabled;
@@ -237,6 +241,11 @@ public class PAF_Player : MonoBehaviour
     public void Respawn()
     {
         if (!falling) return;
+
+        // Spash FX
+        ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.ConfusedFX;
+        if (_system) Instantiate(_system.gameObject, new Vector3(transform.position.x, transform.position.y - 5, transform.position.z + 5), Quaternion.identity);
+
         if (PAF_DalleManager.I.AllRespawnableDalles.Count <= 0)
         {
             transform.position = Vector3.zero;
@@ -247,6 +256,13 @@ public class PAF_Player : MonoBehaviour
         Vector3 _spawnPos = new Vector3(Random.Range(_dalle.bounds.min.x, _dalle.bounds.max.x), 0, Random.Range(_dalle.bounds.min.z, _dalle.bounds.max.z));
         transform.position = _spawnPos;
         falling = false;
+    }
+
+    public void InstantiateRunFX()
+    {
+        // Run FX
+        ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.StepSmokeFX;
+        if (_system) Instantiate(_system.gameObject, transform.position, Quaternion.identity);
     }
 
     public void EndGame(int _one, int _two)

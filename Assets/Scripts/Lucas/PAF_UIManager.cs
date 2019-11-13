@@ -18,6 +18,8 @@ public class PAF_UIManager : MonoBehaviour
      * 
     */
 
+        public static PAF_UIManager Instance { get; private set; }
+
     #region Fields / Properties
     [Header("Animators")]
     /// <summary>
@@ -31,6 +33,8 @@ public class PAF_UIManager : MonoBehaviour
     /// </summary>
     [SerializeField] private TextMeshProUGUI playerOneScore = null;
     [SerializeField] private TextMeshProUGUI playerOneReadyText = null;
+
+    [SerializeField] private TextMeshProUGUI highScoreText = null;
 
     /// <summary>
     /// Text used to display second player's score.
@@ -89,14 +93,15 @@ public class PAF_UIManager : MonoBehaviour
     /// <param name="_isPlayerOne">Is it the score of the first or second player ?</param>
     public void SetPlayerScore(bool _isPlayerOne, int _score)
     {
+        string _text = _score > 0 ? "+" : string.Empty;
         if (_isPlayerOne)
         {
-            playerOneScore.text = _score.ToString();
+            playerOneScore.text = _text + _score.ToString();
             //worldAnimator.SetTrigger("Score P1");
             screenAnimator.SetTrigger("P1 Score");
             return;
         }
-        playerTwoScore.text = _score.ToString();
+        playerTwoScore.text = _text + _score.ToString();
         //worldAnimator.SetTrigger("Score P2");
         screenAnimator.SetTrigger("P2 Score");
     }
@@ -136,7 +141,7 @@ public class PAF_UIManager : MonoBehaviour
     /// <summary>
     /// Hide the main menu object if it exists
     /// </summary>
-    private void HideMainMenu()
+    public void HideMainMenu()
     {
         if (!m_mainMenuObject) return;
         m_mainMenuObject.SetActive(false); 
@@ -190,47 +195,44 @@ public class PAF_UIManager : MonoBehaviour
         PAF_GameManager.Instance.StartGame(); 
     }
 
-    private void DisplayEndMenu(int _playerOneScore, int _playerTwoScore)
+    /// <summary>
+    /// Displays the end game menu.
+    /// </summary>
+    /// <param name="_bestPlayer">Best player : 0 for equality, 1 for first player and other for second one.</param>
+    /// <param name="_highScore">Highscore of this game.</param>
+    public void DisplayEndMenu(int _bestPlayer, int _highScore)
     {
-        int _diff = _playerOneScore - _playerTwoScore; 
-        if (_diff == 0)
+        string _text = string.Empty;
+
+        if (_bestPlayer == 0)
         {
             //Egalité
-            creditsDialogBox.text = "Egalité...";
+            _text = "Egalité : ";
             equalityPresentator.SetActive(true);
         }
         else
         {
-            string _text = string.Empty;
-            int _highScore = 0;
-            if (_diff > 0)
+            if (_bestPlayer == 1)
             {
                 // P1 Gagne
                 _text = "ROUGE";
-                _highScore = _playerOneScore;
             }
             else
             {
                 // P2 Gagne
                 _text = "BLEU";
-                _highScore = _playerTwoScore;
             }
-            creditsDialogBox.text = _text + " gagne !!";
+            _text += " Gagne : ";
             winnerPresentator.SetActive(true);
+        }
 
-            if (_highScore >= PAF_GameManager.HighScore)
-            {
-                newRecordFeedback.SetActive(true);
-            }
+        creditsDialogBox.text = _text + _highScore;
+        if (_highScore >= PAF_GameManager.HighScore)
+        {
+            newRecordFeedback.SetActive(true);
         }
 
         creditsAnchor.SetActive(true);
-        Invoke("UpdateCreditsText", 10);
-    }
-
-    void UpdateCreditsText()
-    {
-        creditsDialogBox.text = "Remerciements :";
     }
     #endregion
 
@@ -238,16 +240,17 @@ public class PAF_UIManager : MonoBehaviour
     // Awake is called when the script instance is being loaded
     private void Awake()
     {
+        Instance = this;
         PAF_GameManager.OnEndCinematic += HideMainMenu;
         PAF_GameManager.OnEndCinematic += StartCountDown; 
         PAF_GameManager.OnPlayerScored += SetPlayerScore;
         PAF_GameManager.OnPlayerReady += SetPlayerReady;
-        PAF_GameManager.OnGameEnd += DisplayEndMenu; 
     }
 
     private void Start()
     {
-        InitAudioMixer(); 
+        InitAudioMixer();
+        if (highScoreText) highScoreText.text = "Meilleur Score : " + (PAF_GameManager.HighScore > 0 ? PAF_GameManager.HighScore.ToString() : "-");
     }
 
     private void Update()
@@ -264,7 +267,6 @@ public class PAF_UIManager : MonoBehaviour
         PAF_GameManager.OnEndCinematic -= StartCountDown;
         PAF_GameManager.OnPlayerScored -= SetPlayerScore;
         PAF_GameManager.OnPlayerReady -= SetPlayerReady;
-        PAF_GameManager.OnGameEnd -= DisplayEndMenu;
     }
     #endregion
 

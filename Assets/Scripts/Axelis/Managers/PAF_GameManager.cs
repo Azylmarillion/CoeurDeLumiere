@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq; 
 using UnityEngine;
 
@@ -80,6 +80,9 @@ public class PAF_GameManager : MonoBehaviour
     /// </summary>
     private int m_currentGameTime = 0;
 
+    /// <summary>
+    /// Highest score registered.
+    /// </summary>
     private static int m_highScore = 0;
     public static int HighScore { get { return m_highScore; } }
 
@@ -92,6 +95,12 @@ public class PAF_GameManager : MonoBehaviour
     /// </summary>
     private int m_playerTwoScore = 0;
 
+    private static string saveFileFolder { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Pafztek"); } }
+
+    private static string saveFileName = "save.sav";
+
+    private static string saveFilePath { get { return Path.Combine(saveFileFolder, saveFileName); } }
+
     /// <summary>
     /// Array of all events called during the game at a certain timecode
     /// </summary>
@@ -100,6 +109,8 @@ public class PAF_GameManager : MonoBehaviour
 
     [Header("Video")]
     [SerializeField] private UnityEngine.Video.VideoPlayer m_videoPlayer = null;
+    [SerializeField] private Material m_introMaterial = null;
+    [SerializeField] private float m_speedFadeCinematic = 2;
     [SerializeField] private PAF_SoundData m_soundDatas = null;
     [SerializeField] private PAF_VFXData m_vfxDatas = null;
 
@@ -120,17 +131,80 @@ public class PAF_GameManager : MonoBehaviour
 
     #region Original Methods
     /// <summary>
+    /// Loads highest score.
+    /// </summary>
+    private void LoadHighScore()
+    {
+        if (!Directory.Exists(saveFileFolder) || !File.Exists(saveFilePath)) return;
+        int.TryParse(File.ReadAllText(saveFilePath), out m_highScore);
+    }
+
+    /// <summary>
+    /// Registers new game high score.
+    /// </summary>
+    /// <param name="_newHighScore">New high score.</param>
+    public void RegisterHighScore(int _newHighScore)
+    {
+        m_highScore = _newHighScore;
+
+        if (!Directory.Exists(saveFileFolder)) Directory.CreateDirectory(saveFileFolder);
+        File.WriteAllText(saveFilePath, _newHighScore.ToString());
+    }
+
+    /// <summary>
+    /// Called at the end of the game.
+    /// </summary>
+    private void EndGame()
+    {
+        OnGameEnd?.Invoke(m_playerOneScore, m_playerTwoScore);
+        int _highestScore = 0;
+
+        if (m_playerOneScore == m_playerTwoScore)
+        {
+            _highestScore = m_playerOneScore;
+            PAF_UIManager.Instance?.DisplayEndMenu(0, _highestScore);
+        }
+        else if (m_playerOneScore > m_playerTwoScore)
+        {
+            _highestScore = m_playerOneScore;
+            PAF_UIManager.Instance?.DisplayEndMenu(1, _highestScore);
+        }
+        else
+        {
+            _highestScore = m_playerTwoScore;
+            PAF_UIManager.Instance?.DisplayEndMenu(2, _highestScore);
+        }
+
+        if (_highestScore > m_highScore) RegisterHighScore(_highestScore);
+
+        m_playerOneIsReady = false;
+        m_playerTwoIsReady = false;
+        m_gameIsOver = true; 
+    }
+
+    /// <summary>
     /// Start the video player to start the cinematic
     /// </summary>
     /// <returns></returns>
     private IEnumerator StartVideoPlayer()
     {
         yield return new WaitForSeconds(1.0f); 
-        if (m_videoPlayer)
+        if (m_videoPlayer && m_introMaterial)
         {
+            m_introMaterial.color = new Color(m_introMaterial.color.r, m_introMaterial.color.g, m_introMaterial.color.b, 1);
+            m_videoPlayer.Prepare();
+            while(!m_videoPlayer.isPrepared)
+            {
+                yield return new WaitForSeconds(.1f);
+            }
+            PAF_UIManager.Instance?.HideMainMenu();
             m_videoPlayer.Play();
             while (m_videoPlayer.isPlaying)
             {
+                if (Input.GetKey(KeyCode.Keypad1) && Input.GetKey(KeyCode.Keypad2) && Input.GetKey(KeyCode.Keypad3))
+                {
+                    m_videoPlayer.Stop();
+                }
                 yield return new WaitForSeconds(.1f);
             }
         }
@@ -157,27 +231,24 @@ public class PAF_GameManager : MonoBehaviour
             yield return new WaitForSeconds(1.0f);
             m_currentGameTime++;
         }
-        OnGameEnd?.Invoke(m_playerOneScore, m_playerTwoScore);
-        m_playerOneIsReady = false;
-        m_playerTwoIsReady = false;
-        m_gameIsOver = true; 
+        EndGame();
     }
 
     /// <summary>
     /// Increase the score of the player according to the given points 
     /// </summary>
     /// <param name="_isFirstPlayer">Is the rewarded player is player one?</param>
-    /// <param name="_fruitScore">The points to add to the player score</param>
-    private void IncreasePlayerScore(bool _isFirstPlayer, int _fruitScore)
+    /// <param name="_increase">The points to add to the player score</param>
+    private void IncreasePlayerScore(bool _isFirstPlayer, int _increase)
     {
         if (_isFirstPlayer)
         {
-            m_playerOneScore += _fruitScore;
-            OnPlayerScored?.Invoke(_isFirstPlayer, m_playerOneScore);
+            m_playerOneScore += _increase;
+            OnPlayerScored?.Invoke(_isFirstPlayer, _increase);
             return; 
         }
-        m_playerTwoScore += _fruitScore;
-        OnPlayerScored?.Invoke(_isFirstPlayer, m_playerTwoScore); 
+        m_playerTwoScore += _increase;
+        OnPlayerScored?.Invoke(_isFirstPlayer, _increase); 
     }
 
     /// <summary>
@@ -213,6 +284,29 @@ public class PAF_GameManager : MonoBehaviour
         m_gameIsReadyToStart = true;
         StartCoroutine(IncreasePlayingTime());
     }
+
+    /// <summary>
+    /// Disable the cinematic if it exists
+    /// </summary>
+    void HideCinematic()
+    {
+        if (!m_videoPlayer) return;
+        m_videoPlayer.Stop();
+        m_videoPlayer.enabled = false;
+        m_videoPlayer.enabled = true;
+        StartCoroutine(FadeCinematic());
+    }
+
+    IEnumerator FadeCinematic()
+    {
+        if (!m_introMaterial) yield break;
+        while (m_introMaterial.color.a > 0)
+        {
+            m_introMaterial.color = Color.Lerp(m_introMaterial.color, new Color(m_introMaterial.color.r, m_introMaterial.color.g, m_introMaterial.color.b, 0), Time.deltaTime * m_speedFadeCinematic);
+            yield return new WaitForSeconds(.1f);
+        }
+        yield return null;
+    }
     #endregion
 
     #region Unity Methods
@@ -221,6 +315,7 @@ public class PAF_GameManager : MonoBehaviour
         if(Instance == null)
         {
             Instance = this;
+            LoadHighScore();
         }
         else
         {
@@ -231,12 +326,16 @@ public class PAF_GameManager : MonoBehaviour
 
     private void Start()
     {
-        PAF_Fruit.OnFruitEaten += IncreasePlayerScore; 
+        PAF_Fruit.OnFruitEaten += IncreasePlayerScore;
+        PAF_Player.OnFall += IncreasePlayerScore;
+        OnEndCinematic += HideCinematic;
     }
 
     private void OnDestroy()
     {
-        PAF_Fruit.OnFruitEaten -= IncreasePlayerScore; 
+        PAF_Fruit.OnFruitEaten -= IncreasePlayerScore;
+        PAF_Player.OnFall -= IncreasePlayerScore;
+        OnEndCinematic -= HideCinematic;
     }
     #endregion
 

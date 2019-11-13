@@ -559,19 +559,22 @@ public class PAF_Fruit : MonoBehaviour
     /// </summary>
     /// <param name="_toFollow">Transform of to follow.</param>
     /// <returns>IEnumerator, baby.</returns>
-    private IEnumerator FollowTransform(Transform _toFollow)
+    private IEnumerator FollowPlant(Transform _toFollow)
     {
         if (velocity.y > 0) velocity.y = -1;
         while (true)
         {
-            Vector3 _newVelocity = _toFollow.position - transform.position;
+            if (transform.localScale.x > .5f)
+            {
+                transform.localScale *= .95f;
+            }
+
+            Vector3 _newVelocity = _toFollow.position - renderer.position;
             float _magnitude = flatVelocity.magnitude;
             if (_magnitude > 25) _magnitude *= .975f;
             else if ((_magnitude < 5f) && (_newVelocity.magnitude > .25f)) _magnitude = 5f;
 
-            _newVelocity = _newVelocity.normalized * _magnitude;
-
-            Velocity = new Vector3(_newVelocity.x, velocity.y, _newVelocity.z);
+            Velocity = _newVelocity.normalized * _magnitude;
 
             yield return null;
         }
@@ -604,7 +607,7 @@ public class PAF_Fruit : MonoBehaviour
         if (isDoomed) return;
 
         DoomFruit();
-        StartCoroutine(FollowTransform(_toFollow));
+        StartCoroutine(FollowPlant(_toFollow));
     }
 
     /// <summary>

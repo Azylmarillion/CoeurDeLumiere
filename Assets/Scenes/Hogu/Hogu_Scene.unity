@@ -1234,18 +1234,23 @@ PrefabInstance:
     - target: {fileID: 4779515518270946707, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4779515517032619180, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4779515517769943192, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: m_gameEvents.Array.data[2].m_callingTime
-      value: 1
+      value: 80
       objectReference: {fileID: 0}
+    - target: {fileID: 4779515517769943192, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: m_introMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: fbc60cd1938373f4d94f7deec5bfc27a, type: 2}
     - target: {fileID: 4779515517769943199, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: allDallesToFall.Array.size
@@ -1332,6 +1337,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4914364756248529303, guid: ec0bea1d0ce64c24aa76636dd27dbf9d,
         type: 3}
+    - target: {fileID: 4779515517769943199, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: fallDelay
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2702095037964005862, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: fbc60cd1938373f4d94f7deec5bfc27a, type: 2}
+    - target: {fileID: 4779515516688734041, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2711af07241f6ae439bbe80bc3c100c4, type: 3}
 --- !u!114 &1827193986 stripped

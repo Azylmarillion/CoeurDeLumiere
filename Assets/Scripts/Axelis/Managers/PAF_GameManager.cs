@@ -197,8 +197,8 @@ public class PAF_GameManager : MonoBehaviour
             {
                 yield return new WaitForSeconds(.1f);
             }
-            PAF_UIManager.Instance?.HideMainMenu();
             m_videoPlayer.Play();
+            StartCoroutine(DelayHideMenu());
             while (m_videoPlayer.isPlaying)
             {
                 if (Input.GetKey(KeyCode.Keypad1) && Input.GetKey(KeyCode.Keypad2) && Input.GetKey(KeyCode.Keypad3))
@@ -209,6 +209,12 @@ public class PAF_GameManager : MonoBehaviour
             }
         }
         OnEndCinematic?.Invoke(); 
+    }
+
+    private IEnumerator DelayHideMenu()
+    {
+        yield return new WaitForSeconds(.3f);
+        PAF_UIManager.Instance?.HideMainMenu();
     }
 
     /// <summary>

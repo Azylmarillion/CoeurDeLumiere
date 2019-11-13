@@ -106,7 +106,7 @@ public class PAF_Bulb : MonoBehaviour
     
     public void Hit(PAF_Player _player)
     {
-        if (!bulbAnimator || !canHit) return;
+        if (!bulbAnimator) return;
         bulbAnimator.SetTrigger("hit");
         m_lastHitPlayer = _player; 
         if (soundSource)
@@ -114,7 +114,7 @@ public class PAF_Bulb : MonoBehaviour
             AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetHitBulb();
             if (_clip) soundSource.PlayOneShot(_clip);
         }
-        if (isBigBulb)
+        if (isBigBulb && canHit)
         {
             hits++;
             if (hits >= bigBulbHitNeeded)
@@ -122,7 +122,7 @@ public class PAF_Bulb : MonoBehaviour
                 bulbAnimator.SetTrigger("spit");
             }
         }
-        else
+        else if (canHit)
         {
             bulbAnimator.SetTrigger("spit");
         }

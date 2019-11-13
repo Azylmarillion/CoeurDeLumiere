@@ -144,6 +144,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6c213f785980ec46bac3b02e54ec198, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &180855017 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1187584706821893920, guid: be0edf943dfecf64d9527ff7cab508d0,
+    type: 3}
+  m_PrefabInstance: {fileID: 652419693}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &194823746
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -841,6 +847,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6c213f785980ec46bac3b02e54ec198, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1169802027 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 867674440246431762, guid: be0edf943dfecf64d9527ff7cab508d0,
+    type: 3}
+  m_PrefabInstance: {fileID: 652419693}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1184228679 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4221673112453703288, guid: be0edf943dfecf64d9527ff7cab508d0,
@@ -1090,6 +1102,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6c213f785980ec46bac3b02e54ec198, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1412575805 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1049280960126206631, guid: be0edf943dfecf64d9527ff7cab508d0,
+    type: 3}
+  m_PrefabInstance: {fileID: 652419693}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1473214507 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8733098649275236760, guid: be0edf943dfecf64d9527ff7cab508d0,
@@ -1236,7 +1254,7 @@ PrefabInstance:
     - target: {fileID: 4779515517769943199, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: allDallesGroups.Array.size
-      value: 3
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4779515517769943199, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
@@ -1293,6 +1311,27 @@ PrefabInstance:
       propertyPath: allDallesGroups.Array.data[2]
       value: 
       objectReference: {fileID: 47292194}
+    - target: {fileID: 4779515517769943199, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: allDallesGroups.Array.data[3]
+      value: 
+      objectReference: {fileID: 180855017}
+    - target: {fileID: 4779515517769943199, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: allDallesGroups.Array.data[4]
+      value: 
+      objectReference: {fileID: 1412575805}
+    - target: {fileID: 4779515517769943199, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: allDallesGroups.Array.data[5]
+      value: 
+      objectReference: {fileID: 1169802027}
+    - target: {fileID: 4779515517769943199, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: dalleFX
+      value: 
+      objectReference: {fileID: 4914364756248529303, guid: ec0bea1d0ce64c24aa76636dd27dbf9d,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2711af07241f6ae439bbe80bc3c100c4, type: 3}
 --- !u!114 &1827193986 stripped

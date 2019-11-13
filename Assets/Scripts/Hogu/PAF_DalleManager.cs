@@ -15,6 +15,8 @@ public class PAF_DalleManager : MonoBehaviour
     [SerializeField] float fallDelay = .25f;
     [SerializeField, Range(0,.1f)] float shift = .05f;
 
+    [SerializeField] GameObject dalleFX = null;
+
     [SerializeField] Material[] dalleMaterials = new Material[] { };
     public Material[] DalleMaterials { get { return dalleMaterials; } }
     public float Shift { get { return shift; } }
@@ -82,6 +84,7 @@ public class PAF_DalleManager : MonoBehaviour
             for (int j = 0; j < _allDallesToFall.Count; j++)
             {
                 _allDallesToFall[j].Fall();
+                if (dalleFX) Instantiate(dalleFX, _allDallesToFall[j].transform.position, _allDallesToFall[j].transform.rotation);
                 yield return new WaitForSeconds(.05f);
             }
 

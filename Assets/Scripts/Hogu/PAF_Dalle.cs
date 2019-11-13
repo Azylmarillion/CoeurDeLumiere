@@ -26,12 +26,9 @@ public class PAF_Dalle : MonoBehaviour
     {
         if (!collider) collider = GetComponent<MeshCollider>();
         if (!renderer) renderer = GetComponent<Renderer>();
-        if (!audioSource) audioSource = GetComponent<AudioSource>();
-        if (!collider || !audioSource || ! renderer) return;
+        if (!collider || !renderer) return;
         renderer.enabled = false;
         collider.enabled = false;
-        AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetDalleFalling();
-        if (_clip) audioSource.PlayOneShot(_clip, .7f);
         Fell = true;
     }
 

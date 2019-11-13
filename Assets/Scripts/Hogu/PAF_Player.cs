@@ -75,8 +75,8 @@ public class PAF_Player : MonoBehaviour
         {
             
             // * DEBUG POUR UNE SEULE MANETTE
-            if(Input.GetKeyDown(KeyCode.A))
-                PAF_GameManager.Instance?.SetPlayerReady(isPlayerOne);
+            //if(Input.GetKeyDown(KeyCode.A))
+            //    PAF_GameManager.Instance?.SetPlayerReady(isPlayerOne);
 
             if (Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button0 : KeyCode.Joystick2Button0) ||
                 Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button1 : KeyCode.Joystick2Button1) ||

@@ -594,7 +594,7 @@ public class PAF_Fruit : MonoBehaviour
 
         // Push the touched fruit if one, or stun a player if hit one
         PAF_Fruit _fruit = _collider.GetComponent<PAF_Fruit>();
-        if (_fruit) _fruit.AddForce(flatVelocity);
+        if (_fruit) _fruit.AddForce(flatVelocity * .8f);
         /*else if (velocity.magnitude > 10f)
         {
             PAF_Player _player = _collider.GetComponent<PAF_Player>();

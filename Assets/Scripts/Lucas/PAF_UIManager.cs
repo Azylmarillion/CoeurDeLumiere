@@ -75,8 +75,6 @@ public class PAF_UIManager : MonoBehaviour
     [Header("Credits")]
     [SerializeField] private TextMeshProUGUI creditsDialogBox = null;
 
-    [SerializeField] private GameObject creditsAnchor = null;
-
     [SerializeField] private GameObject equalityPresentator = null;
     [SerializeField] private GameObject winnerPresentator = null;
 
@@ -179,7 +177,11 @@ public class PAF_UIManager : MonoBehaviour
     private void DisplayOptionsMenu()
     {
         if (m_optionMenuParent == null) return;
-        m_optionMenuParent.SetActive(!m_optionMenuParent.activeInHierarchy); 
+        m_optionMenuParent.SetActive(!m_optionMenuParent.activeInHierarchy);
+
+        // Hide cursor
+        Cursor.visible = !m_optionMenuParent.activeInHierarchy;
+        Cursor.lockState = Cursor.visible ? CursorLockMode.Confined : CursorLockMode.Locked;
     }
 
     /// <summary>
@@ -231,8 +233,6 @@ public class PAF_UIManager : MonoBehaviour
         {
             newRecordFeedback.SetActive(true);
         }
-
-        creditsAnchor.SetActive(true);
     }
     #endregion
 

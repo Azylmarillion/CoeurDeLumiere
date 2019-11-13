@@ -3,6 +3,8 @@ using System.Collections;
 using System.IO;
 using System.Linq; 
 using UnityEngine;
+using UnityEngine.Playables;
+using UnityEngine.SceneManagement;
 
 public class PAF_GameManager : MonoBehaviour 
 {
@@ -95,6 +97,11 @@ public class PAF_GameManager : MonoBehaviour
     /// </summary>
     private int m_playerTwoScore = 0;
 
+    [SerializeField] private ParticleSystem playerOneConfettis = null;
+    [SerializeField] private ParticleSystem playerTwoConfettis = null;
+
+    [SerializeField] private PlayableDirector credits = null;
+
     private static string saveFileFolder { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Pafztek"); } }
 
     private static string saveFileName = "save.sav";
@@ -136,7 +143,7 @@ public class PAF_GameManager : MonoBehaviour
     private void LoadHighScore()
     {
         if (!Directory.Exists(saveFileFolder) || !File.Exists(saveFilePath)) return;
-        int.TryParse(File.ReadAllText(saveFilePath), out m_highScore);
+        int.TryParse(File.ReadAllText(saveFilePath).Trim(), out m_highScore);
     }
 
     /// <summary>
@@ -179,7 +186,10 @@ public class PAF_GameManager : MonoBehaviour
 
         m_playerOneIsReady = false;
         m_playerTwoIsReady = false;
-        m_gameIsOver = true; 
+        m_gameIsOver = true;
+
+        credits.Play();
+        credits.stopped += (PlayableDirector _a) => SceneManager.LoadScene(0);
     }
 
     /// <summary>
@@ -251,10 +261,12 @@ public class PAF_GameManager : MonoBehaviour
         {
             m_playerOneScore += _increase;
             OnPlayerScored?.Invoke(_isFirstPlayer, _increase);
+            if (playerOneConfettis) playerOneConfettis.Play();
             return; 
         }
         m_playerTwoScore += _increase;
-        OnPlayerScored?.Invoke(_isFirstPlayer, _increase); 
+        OnPlayerScored?.Invoke(_isFirstPlayer, _increase);
+        if (playerTwoConfettis) playerTwoConfettis?.Play();
     }
 
     /// <summary>
@@ -335,6 +347,10 @@ public class PAF_GameManager : MonoBehaviour
         PAF_Fruit.OnFruitEaten += IncreasePlayerScore;
         PAF_Player.OnFall += IncreasePlayerScore;
         OnEndCinematic += HideCinematic;
+
+        // Hide cursor
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void OnDestroy()

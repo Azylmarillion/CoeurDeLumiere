@@ -558,7 +558,7 @@ public class PAF_Fruit : MonoBehaviour
     {
         // Eat FX
         ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.FruitFX;
-        if (_system) Instantiate(_system.gameObject, transform.position, Quaternion.identity);
+        if (_system) Instantiate(_system.gameObject, new Vector3(collider.bounds.center.x, renderer.position.y, collider.bounds.center.z), Quaternion.identity);
 
         if (pointsOwner) OnFruitEaten?.Invoke(pointsOwner.IsPlayerOne, fruitScore);
         Destroy(gameObject);

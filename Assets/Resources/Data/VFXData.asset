@@ -13,10 +13,14 @@ MonoBehaviour:
   m_Name: VFXData
   m_EditorClassIdentifier: 
   m_hitFX: {fileID: 4926424866207911111, guid: 17b406f4365b1834e87f132bfae6d810, type: 3}
-  m_splashFX: {fileID: 0}
-  m_fruitFX: {fileID: 0}
-  m_bulbFX: {fileID: 0}
+  m_splashFX: {fileID: 97304217902615626, guid: 43e7cd26210ee0b4b8e7309ec82871d5,
+    type: 3}
+  m_fruitFX: {fileID: 3040002168362472844, guid: d222b4b5352457a44bb0402536f4e2f2,
+    type: 3}
+  m_bulbFX: {fileID: 3082614439587504601, guid: 57db4c9f046ad4c4db2b74693c2578bb,
+    type: 3}
   m_partyFX: {fileID: 0}
   m_confusedFX: {fileID: 6825052972874526631, guid: 0fb48070277ac164bae5a1fdf6842905,
     type: 3}
-  m_stepSmokeFX: {fileID: 0}
+  m_stepSmokeFX: {fileID: 2847837751943014657, guid: eef8a96d0d89e404eb458be9cd40bbda,
+    type: 3}

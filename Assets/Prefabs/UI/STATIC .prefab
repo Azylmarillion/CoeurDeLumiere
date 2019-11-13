@@ -363,7 +363,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -738,12 +738,13 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-    m_callingTime: 90
+    m_callingTime: 80
   m_videoPlayer: {fileID: 6246289004174161987}
   m_introMaterial: {fileID: 2100000, guid: fbc60cd1938373f4d94f7deec5bfc27a, type: 2}
   m_speedFadeCinematic: 15
   m_soundDatas: {fileID: 11400000, guid: 0f1532b6b6bd9db4e9917bf5dc20602c, type: 2}
   m_vfxDatas: {fileID: 11400000, guid: 4239ec0007d6c3b438c48e39bfd99799, type: 2}
+  m_gameMusic: {fileID: 0}
 --- !u!114 &4779515517769943198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -782,11 +783,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   allRespawnableDalles: []
-  allDallesGroups: []
+  allDallesGroups:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   center: {fileID: 4779515516874671242}
-  fallDelay: 2
+  fallDelay: 5
   shift: 0.08
-  dalleFX: {fileID: 0}
+  dalleFX: {fileID: 4914364756248529303, guid: ec0bea1d0ce64c24aa76636dd27dbf9d, type: 3}
   dalleMaterials:
   - {fileID: 2100000, guid: 65bcd7890fd300542928f09c7eb1e8bc, type: 2}
   - {fileID: 2100000, guid: cad886b7e68633c4999ba27109cc5390, type: 2}
@@ -1627,6 +1634,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1608088771717384167, guid: b3e2bb847c086334b8caaf5211d6e25d,
+        type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 4779515518049371725}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}
 --- !u!114 &4779515517150651215 stripped

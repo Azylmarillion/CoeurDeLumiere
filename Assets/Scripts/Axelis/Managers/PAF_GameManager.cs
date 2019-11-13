@@ -367,14 +367,5 @@ public class PAF_GameManager : MonoBehaviour
     #endregion
 
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            RaycastHit _hit;
-            if (Physics.Raycast(Camera.main.ViewportPointToRay(Input.mousePosition), out _hit, Mathf.Infinity)) Debug.Log(_hit.transform.gameObject.name);
-        }
-    }
-
 
 }

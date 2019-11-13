@@ -79,7 +79,7 @@ public class PAF_Bulb : MonoBehaviour
         yield return new WaitForSeconds(.5f);
         animateBigBulb = false;
         initScale = transform.localScale;
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(.75f);
         if (soundSource)
         {
             AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetBulbExploding();
@@ -90,7 +90,7 @@ public class PAF_Bulb : MonoBehaviour
         yield return new WaitForSeconds(.5f);
         animateBigBulb = false;
         initScale = transform.localScale;
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(.75f);
         if (soundSource)
         {
             AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetBulbExploding();
@@ -107,7 +107,6 @@ public class PAF_Bulb : MonoBehaviour
     public void Hit(PAF_Player _player)
     {
         if (!bulbAnimator) return;
-        bulbAnimator.SetTrigger("hit");
         m_lastHitPlayer = _player; 
         if (soundSource)
         {
@@ -121,10 +120,18 @@ public class PAF_Bulb : MonoBehaviour
             {
                 bulbAnimator.SetTrigger("spit");
             }
+            else
+            {
+                bulbAnimator.SetTrigger("hit");
+            }
         }
         else if (canHit)
         {
             bulbAnimator.SetTrigger("spit");
+        }
+        else
+        {
+            bulbAnimator.SetTrigger("hit");
         }
 
         // Bulb FX

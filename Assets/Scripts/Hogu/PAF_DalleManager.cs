@@ -42,7 +42,8 @@ public class PAF_DalleManager : MonoBehaviour
     {
         foreach (GameObject _go in allDallesGroups)
         {
-            _go.AddComponent<AudioSource>();
+            AudioSource _source = _go.AddComponent<AudioSource>();
+            _source.outputAudioMixerGroup = PAF_GameManager.Instance?.AudioMixer.FindMatchingGroups("Global")[0];
         }
     }
 

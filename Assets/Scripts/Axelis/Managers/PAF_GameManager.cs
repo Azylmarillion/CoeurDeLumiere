@@ -133,6 +133,7 @@ public class PAF_GameManager : MonoBehaviour
     [SerializeField] private PAF_SoundData m_soundDatas = null;
     [SerializeField] private PAF_VFXData m_vfxDatas = null;
 
+    [SerializeField] private UnityEngine.Audio.AudioMixer audioMixer = null;
     [SerializeField] private AudioSource m_gameMusic = null;
     [SerializeField] private AudioSource m_audioSource = null;
 
@@ -147,6 +148,8 @@ public class PAF_GameManager : MonoBehaviour
             return m_vfxDatas; 
         }
     }
+
+    public UnityEngine.Audio.AudioMixer AudioMixer { get { return audioMixer; } }
     #endregion
 
     #region Methods

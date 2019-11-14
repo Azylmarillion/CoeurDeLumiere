@@ -11,6 +11,8 @@ public class PAF_Player : MonoBehaviour
     #endregion
 
     #region Fields
+    public static List<PAF_Player> Players = new List<PAF_Player>(); 
+
     [SerializeField] bool isPlayerOne = true;
     public bool IsPlayerOne { get { return isPlayerOne; } }
     [SerializeField] bool stunned = false;
@@ -24,6 +26,7 @@ public class PAF_Player : MonoBehaviour
     [SerializeField, Range(0, 5)] float stunTime = .5f;
     [SerializeField, Range(0, 5)] float fallTime = .5f;
     [SerializeField, Range(.1f, 1)] float fallDetectionSize = .5f;
+    [SerializeField, Range(1.0f, 5.0f)] float recoilDistance = 1; 
 
     private const float colliderRadius = .5f;
     private const int fallScoreIncrease = -10;
@@ -58,6 +61,10 @@ public class PAF_Player : MonoBehaviour
     [SerializeField] LayerMask interactLayer = 0;
     #endregion
 
+    private void Awake()
+    {
+        Players.Add(this); 
+    }
     private void Start()
     {
         PAF_GameManager.OnGameEnd += EndGame;
@@ -66,6 +73,7 @@ public class PAF_Player : MonoBehaviour
 
     private void OnDestroy()
     {
+        Players.Remove(this); 
         PAF_GameManager.OnGameEnd -= EndGame;
     }
 
@@ -232,6 +240,22 @@ public class PAF_Player : MonoBehaviour
          stunned = false;
     }
 
+    private IEnumerator ApplyRecoil(Vector3 _from)
+    {
+        Vector3 _basePosition = transform.position;
+        Vector3 _endPosition = transform.position + Vector3.ClampMagnitude((transform.position - _from), recoilDistance);
+        float _timer = 0;
+        float _totalTimer = stunTime + invulnerableTime;
+        float _delta = 0; 
+        while (stunned)
+        {
+            transform.position = Vector3.Lerp(_basePosition, _endPosition, _delta); 
+            yield return new WaitForEndOfFrame();
+            _timer += Time.deltaTime;
+            _delta = (_timer / _totalTimer); 
+        }
+    }
+
     public static IEnumerator InvertBoolDelay(System.Action<bool> _callBack, float _time)
     {
         bool _state = false;
@@ -272,6 +296,12 @@ public class PAF_Player : MonoBehaviour
     public void EndGame(int _one, int _two)
     {
         playerAnimator.SetMoving(true); 
+    }
+
+    public void Recoil(Vector3 _from)
+    {
+        Stun(_from);
+        StartCoroutine(ApplyRecoil(_from)); 
     }
 
     private void OnDrawGizmos()

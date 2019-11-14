@@ -182,12 +182,12 @@ public class PAF_GameManager : MonoBehaviour
         else if (m_playerOneScore > m_playerTwoScore)
         {
             _highestScore = m_playerOneScore;
-            PAF_UIManager.Instance?.DisplayEndMenu(1, _highestScore);
+            PAF_UIManager.Instance?.DisplayEndMenu(1, _highestScore, m_playerTwoScore);
         }
         else
         {
             _highestScore = m_playerTwoScore;
-            PAF_UIManager.Instance?.DisplayEndMenu(2, _highestScore);
+            PAF_UIManager.Instance?.DisplayEndMenu(2, _highestScore, m_playerOneScore);
         }
 
         if (_highestScore > m_highScore) RegisterHighScore(_highestScore);

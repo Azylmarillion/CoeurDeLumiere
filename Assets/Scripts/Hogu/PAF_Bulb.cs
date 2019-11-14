@@ -169,19 +169,26 @@ public class PAF_Bulb : MonoBehaviour
                 if ((goldenFruitsRemaining > 0) && (goldenFruitsAmount > 1))
                 {
                     int _goldenFruitPercent = 0;
-                    if (PAF_GameManager.Instance?.CurrentGameTimePercent < .5f)
+                    if (PAF_GameManager.Instance?.CurrentGameTimePercent < .4f)
                     {
-                        if (goldenFruitsRemaining > ((goldenFruitsAmount - 1) % 2))
+                        if ((goldenFruitsAmount - goldenFruitsRemaining) < ((goldenFruitsAmount - 1) % 2))
                         {
-                            if (PAF_GameManager.Instance.CurrentGameTimePercent < .25f) _goldenFruitPercent = 10;
-                            else if (PAF_GameManager.Instance.CurrentGameTimePercent < .4f) _goldenFruitPercent = 33;
-                            else _goldenFruitPercent = 100;
+                            if (PAF_GameManager.Instance.CurrentGameTimePercent < .15f) _goldenFruitPercent = 0;
+                            else if (PAF_GameManager.Instance.CurrentGameTimePercent < .25f) _goldenFruitPercent = 20;
+                            else _goldenFruitPercent = 0;
                         }
                     }
                     else
                     {
-                        if (PAF_GameManager.Instance.CurrentGameTimePercent < .75f) _goldenFruitPercent = 10;
-                        else if (PAF_GameManager.Instance.CurrentGameTimePercent < .9f) _goldenFruitPercent = 20;
+                        if (PAF_GameManager.Instance.CurrentGameTimePercent < .66f)
+                        {
+                            if (goldenFruitsRemaining > ((goldenFruitsAmount - 1) % 2f))
+                            {
+                                _goldenFruitPercent = 25;
+                            }
+                            else _goldenFruitPercent = 0;
+                        }
+                        else if (PAF_GameManager.Instance.CurrentGameTimePercent < .85f) _goldenFruitPercent = 15;
                         else _goldenFruitPercent = 100;
                     }
 

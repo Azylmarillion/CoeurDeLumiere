@@ -157,7 +157,7 @@ public class PAF_Bulb : MonoBehaviour
                 if (goldenFruitsRemaining > 0)
                 {
                     items = new GameObject[] { m_fruitData.GetGoldenFruit };
-                    goldenFruitsAmount--;
+                    goldenFruitsRemaining--;
                     _itemsToSpawn--;
                 }
                 
@@ -195,7 +195,7 @@ public class PAF_Bulb : MonoBehaviour
                     if (Random.Range(0, 100) < _goldenFruitPercent)
                     {
                         items = items.Append(m_fruitData.GetGoldenFruit).ToArray();
-                        goldenFruitsAmount--;
+                        goldenFruitsRemaining--;
                         _itemsToSpawn--;
                     }
                 }

@@ -50,6 +50,11 @@ public class PAF_Fruit : MonoBehaviour
     private bool isDoomed = false;
 
     /// <summary>
+    /// Indicates if it's a golden fruit or not.
+    /// </summary>
+    [SerializeField] private bool isGolden = false;
+
+    /// <summary>
     /// Indicates if freezing object rotation around the X axis.
     /// </summary>
     [SerializeField] private bool doFreezeXRotation = false;
@@ -120,7 +125,8 @@ public class PAF_Fruit : MonoBehaviour
         get { return velocity; }
         set
         {
-            value = new Vector3(Mathf.Clamp(value.x, -300, 300), Mathf.Clamp(value.y, -300, 300), Mathf.Clamp(value.z, -300, 300));
+            if (isGolden) value = new Vector3(Mathf.Clamp(value.x, -25, 25), Mathf.Clamp(value.y, -25, 25), Mathf.Clamp(value.z, -25, 25));
+            else value = new Vector3(Mathf.Clamp(value.x, -250, 250), Mathf.Clamp(value.y, -250, 250), Mathf.Clamp(value.z, -250, 250));
 
             velocity = value;
             autoAimCurveIndex = 0;

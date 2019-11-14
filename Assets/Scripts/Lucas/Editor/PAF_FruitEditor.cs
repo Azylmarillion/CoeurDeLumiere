@@ -37,6 +37,9 @@ public class PAF_FruitEditor : Editor
     /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="bool"/>.</summary>
     SerializedProperty isFalling = null;
 
+    /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="bool"/>.</summary>
+    SerializedProperty isGolden = null;
+
     /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="float"/>.</summary>
     SerializedProperty weight = null;
 
@@ -177,6 +180,7 @@ public class PAF_FruitEditor : Editor
         GUI.enabled = true;
         GUILayout.Space(5);
 
+        EditorGUILayout.PropertyField(isGolden, new GUIContent("Golden", "Indicates if the fruit is a golden one or not."));
         EditorGUILayout.PropertyField(doFreezeXRotation, new GUIContent("Freeze X Rot.", "Should the X rotation of the obejct be frozenor not."));
 
         GUILayout.Space(5);
@@ -211,6 +215,7 @@ public class PAF_FruitEditor : Editor
         collider = serializedObject.FindProperty("collider");
         doFreezeXRotation = serializedObject.FindProperty("doFreezeXRotation");
         isFalling = serializedObject.FindProperty("isFalling");
+        isGolden = serializedObject.FindProperty("isGolden");
         weight = serializedObject.FindProperty("weight");
         fruitScore = serializedObject.FindProperty("fruitScore");
         whatCollide = serializedObject.FindProperty("whatCollide");

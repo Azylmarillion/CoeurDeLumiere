@@ -5003,7 +5003,7 @@ Transform:
   m_GameObject: {fileID: 5981560135128472924}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.844, y: 0, z: 0}
-  m_LocalScale: {x: 17.5, y: 17.5, z: 17.5}
+  m_LocalScale: {x: 20, y: 20, z: 20}
   m_Children:
   - {fileID: 8960191549657120941}
   m_Father: {fileID: 0}
@@ -5023,6 +5023,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   renderer: {fileID: 8960191549657120941}
   collider: {fileID: 5981560135128472926}
+  isGolden: 1
   doFreezeXRotation: 0
   isFalling: 0
   weight: 1

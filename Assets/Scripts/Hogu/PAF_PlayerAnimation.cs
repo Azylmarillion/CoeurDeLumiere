@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PAF_PlayerAnimation : MonoBehaviour
 {
-    [SerializeField] private AudioSource audio = null;
+    [SerializeField] private new AudioSource audio = null;
     [SerializeField] private GameObject m_vfxObject = null;
     [SerializeField] private PAF_Player m_player = null;
 
@@ -12,7 +10,12 @@ public class PAF_PlayerAnimation : MonoBehaviour
     {
         // Run FX
         ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.StepSmokeFX;
-        if (_system) Instantiate(_system.gameObject, transform.position, Quaternion.identity);
+        if (_system)
+        {
+            GameObject _fx = Instantiate(_system.gameObject, transform.position, Quaternion.identity);
+
+            if (transform.rotation.eulerAngles.y > 180) _fx.transform.localScale = new Vector3(_fx.transform.localScale.x * -1, _fx.transform.localScale.y, _fx.transform.localScale.z);
+        }
 
         if (!audio)
         {

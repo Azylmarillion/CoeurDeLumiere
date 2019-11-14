@@ -27,7 +27,8 @@ public class PAF_Player : MonoBehaviour
     [SerializeField, Range(0, 5)] float stunTime = .5f;
     [SerializeField, Range(0, 5)] float fallTime = .5f;
     [SerializeField, Range(.1f, 1)] float fallDetectionSize = .5f;
-    [SerializeField, Range(1.0f, 5.0f)] float recoilDistance = 1; 
+    [SerializeField, Range(1.0f, 5.0f)] float recoilDistance = 1;
+    private float resetMoveTimer = 0;
 
     private const float colliderRadius = .5f;
     private const int fallScoreIncrease = -10;
@@ -119,10 +120,18 @@ public class PAF_Player : MonoBehaviour
             Vector3 _dir = new Vector3(Input.GetAxis(isPlayerOne ? "Horizontal1" : "Horizontal2"), 0, Input.GetAxis(isPlayerOne ? "Vertical1" : "Vertical2"));
             if (idle = _dir.magnitude < .1f)
             {
-                playerAnimator.SetMoving(idle);
-                accelerationTimer = 0; 
+                resetMoveTimer += Time.deltaTime;
+
+                if (resetMoveTimer > .1f)
+                {
+                    playerAnimator.SetMoving(idle);
+                    accelerationTimer = 0;
+                    resetMoveTimer = 0;
+                }
                 return;
             }
+            else if (resetMoveTimer > 0) resetMoveTimer = 0;
+
             transform.rotation = Quaternion.LookRotation(_dir);
             accelerationTimer += Time.deltaTime;
             accelerationTimer = Mathf.Clamp(accelerationTimer, 0, 1);
@@ -308,13 +317,6 @@ public class PAF_Player : MonoBehaviour
         Vector3 _spawnPos = new Vector3(Random.Range(_dalle.bounds.min.x, _dalle.bounds.max.x), 0, Random.Range(_dalle.bounds.min.z, _dalle.bounds.max.z));
         transform.position = _spawnPos;
         falling = false;
-    }
-
-    public void InstantiateRunFX()
-    {
-        // Run FX
-        ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.StepSmokeFX;
-        if (_system) Instantiate(_system.gameObject, transform.position, Quaternion.identity);
     }
 
     public void EndGame(int _one, int _two)

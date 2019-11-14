@@ -48,6 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   renderer: {fileID: 2691925358220098262}
   collider: {fileID: 1385988311233172188}
+  isGolden: 1
   doFreezeXRotation: 1
   isFalling: 0
   weight: 1

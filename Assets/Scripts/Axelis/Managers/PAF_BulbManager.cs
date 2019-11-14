@@ -169,6 +169,7 @@ public class PAF_BulbManager : MonoBehaviour
             return; 
         }
         Instance = this;
+        PAF_Bulb.InitGoldenAmount();
     }
 
     private void OnDrawGizmos()

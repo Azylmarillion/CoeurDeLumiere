@@ -362,16 +362,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 272de673b3e5c034889003a6e049b964, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isPlayerOne: 0
+  isPlayerOne: 1
   stunned: 0
   canAttack: 1
   isInvulnerable: 0
-  attackDelay: 0.4
+  attackDelay: 0.1
   attackForce: 30
-  invulnerableTime: 0.5
-  stunTime: 0.5
+  invulnerableTime: 1
+  stunTime: 0.25
   fallTime: 1
-  fallDetectionSize: 0.5
+  fallDetectionSize: 0.25
   accelerationCurve:
     serializedVersion: 2
     m_Curve:
@@ -409,7 +409,7 @@ MonoBehaviour:
     m_Bits: 1024
   obstacleLayer:
     serializedVersion: 2
-    m_Bits: 4352
+    m_Bits: 20736
   interactLayer:
     serializedVersion: 2
     m_Bits: 6912
@@ -802,21 +802,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3893279133218620742, guid: 5138c4352a8475946bf6abf46a7337bd,
         type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3893279133218620742, guid: 5138c4352a8475946bf6abf46a7337bd,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3893279133218620742, guid: 5138c4352a8475946bf6abf46a7337bd,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3893279133218620742, guid: 5138c4352a8475946bf6abf46a7337bd,
-        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -828,6 +813,21 @@ PrefabInstance:
     - target: {fileID: 3893279133218620742, guid: 5138c4352a8475946bf6abf46a7337bd,
         type: 3}
       propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3893279133218620742, guid: 5138c4352a8475946bf6abf46a7337bd,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3893279133218620742, guid: 5138c4352a8475946bf6abf46a7337bd,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3893279133218620742, guid: 5138c4352a8475946bf6abf46a7337bd,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

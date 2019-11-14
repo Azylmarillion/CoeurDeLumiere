@@ -93,7 +93,8 @@ public class PAF_UIManager : MonoBehaviour
     [SerializeField] private Slider m_volumeSliderMusic = null;
 
     [Header("Credits")]
-    [SerializeField] private TextMeshProUGUI creditsDialogBox = null;
+    [SerializeField] private TextMeshProUGUI winnerScoreText = null;
+    [SerializeField] private TextMeshProUGUI loserScoreText = null;
 
     [SerializeField] private GameObject equalityPresentator = null;
     [SerializeField] private GameObject winnerPresentator = null;
@@ -243,33 +244,41 @@ public class PAF_UIManager : MonoBehaviour
     /// </summary>
     /// <param name="_bestPlayer">Best player : 0 for equality, 1 for first player and other for second one.</param>
     /// <param name="_highScore">Highscore of this game.</param>
-    public void DisplayEndMenu(int _bestPlayer, int _highScore)
+    public void DisplayEndMenu(int _bestPlayer, int _highScore, int _otherScore = 0)
     {
-        string _text = string.Empty;
+        string _winnerText = string.Empty;
 
         if (_bestPlayer == 0)
         {
             //Egalité
-            _text = "Egalité : ";
+            _winnerText = "Egalité : ";
             equalityPresentator.SetActive(true);
+            loserScoreText.transform.parent.gameObject.SetActive(false);
         }
         else
         {
+            string _loserText = string.Empty;
+
             if (_bestPlayer == 1)
             {
                 // P1 Gagne
-                _text = "ROUGE";
+                _winnerText = "ROUGE";
+                _loserText = "BLEU ";
             }
             else
             {
                 // P2 Gagne
-                _text = "BLEU";
+                _winnerText = "BLEU";
+                _loserText = "ROUGE ";
             }
-            _text += " Gagne : ";
+            _winnerText += " Gagne : ";
             winnerPresentator.SetActive(true);
+
+            loserScoreText.text = _loserText + _otherScore;
         }
 
-        creditsDialogBox.text = _text + _highScore;
+        winnerScoreText.text = _winnerText + _highScore;
+        
         if (_highScore >= PAF_GameManager.HighScore)
         {
             newRecordFeedback.SetActive(true);

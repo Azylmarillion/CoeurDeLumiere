@@ -169,7 +169,6 @@ public class PAF_BulbManager : MonoBehaviour
             return; 
         }
         Instance = this;
-        PAF_Bulb.GoldenFruitsRemaining = 0;
     }
 
     private void OnDrawGizmos()

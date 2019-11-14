@@ -17,8 +17,8 @@ public class PAF_Bulb : MonoBehaviour
 
     #region Fields
     [SerializeField] bool isBigBulb = false;
-    [SerializeField, Range(0, 10)] private int goldenFruitsAmount = 3;
-    public static int GoldenFruitsRemaining = 0;
+    private static int goldenFruitsAmount = 3;
+    private static int goldenFruitsRemaining = 0;
 
     [SerializeField, Header("Big bulb stats")] int bigBulbHitNeeded = 10;
     [SerializeField, Range(0, 10)] int minItemsInBigBulb = 1;
@@ -59,7 +59,10 @@ public class PAF_Bulb : MonoBehaviour
         if(animateBigBulb) AnimateBigger();
     }
 
-
+    public static void InitGoldenAmount()
+    {
+        goldenFruitsRemaining = goldenFruitsAmount;
+    }
 
     public void SetBigBulb()
     {
@@ -152,10 +155,10 @@ public class PAF_Bulb : MonoBehaviour
             if (isBigBulb)
             {
                 _itemsToSpawn = Random.Range(minItemsInBigBulb, maxItemsInBigBulb + 1);
-                if (GoldenFruitsRemaining > 0)
+                if (goldenFruitsRemaining > 0)
                 {
                     items = new GameObject[] { m_fruitData.GetGoldenFruit };
-                    GoldenFruitsRemaining--;
+                    goldenFruitsRemaining--;
                     _itemsToSpawn--;
                 }
                 
@@ -164,12 +167,12 @@ public class PAF_Bulb : MonoBehaviour
             else
             {
                 _itemsToSpawn = Random.Range(minItemsInBulb, maxItemsInBulb + 1);
-                if ((GoldenFruitsRemaining > 0) && (goldenFruitsAmount > 1))
+                if ((goldenFruitsRemaining > 0) && (goldenFruitsAmount > 1))
                 {
                     int _goldenFruitPercent = 0;
                     if (PAF_GameManager.Instance?.CurrentGameTimePercent < .4f)
                     {
-                        if ((goldenFruitsAmount - GoldenFruitsRemaining) < ((goldenFruitsAmount - 1) % 2))
+                        if ((goldenFruitsAmount - goldenFruitsRemaining) < ((goldenFruitsAmount - 1) % 2))
                         {
                             if (PAF_GameManager.Instance.CurrentGameTimePercent < .15f) _goldenFruitPercent = 0;
                             else if (PAF_GameManager.Instance.CurrentGameTimePercent < .25f) _goldenFruitPercent = 20;
@@ -180,7 +183,7 @@ public class PAF_Bulb : MonoBehaviour
                     {
                         if (PAF_GameManager.Instance.CurrentGameTimePercent < .66f)
                         {
-                            if (GoldenFruitsRemaining > ((goldenFruitsAmount - 1) % 2f))
+                            if (goldenFruitsRemaining > ((goldenFruitsAmount - 1) % 2f))
                             {
                                 _goldenFruitPercent = 25;
                             }
@@ -193,7 +196,7 @@ public class PAF_Bulb : MonoBehaviour
                     if (Random.Range(0, 100) < _goldenFruitPercent)
                     {
                         items = new GameObject[] { m_fruitData.GetGoldenFruit };
-                        GoldenFruitsRemaining--;
+                        goldenFruitsRemaining--;
                         _itemsToSpawn--;
                     }
                 }

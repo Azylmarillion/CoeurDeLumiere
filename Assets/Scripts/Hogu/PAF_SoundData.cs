@@ -20,6 +20,7 @@ public class PAF_SoundData : ScriptableObject
     [SerializeField] AudioClip moveMenu = null;
     [SerializeField] AudioClip selectMenu = null;
     [SerializeField] AudioClip crowdCheer = null;
+    [SerializeField] AudioClip whistle = null; 
 
 
 
@@ -97,5 +98,10 @@ public class PAF_SoundData : ScriptableObject
     {
         if (fruitSpawn.Length > 0) return fruitSpawn[Random.Range(0, fruitSpawn.Length)];
         return null;
+    }
+
+    public AudioClip Whistle
+    {
+        get { return whistle;  }
     }
 }

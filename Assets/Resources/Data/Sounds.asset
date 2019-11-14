@@ -71,3 +71,4 @@ MonoBehaviour:
   moveMenu: {fileID: 0}
   selectMenu: {fileID: 0}
   crowdCheer: {fileID: 0}
+  whistle: {fileID: 8300000, guid: 96d769e8e26c5a344a3bde95ad328bde, type: 3}

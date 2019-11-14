@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq; 
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -49,6 +50,7 @@ public class PAF_Player : MonoBehaviour
     #region Objects
     [SerializeField] Collider moveArea = null;
     [SerializeField] Renderer playerRenderer = null;
+    [SerializeField] Renderer stickRend = null;
     [SerializeField] PAF_PlayerAnimator playerAnimator = null;
     #endregion
 
@@ -59,15 +61,19 @@ public class PAF_Player : MonoBehaviour
     [SerializeField] LayerMask groundLayer = 0;
     [SerializeField] LayerMask obstacleLayer = 0;
     [SerializeField] LayerMask interactLayer = 0;
+
+    [Header("Leader VFX")]
+    [SerializeField] private GameObject m_leaderVFX = null; 
     #endregion
 
     private void Awake()
     {
-        Players.Add(this); 
+        Players.Add(this);
     }
     private void Start()
     {
         PAF_GameManager.OnGameEnd += EndGame;
+        PAF_GameManager.OnPlayerScored += CheckScore;
         playerAnimator.Init(playerSpeed);
     }
 
@@ -75,6 +81,7 @@ public class PAF_Player : MonoBehaviour
     {
         Players.Remove(this); 
         PAF_GameManager.OnGameEnd -= EndGame;
+        PAF_GameManager.OnPlayerScored -= CheckScore;
     }
 
     private void Update()
@@ -159,7 +166,6 @@ public class PAF_Player : MonoBehaviour
         if (_clip) audioPlayer.PlayOneShot(_clip, .8f);
         playerAnimator.SetFalling();
         playerAnimator.SetMoving(false);
-
         OnFall?.Invoke(isPlayerOne, fallScoreIncrease);
     }
 
@@ -228,16 +234,33 @@ public class PAF_Player : MonoBehaviour
         if (_system) Instantiate(_system, new Vector3(transform.position.x - (transform.forward.x * .75f), transform.position.y + 1, transform.position.z - (transform.forward.z * .75f)), Quaternion.identity);
     }
 
-    void Flash() => playerRenderer.enabled = !playerRenderer.enabled;
+    IEnumerator FallInvulnerable()
+    {
+        isInvulnerable = true;
+        InvokeRepeating("Flash", 0, .1f);
+        yield return new WaitForSeconds(invulnerableTime);
+        isInvulnerable = false;
+        CancelInvoke("Flash");
+        if (playerRenderer) playerRenderer.enabled = true;
+        if (stickRend) stickRend.enabled = true;
+    }
+
+    void Flash()
+    {
+        playerRenderer.enabled = !playerRenderer.enabled;
+        if (stickRend) stickRend.enabled = !stickRend.enabled;
+    }
 
     IEnumerator StunFlashTimer()
     {
         stunned = true;
         StartCoroutine(InvertBoolDelay((state) => { isInvulnerable = !state; }, invulnerableTime + stunTime));
-        yield return new WaitForSeconds(stunTime + invulnerableTime);
+        yield return new WaitForSeconds(stunTime );
+         stunned = false;
+        yield return new WaitForSeconds(invulnerableTime);
         CancelInvoke("Flash");
         if (playerRenderer) playerRenderer.enabled = true;
-         stunned = false;
+        if (stickRend) stickRend.enabled = true;
     }
 
     private IEnumerator ApplyRecoil(Vector3 _from)
@@ -268,6 +291,7 @@ public class PAF_Player : MonoBehaviour
     public void Respawn()
     {
         if (!falling) return;
+        StartCoroutine(FallInvulnerable());
         transform.GetChild(0).localScale = Vector3.one;
 
         // Spash FX
@@ -302,6 +326,22 @@ public class PAF_Player : MonoBehaviour
     {
         Stun(_from);
         StartCoroutine(ApplyRecoil(_from)); 
+    }
+
+    private void CheckScore(bool _isPlayerOne, int _score)
+    {
+        if (!m_leaderVFX) return; 
+        if(_isPlayerOne == isPlayerOne)
+        {
+            if(_isPlayerOne)
+            {
+                m_leaderVFX.SetActive(PAF_GameManager.Instance.PlayerOneIsLeading);
+            }
+            else
+            {
+                m_leaderVFX.SetActive(!PAF_GameManager.Instance.PlayerOneIsLeading);
+            }
+        }
     }
 
     private void OnDrawGizmos()

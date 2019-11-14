@@ -374,6 +374,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e34f7f4c21e616d4ba6b637ee55234e8, type: 3}
+<<<<<<< HEAD
 --- !u!1 &391989897
 GameObject:
   m_ObjectHideFlags: 0
@@ -505,6 +506,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3665497634d6d3341b247198f4408a04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+=======
+>>>>>>> master
 --- !u!1001 &611004183
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1067,93 +1070,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 35df2d5b0e109c244a81dc1eb50b4694, type: 3}
---- !u!1001 &1047580072
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 391989898}
-    m_Modifications:
-    - target: {fileID: 4412692343351390022, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_Name
-      value: Left Fruit
-      objectReference: {fileID: 0}
-    - target: {fileID: 4412692343351390074, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -9
-      objectReference: {fileID: 0}
-    - target: {fileID: 4412692343351390074, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4412692343351390074, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4412692343351390074, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4412692343351390074, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4412692343351390074, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4412692343351390074, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4412692343351390074, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4412692343351390074, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4412692343351390074, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4412692343351390074, guid: 5af142f6eb446074f8473ed6198ad5c4,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 5af142f6eb446074f8473ed6198ad5c4, type: 3}
---- !u!4 &1047580073 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4412692343351390074, guid: 5af142f6eb446074f8473ed6198ad5c4,
-    type: 3}
-  m_PrefabInstance: {fileID: 1047580072}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1047580074 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4412692343351390021, guid: 5af142f6eb446074f8473ed6198ad5c4,
-    type: 3}
-  m_PrefabInstance: {fileID: 1047580072}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3665497634d6d3341b247198f4408a04, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1169802027 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 867674440246431762, guid: be0edf943dfecf64d9527ff7cab508d0,
@@ -1672,6 +1588,7 @@ PrefabInstance:
       propertyPath: m_gameMusic
       value: 
       objectReference: {fileID: 1706938601}
+<<<<<<< HEAD
     - target: {fileID: 4779515517769943192, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: leftFruit
@@ -1737,6 +1654,8 @@ PrefabInstance:
       propertyPath: m_gameEvents.Array.data[3].m_event.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
       value: 3
       objectReference: {fileID: 0}
+=======
+>>>>>>> master
     - target: {fileID: 4779515517769943199, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: allDallesGroups.Array.data[0]
@@ -1767,6 +1686,7 @@ PrefabInstance:
       propertyPath: allDallesGroups.Array.data[5]
       value: 
       objectReference: {fileID: 1169802027}
+<<<<<<< HEAD
     - target: {fileID: 6054337898439957218, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: winnerScoreText
@@ -1782,10 +1702,12 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+=======
+>>>>>>> master
     - target: {fileID: 4779515517133199599, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -154.99951
+      value: -154.99963
       objectReference: {fileID: 0}
     - target: {fileID: 4779515518356734191, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
@@ -1820,6 +1742,7 @@ PrefabInstance:
     - target: {fileID: 23677760662645999, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: m_AnchoredPosition.y
+<<<<<<< HEAD
       value: 110
       objectReference: {fileID: 0}
     - target: {fileID: 4779515516845857926, guid: 2711af07241f6ae439bbe80bc3c100c4,
@@ -1887,6 +1810,9 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 1
+=======
+      value: 110.00012
+>>>>>>> master
       objectReference: {fileID: 0}
     - target: {fileID: 4779515517094183218, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}

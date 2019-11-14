@@ -97,7 +97,10 @@ public class PAF_GameManager : MonoBehaviour
     /// Score of player Two
     /// </summary>
     private int m_playerTwoScore = 0;
-
+    public bool PlayerOneIsLeading
+    {
+        get { return m_playerOneScore > m_playerTwoScore;  }
+    }
     [SerializeField] private ParticleSystem playerOneConfettis = null;
     [SerializeField] private ParticleSystem playerTwoConfettis = null;
 
@@ -108,13 +111,6 @@ public class PAF_GameManager : MonoBehaviour
     private static string saveFileName = "save.sav";
 
     private static string saveFilePath { get { return Path.Combine(saveFileFolder, saveFileName); } }
-
-    [Header("Tuto")]
-    [SerializeField] private PAF_Fruit leftFruit = null;
-    [SerializeField] private Vector3 leftFruitForce = Vector3.zero;
-
-    [SerializeField] private PAF_Fruit rightFruit = null;
-    [SerializeField] private Vector3 rightFruitForce = Vector3.zero;
 
     /// <summary>
     /// Array of all events called during the game at a certain timecode
@@ -234,16 +230,7 @@ public class PAF_GameManager : MonoBehaviour
                 yield return new WaitForSeconds(.1f);
             }
         }
-        OnEndCinematic?.Invoke();
-
-        Invoke("TutoAnim", 1f);
-    }
-
-    private void TutoAnim()
-    {
-        // Fruits Tuto
-        if (leftFruit) leftFruit.AddForce(leftFruitForce);
-        if (rightFruit) rightFruit.AddForce(rightFruitForce);
+        OnEndCinematic?.Invoke(); 
     }
 
     private IEnumerator DelayHideMenu()

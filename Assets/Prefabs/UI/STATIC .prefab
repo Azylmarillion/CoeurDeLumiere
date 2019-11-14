@@ -955,7 +955,7 @@ MonoBehaviour:
     m_callingTime: 110
   m_videoPlayer: {fileID: 6246289004174161987}
   m_introMaterial: {fileID: 2100000, guid: fbc60cd1938373f4d94f7deec5bfc27a, type: 2}
-  m_speedFadeCinematic: 15
+  m_speedFadeCinematic: 1
   m_soundDatas: {fileID: 11400000, guid: 0f1532b6b6bd9db4e9917bf5dc20602c, type: 2}
   m_vfxDatas: {fileID: 11400000, guid: 4239ec0007d6c3b438c48e39bfd99799, type: 2}
   m_gameMusic: {fileID: 0}

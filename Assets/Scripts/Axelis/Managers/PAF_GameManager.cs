@@ -290,7 +290,7 @@ public class PAF_GameManager : MonoBehaviour
     private void IncreasePlayerScore(bool _isFirstPlayer, int _increase)
     {
         AudioClip _clip = SoundDatas.GetCrowdCheer();
-        if (_clip) m_audioSource.PlayOneShot(_clip, 3);
+        if (_clip) m_audioSource.PlayOneShot(_clip, 1.5f);
         if (_isFirstPlayer)
         {
             m_playerOneScore += _increase;
@@ -356,11 +356,16 @@ public class PAF_GameManager : MonoBehaviour
     IEnumerator FadeCinematic()
     {
         if (!m_introMaterial) yield break;
-        while (m_introMaterial.color.a > 0)
+        Color _baseColor = m_introMaterial.color;
+        float _timer = 0; 
+        while (_timer < m_speedFadeCinematic)
         {
-            m_introMaterial.color = Color.Lerp(m_introMaterial.color, new Color(m_introMaterial.color.r, m_introMaterial.color.g, m_introMaterial.color.b, 0), Time.deltaTime * m_speedFadeCinematic);
-            yield return new WaitForSeconds(.1f);
+            m_introMaterial.color = Color.Lerp(_baseColor, new Color(m_introMaterial.color.r, m_introMaterial.color.g, m_introMaterial.color.b, 0), _timer / m_speedFadeCinematic);
+            yield return null;
+            _timer += Time.deltaTime; 
         }
+        _baseColor.a = 0;
+        m_introMaterial.color = _baseColor; 
         yield return null;
     }
 

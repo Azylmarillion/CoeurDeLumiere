@@ -37,6 +37,8 @@ public class PAF_GameManager : MonoBehaviour
 	*/
 
     #region Events
+    public static event Action OnStartCinematic = null;
+
     public static event Action OnEndCinematic = null; 
     /// <summary>
     /// Event called when the game Starts
@@ -223,7 +225,8 @@ public class PAF_GameManager : MonoBehaviour
     /// <returns></returns>
     private IEnumerator StartVideoPlayer()
     {
-        yield return new WaitForSeconds(1.0f); 
+        OnStartCinematic?.Invoke();
+        yield return new WaitForSeconds(1.0f);
         if (m_videoPlayer && m_introMaterial)
         {
             m_introMaterial.color = new Color(m_introMaterial.color.r, m_introMaterial.color.g, m_introMaterial.color.b, 1);
@@ -428,8 +431,6 @@ public class PAF_GameManager : MonoBehaviour
     }
 #endregion
 
-#endregion
-
-
+    #endregion
 
 }

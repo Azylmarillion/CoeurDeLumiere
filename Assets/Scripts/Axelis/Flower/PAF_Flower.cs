@@ -44,6 +44,8 @@ public class PAF_Flower : MonoBehaviour
     private float m_eatingRange = 1.0f;
     [SerializeField, Range(5.0f, 50.0f)]
     private float m_detectionRange = 2.0f;
+    [SerializeField, Range(.1f, 5.0f)]
+    private float m_eatingPlayerRange = 1.0f;
 
     [SerializeField, Range(1, 360)]
     private int m_fieldOfView = 60;
@@ -95,6 +97,15 @@ public class PAF_Flower : MonoBehaviour
                     m_followedFruit = _fruits.OrderBy(f => Vector3.Distance(transform.position, f.transform.position)).FirstOrDefault();
             }
 
+            if(PAF_Player.Players.Any(p => Vector3.Distance(m_mouthTransform.position, p.transform.position) <= m_eatingPlayerRange))
+            {
+                PAF_Player.Players.Where(p => Vector3.Distance(transform.position, p.transform.position) <= m_eatingRange).ToList().ForEach(p => p.Recoil(transform.position)); 
+                m_followedFruit = null;
+                m_currentState = FlowerState.Eating;
+                m_animator.SetInteger("BehaviourState", (int)m_currentState);
+                yield break; 
+            }
+
             _targetedPosition = transform.position + (m_followedFruit.transform.position - transform.position).normalized * m_eatingRange;
             if(m_joints != null && m_joints.Length > 0)
             {
@@ -113,16 +124,22 @@ public class PAF_Flower : MonoBehaviour
         while (m_followedFruit == null)
         {
             yield return null;
+            if (PAF_Player.Players.Any(p => Vector3.Distance(m_mouthTransform.position, p.transform.position) <= m_eatingPlayerRange))
+            {
+                PAF_Player.Players.Where(p => Vector3.Distance(transform.position, p.transform.position) <= m_eatingRange).ToList().ForEach(p => p.Recoil(transform.position));
+                m_followedFruit = null;
+                m_currentState = FlowerState.Eating;
+                m_animator.SetInteger("BehaviourState", (int)m_currentState);
+                yield break;
+            }
             if (PAF_Fruit.ArenaFruits.Length == 0)
             {
-                //Debug.Log("Zero");
                 continue;
             }
             PAF_Fruit[] _fruits = PAF_Fruit.ArenaFruits.ToList().Where(f => Vector3.Distance(transform.position, f.transform.position) <= m_detectionRange
                                                                          && Vector3.Angle(transform.forward, f.transform.position - transform.position) < (m_fieldOfView / 2)).ToArray();
             if (_fruits.Length == 0)
             {
-                //Debug.Log("Too Far");
                 continue;
             }
             m_followedFruit = _fruits.OrderBy(f => Vector3.Distance(transform.position, f.transform.position)).FirstOrDefault(); 
@@ -131,8 +148,6 @@ public class PAF_Flower : MonoBehaviour
                 EatFruit();
                 yield break; 
             }
-
-            //Debug.Log("Nik");
         }
         m_currentState = FlowerState.Following;
         m_animator.SetInteger("BehaviourState", (int)m_currentState);
@@ -153,8 +168,6 @@ public class PAF_Flower : MonoBehaviour
             m_animator.SetInteger("BehaviourState", (int)m_currentState);
             return; 
         }
-        //RESET THE STATE
-        ResetState(); 
     }
 
     /// <summary>
@@ -171,7 +184,6 @@ public class PAF_Flower : MonoBehaviour
                 AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetPlantEating();
                 if (_clip) audiosource.PlayOneShot(_clip);
             }
-            // CALL VFX AND SOUND HERE
         }
         //RESET THE STATE
         ResetState(); 
@@ -216,7 +228,9 @@ public class PAF_Flower : MonoBehaviour
         if(m_mouthTransform != null)
         {
             Gizmos.color = Color.blue;
-            Gizmos.DrawSphere(m_mouthTransform.position, .15f); 
+            Gizmos.DrawSphere(m_mouthTransform.position, .15f);
+            Gizmos.color = new Color(0, 0, 1, .5f); 
+            Gizmos.DrawSphere(m_mouthTransform.position, m_eatingPlayerRange); 
         }
         
         if(m_followedFruit != null)

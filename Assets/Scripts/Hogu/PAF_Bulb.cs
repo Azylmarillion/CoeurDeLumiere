@@ -12,7 +12,6 @@ public class PAF_Bulb : MonoBehaviour
     [SerializeField] Animator bulbAnimator = null;
     [SerializeField] GameObject[] items = null;
     [SerializeField] AudioSource soundSource = null;
-    [SerializeField] PAF_FruitData fruitData = null;
     #endregion
 
     #region Fields
@@ -141,11 +140,11 @@ public class PAF_Bulb : MonoBehaviour
 
     public void Explode(bool _spawnItems)
     {
-        if (items.Length < 0 || !bulbAnimator || !fruitData) return;
+        if (items.Length < 0 || !bulbAnimator || !PAF_GameManager.Instance?.FruitData) return;
         int _itemsToSpawn = 0;
         if (_spawnItems) _itemsToSpawn = Random.Range(isBigBulb ? minItemsInBigBulb : minItemsInBulb, (isBigBulb ? maxItemsInBigBulb : maxItemsInBulb) + 1);
 
-        items = fruitData.GetRandomFruit(_itemsToSpawn);
+        items = PAF_GameManager.Instance.FruitData.GetRandomFruit(_itemsToSpawn);
         for (int i = 0; i < _itemsToSpawn; i++)
         {
             if (soundSource)

@@ -89,6 +89,12 @@ public class PAF_GameManager : MonoBehaviour
     public static int HighScore { get { return m_highScore; } }
 
     /// <summary>
+    /// Total amount of golden fruits per game.
+    /// </summary>
+    [SerializeField] private int goldenFruitsAmount = 3;
+    public int GoldenFruitsAmount { get { return goldenFruitsAmount; } }
+
+    /// <summary>
     /// Score of player One
     /// </summary>
     private int m_playerOneScore = 0;
@@ -118,8 +124,11 @@ public class PAF_GameManager : MonoBehaviour
     [SerializeField] private UnityEngine.Video.VideoPlayer m_videoPlayer = null;
     [SerializeField] private Material m_introMaterial = null;
     [SerializeField] private float m_speedFadeCinematic = 2;
+
+    [Header("Datas")]
     [SerializeField] private PAF_SoundData m_soundDatas = null;
     [SerializeField] private PAF_VFXData m_vfxDatas = null;
+    [SerializeField] private PAF_FruitData m_fruitData = null;
 
     [SerializeField] private AudioSource m_gameMusic = null;
 
@@ -132,6 +141,13 @@ public class PAF_GameManager : MonoBehaviour
         get
         {
             return m_vfxDatas; 
+        }
+    }
+    public PAF_FruitData FruitData
+    {
+        get
+        {
+            return m_fruitData;
         }
     }
     #endregion

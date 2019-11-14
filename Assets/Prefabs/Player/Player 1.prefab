@@ -368,6 +368,7 @@ MonoBehaviour:
   stunTime: 0.5
   fallTime: 1
   fallDetectionSize: 0.5
+  recoilDistance: 1
   accelerationCurve:
     serializedVersion: 2
     m_Curve:
@@ -431,7 +432,7 @@ AudioSource:
   m_GameObject: {fileID: 8338223916140015525}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 24300002, guid: ab95f4241408a654aa3c6d8323415645,
+  OutputAudioMixerGroup: {fileID: -3526637724369092550, guid: ab95f4241408a654aa3c6d8323415645,
     type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1

@@ -112,6 +112,12 @@ public class PAF_GameManager : MonoBehaviour
 
     private static string saveFilePath { get { return Path.Combine(saveFileFolder, saveFileName); } }
 
+    [Header("Tuto")]
+    [SerializeField] private PAF_Fruit leftFruit = null;
+    [SerializeField] private Vector3 leftFruitForce = Vector3.zero;
+    [SerializeField] private PAF_Fruit rightFruit = null;
+    [SerializeField] private Vector3 rightFruitForce = Vector3.zero;
+
     /// <summary>
     /// Array of all events called during the game at a certain timecode
     /// </summary>
@@ -234,7 +240,16 @@ public class PAF_GameManager : MonoBehaviour
                 yield return new WaitForSeconds(.1f);
             }
         }
-        OnEndCinematic?.Invoke(); 
+        OnEndCinematic?.Invoke();
+
+        // Tuto anim
+        Invoke("TutoAnim", .5f);
+    }
+
+    private void TutoAnim()
+    {
+        if (leftFruit) leftFruit.AddForce(leftFruitForce);
+        if (rightFruit) rightFruit.AddForce(rightFruitForce);
     }
 
     private IEnumerator DelayHideMenu()

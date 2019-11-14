@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq; 
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -60,15 +61,19 @@ public class PAF_Player : MonoBehaviour
     [SerializeField] LayerMask groundLayer = 0;
     [SerializeField] LayerMask obstacleLayer = 0;
     [SerializeField] LayerMask interactLayer = 0;
+
+    [Header("Leader VFX")]
+    [SerializeField] private GameObject m_leaderVFX = null; 
     #endregion
 
     private void Awake()
     {
-        Players.Add(this); 
+        Players.Add(this);
     }
     private void Start()
     {
         PAF_GameManager.OnGameEnd += EndGame;
+        PAF_GameManager.OnPlayerScored += CheckScore;
         playerAnimator.Init(playerSpeed);
     }
 
@@ -76,6 +81,7 @@ public class PAF_Player : MonoBehaviour
     {
         Players.Remove(this); 
         PAF_GameManager.OnGameEnd -= EndGame;
+        PAF_GameManager.OnPlayerScored -= CheckScore;
     }
 
     private void Update()
@@ -320,6 +326,22 @@ public class PAF_Player : MonoBehaviour
     {
         Stun(_from);
         StartCoroutine(ApplyRecoil(_from)); 
+    }
+
+    private void CheckScore(bool _isPlayerOne, int _score)
+    {
+        if (!m_leaderVFX) return; 
+        if(_isPlayerOne == isPlayerOne)
+        {
+            if(_isPlayerOne)
+            {
+                m_leaderVFX.SetActive(PAF_GameManager.Instance.PlayerOneIsLeading);
+            }
+            else
+            {
+                m_leaderVFX.SetActive(!PAF_GameManager.Instance.PlayerOneIsLeading);
+            }
+        }
     }
 
     private void OnDrawGizmos()

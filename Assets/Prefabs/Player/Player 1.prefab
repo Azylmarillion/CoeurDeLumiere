@@ -401,6 +401,7 @@ MonoBehaviour:
   audioPlayer: {fileID: 8338223916140015523}
   moveArea: {fileID: 0}
   playerRenderer: {fileID: 8338223916006774665}
+  stickRend: {fileID: 0}
   playerAnimator: {fileID: 8338223916140015520}
   groundLayer:
     serializedVersion: 2
@@ -411,6 +412,7 @@ MonoBehaviour:
   interactLayer:
     serializedVersion: 2
     m_Bits: 6912
+  m_leaderVFX: {fileID: 2188547168008550100}
 --- !u!114 &8338223916140015520
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -840,11 +842,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8338223915687704646}
     m_Modifications:
-    - target: {fileID: 8683646044649936026, guid: eeb29b4f2f1205446b5179dbadb1e465,
-        type: 3}
-      propertyPath: m_Name
-      value: LeaderPlayer
-      objectReference: {fileID: 0}
     - target: {fileID: 8683646044649936029, guid: eeb29b4f2f1205446b5179dbadb1e465,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -900,8 +897,24 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8683646044649936026, guid: eeb29b4f2f1205446b5179dbadb1e465,
+        type: 3}
+      propertyPath: m_Name
+      value: LeaderPlayer
+      objectReference: {fileID: 0}
+    - target: {fileID: 8683646044649936026, guid: eeb29b4f2f1205446b5179dbadb1e465,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eeb29b4f2f1205446b5179dbadb1e465, type: 3}
+--- !u!1 &2188547168008550100 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8683646044649936026, guid: eeb29b4f2f1205446b5179dbadb1e465,
+    type: 3}
+  m_PrefabInstance: {fileID: 7412302783828976206}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2188547168008550099 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8683646044649936029, guid: eeb29b4f2f1205446b5179dbadb1e465,

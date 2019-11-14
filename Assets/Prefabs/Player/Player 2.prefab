@@ -363,7 +363,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 272de673b3e5c034889003a6e049b964, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isPlayerOne: 1
+  isPlayerOne: 0
   stunned: 0
   canAttack: 1
   isInvulnerable: 0
@@ -405,6 +405,7 @@ MonoBehaviour:
   audioPlayer: {fileID: 2916782158257233578}
   moveArea: {fileID: 0}
   playerRenderer: {fileID: 2916782157570568931}
+  stickRend: {fileID: 0}
   playerAnimator: {fileID: 2916782158257233579}
   groundLayer:
     serializedVersion: 2
@@ -415,6 +416,7 @@ MonoBehaviour:
   interactLayer:
     serializedVersion: 2
     m_Bits: 6912
+  m_leaderVFX: {fileID: 2403911175166177994}
 --- !u!114 &2916782158257233579
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -717,11 +719,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2916782157117197068}
     m_Modifications:
-    - target: {fileID: 8683646044649936026, guid: eeb29b4f2f1205446b5179dbadb1e465,
-        type: 3}
-      propertyPath: m_Name
-      value: LeaderPlayer (1)
-      objectReference: {fileID: 0}
     - target: {fileID: 8683646044649936029, guid: eeb29b4f2f1205446b5179dbadb1e465,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -775,6 +772,16 @@ PrefabInstance:
     - target: {fileID: 8683646044649936029, guid: eeb29b4f2f1205446b5179dbadb1e465,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8683646044649936026, guid: eeb29b4f2f1205446b5179dbadb1e465,
+        type: 3}
+      propertyPath: m_Name
+      value: LeaderPlayer (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8683646044649936026, guid: eeb29b4f2f1205446b5179dbadb1e465,
+        type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8683646043491734943, guid: eeb29b4f2f1205446b5179dbadb1e465,
@@ -869,6 +876,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eeb29b4f2f1205446b5179dbadb1e465, type: 3}
+--- !u!1 &2403911175166177994 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8683646044649936026, guid: eeb29b4f2f1205446b5179dbadb1e465,
+    type: 3}
+  m_PrefabInstance: {fileID: 6475871063343031888}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2403911175166177997 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8683646044649936029, guid: eeb29b4f2f1205446b5179dbadb1e465,

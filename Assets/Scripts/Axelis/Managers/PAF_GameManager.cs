@@ -97,7 +97,10 @@ public class PAF_GameManager : MonoBehaviour
     /// Score of player Two
     /// </summary>
     private int m_playerTwoScore = 0;
-
+    public bool PlayerOneIsLeading
+    {
+        get { return m_playerOneScore > m_playerTwoScore;  }
+    }
     [SerializeField] private ParticleSystem playerOneConfettis = null;
     [SerializeField] private ParticleSystem playerTwoConfettis = null;
 

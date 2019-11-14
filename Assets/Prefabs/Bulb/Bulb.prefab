@@ -305,8 +305,9 @@ MonoBehaviour:
   bulbAnimator: {fileID: 5664792578582752418}
   items: []
   soundSource: {fileID: 7308732899696908981}
-  fruitData: {fileID: 11400000, guid: ea003670eed99994e9320efa5cd04435, type: 2}
+  m_fruitData: {fileID: 11400000, guid: ea003670eed99994e9320efa5cd04435, type: 2}
   isBigBulb: 0
+  goldenFruitsAmount: 3
   bigBulbHitNeeded: 5
   minItemsInBigBulb: 7
   maxItemsInBigBulb: 10

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -12,10 +12,14 @@ public class PAF_Bulb : MonoBehaviour
     [SerializeField] Animator bulbAnimator = null;
     [SerializeField] GameObject[] items = null;
     [SerializeField] AudioSource soundSource = null;
+    [SerializeField] PAF_FruitData m_fruitData = null;
     #endregion
 
     #region Fields
     [SerializeField] bool isBigBulb = false;
+    [SerializeField, Range(0, 10)] private int goldenFruitsAmount = 3;
+    private static int goldenFruitsRemaining = -1;
+
     [SerializeField, Header("Big bulb stats")] int bigBulbHitNeeded = 10;
     [SerializeField, Range(0, 10)] int minItemsInBigBulb = 1;
     [SerializeField, Range(1, 50)] int maxItemsInBigBulb = 10;
@@ -41,6 +45,8 @@ public class PAF_Bulb : MonoBehaviour
 
     private void Start()
     {
+        if (goldenFruitsRemaining < 0) goldenFruitsRemaining = goldenFruitsAmount;
+
         initScale = transform.localScale;
         if (maxItemsInBigBulb <= minItemsInBigBulb) maxItemsInBigBulb = minItemsInBigBulb + 1;
         if (maxItemsInBulb <= minItemsInBulb) maxItemsInBulb = minItemsInBulb + 1;
@@ -140,11 +146,56 @@ public class PAF_Bulb : MonoBehaviour
 
     public void Explode(bool _spawnItems)
     {
-        if (items.Length < 0 || !bulbAnimator || !PAF_GameManager.Instance?.FruitData) return;
+        if (items.Length < 0 || !bulbAnimator || !m_fruitData) return;
         int _itemsToSpawn = 0;
-        if (_spawnItems) _itemsToSpawn = Random.Range(isBigBulb ? minItemsInBigBulb : minItemsInBulb, (isBigBulb ? maxItemsInBigBulb : maxItemsInBulb) + 1);
 
-        items = PAF_GameManager.Instance.FruitData.GetRandomFruit(_itemsToSpawn);
+        if (_spawnItems)
+        {
+            if (isBigBulb)
+            {
+                _itemsToSpawn = Random.Range(minItemsInBigBulb, maxItemsInBigBulb + 1);
+                if (goldenFruitsRemaining > 0)
+                {
+                    items = new GameObject[] { m_fruitData.GetGoldenFruit };
+                    goldenFruitsAmount--;
+                    _itemsToSpawn--;
+                }
+                
+                items = items.Concat(m_fruitData.GetRandomFruit(_itemsToSpawn)).ToArray();
+            }
+            else
+            {
+                _itemsToSpawn = Random.Range(minItemsInBulb, maxItemsInBulb + 1);
+                if ((goldenFruitsRemaining > 0) && (goldenFruitsAmount > 1))
+                {
+                    int _goldenFruitPercent = 0;
+                    if (PAF_GameManager.Instance?.CurrentGameTimePercent < .5f)
+                    {
+                        if (goldenFruitsRemaining > ((goldenFruitsAmount - 1) % 2))
+                        {
+                            if (PAF_GameManager.Instance.CurrentGameTimePercent < .25f) _goldenFruitPercent = 10;
+                            else if (PAF_GameManager.Instance.CurrentGameTimePercent < .4f) _goldenFruitPercent = 33;
+                            else _goldenFruitPercent = 100;
+                        }
+                    }
+                    else
+                    {
+                        if (PAF_GameManager.Instance.CurrentGameTimePercent < .75f) _goldenFruitPercent = 10;
+                        else if (PAF_GameManager.Instance.CurrentGameTimePercent < .9f) _goldenFruitPercent = 20;
+                        else _goldenFruitPercent = 100;
+                    }
+
+                    if (Random.Range(0, 100) < _goldenFruitPercent)
+                    {
+                        items = items.Append(m_fruitData.GetGoldenFruit).ToArray();
+                        goldenFruitsAmount--;
+                        _itemsToSpawn--;
+                    }
+                }
+                items = items.Concat(m_fruitData.GetRandomFruit(_itemsToSpawn)).ToArray();
+            }
+        }
+
         for (int i = 0; i < _itemsToSpawn; i++)
         {
             if (soundSource)
@@ -156,7 +207,7 @@ public class PAF_Bulb : MonoBehaviour
             float _range = isBigBulb ? 20 : 15;
             float _height = isBigBulb ? 5 : 3;
 
-            PAF_Fruit _fruit = Instantiate(items[Random.Range(0, items.Length)], transform.position, transform.rotation).GetComponent<PAF_Fruit>();
+            PAF_Fruit _fruit = Instantiate(items[i], transform.position, transform.rotation).GetComponent<PAF_Fruit>();
             Vector3 _force = new Vector3(Random.Range(-_range, _range), Random.Range(.25f, _height), Random.Range(_range, _range));
             if (_fruit) _fruit.AddForce(_force, m_lastHitPlayer);
         }

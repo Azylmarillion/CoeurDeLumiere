@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 6310562788876935626}
   - component: {fileID: 5703927659285776351}
   m_Layer: 0
-  m_Name: Glow (2)
+  m_Name: Glow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -104,11 +104,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3865537942073605598}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.005, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 7025828936492337254}
-  m_RootOrder: 1
+  m_Father: {fileID: 2585788264562439213}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &6310562788876935626
 ParticleSystem:
@@ -4958,7 +4958,6 @@ Transform:
   m_LocalScale: {x: 15, y: 15, z: 15}
   m_Children:
   - {fileID: 2585788264562439213}
-  - {fileID: 7992277460091150161}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4980,7 +4979,7 @@ MonoBehaviour:
   isFalling: 0
   weight: 1
   autoAimCurveIndex: 0
-  fruitScore: 125
+  fruitScore: 500
   whatIsGround:
     serializedVersion: 2
     m_Bits: 1024
@@ -5327,6 +5326,7 @@ Transform:
   - {fileID: 3329302822892815578}
   - {fileID: 6326058135423667002}
   - {fileID: 4441642615394683499}
+  - {fileID: 7992277460091150161}
   m_Father: {fileID: 7025828936492337254}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

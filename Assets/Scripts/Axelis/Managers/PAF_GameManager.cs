@@ -81,18 +81,13 @@ public class PAF_GameManager : MonoBehaviour
     /// Current time spent during the game
     /// </summary>
     private int m_currentGameTime = 0;
+    public float CurrentGameTimePercent { get { return (float)m_currentGameTime / 120f; } }
 
     /// <summary>
     /// Highest score registered.
     /// </summary>
     private static int m_highScore = 0;
     public static int HighScore { get { return m_highScore; } }
-
-    /// <summary>
-    /// Total amount of golden fruits per game.
-    /// </summary>
-    [SerializeField] private int goldenFruitsAmount = 3;
-    public int GoldenFruitsAmount { get { return goldenFruitsAmount; } }
 
     /// <summary>
     /// Score of player One
@@ -128,7 +123,6 @@ public class PAF_GameManager : MonoBehaviour
     [Header("Datas")]
     [SerializeField] private PAF_SoundData m_soundDatas = null;
     [SerializeField] private PAF_VFXData m_vfxDatas = null;
-    [SerializeField] private PAF_FruitData m_fruitData = null;
 
     [SerializeField] private AudioSource m_gameMusic = null;
 
@@ -141,13 +135,6 @@ public class PAF_GameManager : MonoBehaviour
         get
         {
             return m_vfxDatas; 
-        }
-    }
-    public PAF_FruitData FruitData
-    {
-        get
-        {
-            return m_fruitData;
         }
     }
     #endregion

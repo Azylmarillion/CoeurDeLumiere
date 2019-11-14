@@ -134,11 +134,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3450045709587736095}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.0348, z: 0}
+  m_LocalPosition: {x: 0, y: 0.0023000054, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 5981560135128472928}
-  m_RootOrder: 1
+  m_Father: {fileID: 8960191549657120941}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &3450045709587736089
 ParticleSystem:
@@ -5006,7 +5006,6 @@ Transform:
   m_LocalScale: {x: 17.5, y: 17.5, z: 17.5}
   m_Children:
   - {fileID: 8960191549657120941}
-  - {fileID: 3450045709587736090}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5028,7 +5027,7 @@ MonoBehaviour:
   isFalling: 0
   weight: 1
   autoAimCurveIndex: 0
-  fruitScore: 100
+  fruitScore: 500
   whatIsGround:
     serializedVersion: 2
     m_Bits: 1024
@@ -5216,6 +5215,7 @@ Transform:
   - {fileID: 8656233392729469754}
   - {fileID: 6575517600033954964}
   - {fileID: 5906637624486844659}
+  - {fileID: 3450045709587736090}
   m_Father: {fileID: 5981560135128472928}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

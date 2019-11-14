@@ -153,7 +153,7 @@ PrefabInstance:
     - target: {fileID: 2916782158257233556, guid: e34f7f4c21e616d4ba6b637ee55234e8,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2916782158257233577, guid: e34f7f4c21e616d4ba6b637ee55234e8,
         type: 3}
@@ -1330,6 +1330,16 @@ PrefabInstance:
       propertyPath: allDallesGroups.Array.data[5]
       value: 
       objectReference: {fileID: 1169802027}
+    - target: {fileID: 4779515517133199599, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -154.99963
+      objectReference: {fileID: 0}
+    - target: {fileID: 23677760662645999, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 110.00012
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2711af07241f6ae439bbe80bc3c100c4, type: 3}
 --- !u!1 &1879566306
@@ -1498,7 +1508,7 @@ PrefabInstance:
     - target: {fileID: 8338223916140015525, guid: 2ec9871d3515db542a90ef5be60f5f54,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8338223916140015534, guid: 2ec9871d3515db542a90ef5be60f5f54,
         type: 3}

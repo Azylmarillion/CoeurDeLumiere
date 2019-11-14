@@ -12,7 +12,7 @@ public class PAF_FruitData : ScriptableObject
         get
         {
             if ((goldenFruits == null) || (goldenFruits.Length == 0)) return null;
-            return goldenFruits[Random.Range(0, goldenFruits.Length + 1)];
+            return goldenFruits[Random.Range(0, goldenFruits.Length)];
         }
     }
 

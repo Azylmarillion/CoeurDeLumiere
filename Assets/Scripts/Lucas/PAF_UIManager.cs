@@ -75,6 +75,23 @@ public class PAF_UIManager : MonoBehaviour
     }
     [SerializeField] private Slider m_volumeSlider = null;
 
+    [SerializeField] private float m_volumeIntensityMusic = 1.0f;
+    public float VolumeIntensityMusic
+    {
+        get
+        {
+            return m_volumeIntensityMusic;
+        }
+        set
+        {
+            m_volumeIntensityMusic = value;
+            PlayerPrefs.SetFloat("VolumeAttenuationMusic", value);
+            if (m_audioMixer) m_audioMixer.SetFloat("VolumeAttenuationMusic", value);
+        }
+
+    }
+    [SerializeField] private Slider m_volumeSliderMusic = null;
+
     [Header("Credits")]
     [SerializeField] private TextMeshProUGUI creditsDialogBox = null;
 
@@ -172,6 +189,20 @@ public class PAF_UIManager : MonoBehaviour
             if(m_volumeSlider)
             {
                 m_volumeSlider.value = _value; 
+            }
+            if (!PlayerPrefs.HasKey("VolumeAttenuationMusic"))
+            {
+                m_audioMixer.GetFloat("VolumeAttenuationMusic", out _value);
+                PlayerPrefs.SetFloat("VolumeAttenuationMusic", _value);
+            }
+            else
+            {
+                m_audioMixer.SetFloat("VolumeAttenuationMusic", PlayerPrefs.GetFloat("VolumeAttenuationMusic"));
+                m_audioMixer.GetFloat("VolumeAttenuationMusic", out _value);
+            }
+            if (m_volumeSlider)
+            {
+                m_volumeSlider.value = _value;
             }
         }
     }

@@ -163,7 +163,6 @@ public class PAF_Flower : MonoBehaviour
         AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetflowerGloups();
         if (_clip) audiosource.PlayOneShot(_clip, .8f);
         m_hasEat = false;
-        Debug.Log("cc");
     }
     #endregion
 

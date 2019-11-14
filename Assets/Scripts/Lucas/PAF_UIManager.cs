@@ -43,6 +43,7 @@ public class PAF_UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playerTwoReadyText = null;
 
     [Header("Score")]
+    [SerializeField] private GameObject playersScoreAnchor = null;
     [SerializeField] private TextMeshProUGUI playerOneTotalScore = null;
     [SerializeField] private Animator playerOneTotalScoreAnimator = null;
     [SerializeField] private TextMeshProUGUI playerTwoTotalScore = null;
@@ -235,8 +236,7 @@ public class PAF_UIManager : MonoBehaviour
     {
         if(screenAnimator)
         {
-            playerOneTotalScore.gameObject.SetActive(true);
-            playerTwoTotalScore.gameObject.SetActive(true);
+            playersScoreAnchor.SetActive(true);
 
             screenAnimator.SetTrigger("StartCountDown"); 
             return; 
@@ -256,7 +256,7 @@ public class PAF_UIManager : MonoBehaviour
         if (_bestPlayer == 0)
         {
             //Egalité
-            _winnerText = "Egalité : ";
+            _winnerText = "Egalite : ";
             equalityPresentator.SetActive(true);
             loserScoreText.transform.parent.gameObject.SetActive(false);
         }

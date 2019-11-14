@@ -42,8 +42,11 @@ public class PAF_UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playerTwoScore = null;
     [SerializeField] private TextMeshProUGUI playerTwoReadyText = null;
 
+    [Header("Score")]
     [SerializeField] private TextMeshProUGUI playerOneTotalScore = null;
+    [SerializeField] private Animator playerOneTotalScoreAnimator = null;
     [SerializeField] private TextMeshProUGUI playerTwoTotalScore = null;
+    [SerializeField] private Animator playerTwoTotalScoreAnimator = null;
 
     [Header("Images")]
     [SerializeField] private Image m_playerOneReadyImage = null; 
@@ -116,12 +119,14 @@ public class PAF_UIManager : MonoBehaviour
         if (_isPlayerOne)
         {
             playerOneTotalScore.text = (int.Parse(playerOneTotalScore.text) + _score).ToString();
+            playerOneTotalScoreAnimator.SetTrigger("Score");
             playerOneScore.text = _text + _score.ToString();
             //worldAnimator.SetTrigger("Score P1");
             screenAnimator.SetTrigger("P1 Score");
             return;
         }
         playerTwoTotalScore.text = (int.Parse(playerTwoTotalScore.text) + _score).ToString();
+        playerTwoTotalScoreAnimator.SetTrigger("Score");
         playerTwoScore.text = _text + _score.ToString();
         //worldAnimator.SetTrigger("Score P2");
         screenAnimator.SetTrigger("P2 Score");

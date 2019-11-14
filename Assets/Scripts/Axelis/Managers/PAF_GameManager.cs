@@ -128,6 +128,7 @@ public class PAF_GameManager : MonoBehaviour
     [SerializeField] private PAF_VFXData m_vfxDatas = null;
 
     [SerializeField] private AudioSource m_gameMusic = null;
+    [SerializeField] private AudioSource m_audioSource = null;
 
     public PAF_SoundData SoundDatas
     {
@@ -161,6 +162,9 @@ public class PAF_GameManager : MonoBehaviour
     public void RegisterHighScore(int _newHighScore)
     {
         m_highScore = _newHighScore;
+
+        AudioClip _clip = SoundDatas.GetHighscoreSound();
+        if (_clip) m_audioSource.PlayOneShot(_clip, .8f);
 
         if (!Directory.Exists(saveFileFolder)) Directory.CreateDirectory(saveFileFolder);
         File.WriteAllText(saveFilePath, _newHighScore.ToString());
@@ -270,6 +274,8 @@ public class PAF_GameManager : MonoBehaviour
     /// <param name="_increase">The points to add to the player score</param>
     private void IncreasePlayerScore(bool _isFirstPlayer, int _increase)
     {
+        AudioClip _clip = SoundDatas.GetCrowdCheer();
+        if (_clip) m_audioSource.PlayOneShot(_clip, 3);
         if (_isFirstPlayer)
         {
             m_playerOneScore += _increase;
@@ -338,6 +344,25 @@ public class PAF_GameManager : MonoBehaviour
         }
         yield return null;
     }
+
+    public void StartTicTicSound()
+    {
+        StartCoroutine(TimeTicTic());
+    }
+
+    IEnumerator TimeTicTic()
+    {
+        InvokeRepeating("TicTicSound", 0, 1);
+        yield return new WaitForSeconds(m_gameDuration - m_currentGameTime);
+        CancelInvoke("TicTicSound");
+    }
+
+    void TicTicSound()
+    {
+        AudioClip _clip = SoundDatas.GetTicTic();
+        if (_clip) m_audioSource.PlayOneShot(_clip, 3);
+    }
+
     #endregion
 
     #region Unity Methods

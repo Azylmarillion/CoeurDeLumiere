@@ -61,7 +61,9 @@ public class PAF_Flower : MonoBehaviour
 
     [SerializeField] AudioSource audiosource = null;
 
-    public static List<PAF_Flower> Flowers = new List<PAF_Flower>(); 
+    public static List<PAF_Flower> Flowers = new List<PAF_Flower>();
+
+    private bool m_hasEat = false;
     #endregion
 
     #region Methods
@@ -152,6 +154,17 @@ public class PAF_Flower : MonoBehaviour
         m_currentState = FlowerState.Following;
         m_animator.SetInteger("BehaviourState", (int)m_currentState);
     }
+
+    IEnumerator DelayGloupsSound()
+    {
+        if (m_hasEat) yield break;
+        m_hasEat = true;
+        yield return new WaitForSeconds(.5f);
+        AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetflowerGloups();
+        if (_clip) audiosource.PlayOneShot(_clip, .8f);
+        m_hasEat = false;
+        Debug.Log("cc");
+    }
     #endregion
 
     #region Void
@@ -166,6 +179,9 @@ public class PAF_Flower : MonoBehaviour
 
             m_currentState = FlowerState.Eating;
             m_animator.SetInteger("BehaviourState", (int)m_currentState);
+
+            StartCoroutine(DelayGloupsSound());
+
             return; 
         }
     }

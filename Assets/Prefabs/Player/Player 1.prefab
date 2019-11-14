@@ -401,7 +401,7 @@ MonoBehaviour:
   audioPlayer: {fileID: 8338223916140015523}
   moveArea: {fileID: 0}
   playerRenderer: {fileID: 8338223916006774665}
-  stickRend: {fileID: 0}
+  stickRend: {fileID: 8338223916209712954}
   playerAnimator: {fileID: 8338223916140015520}
   groundLayer:
     serializedVersion: 2

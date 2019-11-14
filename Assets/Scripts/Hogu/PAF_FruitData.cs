@@ -6,7 +6,15 @@ using UnityEngine;
 public class PAF_FruitData : ScriptableObject
 {
     [SerializeField] GameObject[] fruits;
-
+    [SerializeField] GameObject[] goldenFruits;
+    public GameObject GetGoldenFruit
+    {
+        get
+        {
+            if ((goldenFruits == null) || (goldenFruits.Length == 0)) return null;
+            return goldenFruits[Random.Range(0, goldenFruits.Length + 1)];
+        }
+    }
 
     public GameObject[] GetRandomFruit(int _number)
     {

@@ -347,11 +347,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   renderer: {fileID: 8687980502086057991}
   collider: {fileID: 5689821916381751309}
+  isGolden: 0
   doFreezeXRotation: 1
   isFalling: 0
   weight: 1
   autoAimCurveIndex: 0
-  fruitScore: 80
+  fruitScore: 90
   whatIsGround:
     serializedVersion: 2
     m_Bits: 1024

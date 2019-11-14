@@ -530,6 +530,11 @@ public class PAF_Fruit : MonoBehaviour
                 return;
             }
         }
+
+        if ((renderer.position.y > originalPivotHeight) && (velocity.y == 0))
+        {
+            Velocity -= new Vector3(0, .1f, 0);
+        }
         
         if (!isFalling)
         {

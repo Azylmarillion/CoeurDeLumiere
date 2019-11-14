@@ -72,8 +72,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: ef65edc0c11763a4487ff6a6380aa9d8, type: 3}
   - {fileID: 8300000, guid: 85586c70d9dd85d40970a41dfaef482b, type: 3}
   highScore: {fileID: 8300000, guid: 4d3011ecb2ef32044b32dffbe08018f6, type: 3}
-  moveMenu: {fileID: 0}
-  selectMenu: {fileID: 0}
+  selectMenu: {fileID: 8300000, guid: f62234f573620a841b4d94fe93c4a2ff, type: 3}
   crowdCheer: {fileID: 8300000, guid: 37211d629bd0cef489ffe21b902361a5, type: 3}
   whistle: {fileID: 8300000, guid: 96d769e8e26c5a344a3bde95ad328bde, type: 3}
   ticTic: {fileID: 8300000, guid: 718dadf8f410b1f448cc7236afc28f73, type: 3}

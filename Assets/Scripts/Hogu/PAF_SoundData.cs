@@ -19,7 +19,6 @@ public class PAF_SoundData : ScriptableObject
     [SerializeField] AudioClip[] plantEating = null;
     [SerializeField] AudioClip[] plantGloups = null;
     [SerializeField] AudioClip highScore = null;
-    [SerializeField] AudioClip moveMenu = null;
     [SerializeField] AudioClip selectMenu = null;
     [SerializeField] AudioClip crowdCheer = null;
     [SerializeField] AudioClip whistle = null; 
@@ -80,11 +79,6 @@ public class PAF_SoundData : ScriptableObject
     public AudioClip GetPlantEating()
     {
         if (plantEating.Length > 0) return plantEating[Random.Range(0, plantEating.Length)];
-        return null;
-    }
-    public AudioClip GetMoveMenu()
-    {
-        if (moveMenu) return moveMenu;
         return null;
     }
     public AudioClip GetSelectMenu()

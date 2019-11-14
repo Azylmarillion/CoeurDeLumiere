@@ -295,7 +295,11 @@ public class PAF_GameManager : MonoBehaviour
     /// <param name="_isPlayerOne"></param>
     public void SetPlayerReady(bool _isPlayerOne)
     {
-        if (m_gameIsOver) return; 
+        if (m_gameIsOver) return;
+
+        AudioClip _clip = SoundDatas.GetSelectMenu();
+        if (_clip) m_audioSource.PlayOneShot(_clip, .8f);
+
         if (_isPlayerOne)
         {
             m_playerOneIsReady = true;

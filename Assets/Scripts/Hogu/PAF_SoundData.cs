@@ -17,10 +17,13 @@ public class PAF_SoundData : ScriptableObject
     [SerializeField] AudioClip[] bulbExplode = null;
     [SerializeField] AudioClip[] dalleFalling = null;
     [SerializeField] AudioClip[] plantEating = null;
+    [SerializeField] AudioClip[] plantGloups = null;
+    [SerializeField] AudioClip highScore = null;
     [SerializeField] AudioClip moveMenu = null;
     [SerializeField] AudioClip selectMenu = null;
     [SerializeField] AudioClip crowdCheer = null;
     [SerializeField] AudioClip whistle = null; 
+    [SerializeField] AudioClip ticTic = null; 
 
 
 
@@ -98,7 +101,24 @@ public class PAF_SoundData : ScriptableObject
     {
         if (fruitSpawn.Length > 0) return fruitSpawn[Random.Range(0, fruitSpawn.Length)];
         return null;
+    } 
+    public AudioClip GetflowerGloups()
+    {
+        if (plantGloups.Length > 0) return plantGloups[Random.Range(0, plantGloups.Length)];
+        return null;
+    } 
+    public AudioClip GetHighscoreSound()
+    {
+        if (highScore) return highScore;
+        return null;
     }
+    public AudioClip GetTicTic()
+    {
+        if (ticTic) return ticTic;
+        return null;
+    }
+
+
 
     public AudioClip Whistle
     {

@@ -49,6 +49,15 @@ public class PAF_BulbManager : MonoBehaviour
 
     [SerializeField]
     private int m_bulbLimit = 1;
+    public int BulbLimit
+    {
+        get { return m_bulbLimit;  }
+        set
+        {
+            if (value > m_bulbsPositions.Length) return;
+            m_bulbLimit = value; 
+        }
+    }
     [SerializeField]
     private float m_bulbDelay = 1.0f;
 

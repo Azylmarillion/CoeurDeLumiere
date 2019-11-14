@@ -362,12 +362,12 @@ MonoBehaviour:
   stunned: 0
   canAttack: 1
   isInvulnerable: 0
-  attackDelay: 0.4
+  attackDelay: 0.1
   attackForce: 30
-  invulnerableTime: 0.5
-  stunTime: 0.5
+  invulnerableTime: 1
+  stunTime: 0.25
   fallTime: 1
-  fallDetectionSize: 0.5
+  fallDetectionSize: 0.25
   recoilDistance: 1
   accelerationCurve:
     serializedVersion: 2
@@ -406,7 +406,7 @@ MonoBehaviour:
     m_Bits: 1024
   obstacleLayer:
     serializedVersion: 2
-    m_Bits: 4352
+    m_Bits: 20736
   interactLayer:
     serializedVersion: 2
     m_Bits: 6912

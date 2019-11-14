@@ -49,6 +49,7 @@ public class PAF_Player : MonoBehaviour
     #region Objects
     [SerializeField] Collider moveArea = null;
     [SerializeField] Renderer playerRenderer = null;
+    [SerializeField] Renderer stickRend = null;
     [SerializeField] PAF_PlayerAnimator playerAnimator = null;
     #endregion
 
@@ -159,7 +160,6 @@ public class PAF_Player : MonoBehaviour
         if (_clip) audioPlayer.PlayOneShot(_clip, .8f);
         playerAnimator.SetFalling();
         playerAnimator.SetMoving(false);
-
         OnFall?.Invoke(isPlayerOne, fallScoreIncrease);
     }
 
@@ -228,16 +228,33 @@ public class PAF_Player : MonoBehaviour
         if (_system) Instantiate(_system, new Vector3(transform.position.x - (transform.forward.x * .75f), transform.position.y + 1, transform.position.z - (transform.forward.z * .75f)), Quaternion.identity);
     }
 
-    void Flash() => playerRenderer.enabled = !playerRenderer.enabled;
+    IEnumerator FallInvulnerable()
+    {
+        isInvulnerable = true;
+        InvokeRepeating("Flash", 0, .1f);
+        yield return new WaitForSeconds(invulnerableTime);
+        isInvulnerable = false;
+        CancelInvoke("Flash");
+        if (playerRenderer) playerRenderer.enabled = true;
+        if (stickRend) stickRend.enabled = true;
+    }
+
+    void Flash()
+    {
+        playerRenderer.enabled = !playerRenderer.enabled;
+        if (stickRend) stickRend.enabled = !stickRend.enabled;
+    }
 
     IEnumerator StunFlashTimer()
     {
         stunned = true;
         StartCoroutine(InvertBoolDelay((state) => { isInvulnerable = !state; }, invulnerableTime + stunTime));
-        yield return new WaitForSeconds(stunTime + invulnerableTime);
+        yield return new WaitForSeconds(stunTime );
+         stunned = false;
+        yield return new WaitForSeconds(invulnerableTime);
         CancelInvoke("Flash");
         if (playerRenderer) playerRenderer.enabled = true;
-         stunned = false;
+        if (stickRend) stickRend.enabled = true;
     }
 
     private IEnumerator ApplyRecoil(Vector3 _from)
@@ -268,6 +285,7 @@ public class PAF_Player : MonoBehaviour
     public void Respawn()
     {
         if (!falling) return;
+        StartCoroutine(FallInvulnerable());
         transform.GetChild(0).localScale = Vector3.one;
 
         // Spash FX

@@ -240,7 +240,7 @@ public class PAF_Player : MonoBehaviour
 
         // Confused FX
         GameObject _system = PAF_GameManager.Instance?.VFXDatas?.ConfusedFX;
-        if (_system) Instantiate(_system, new Vector3(transform.position.x - (transform.forward.x * .75f), transform.position.y + 1, transform.position.z - (transform.forward.z * .75f)), Quaternion.identity);
+        if (_system) Instantiate(_system, new Vector3(transform.position.x - (transform.forward.x * .75f), transform.position.y + 1, transform.position.z - (transform.forward.z * .75f)), Quaternion.identity, transform);
     }
 
     IEnumerator FallInvulnerable()

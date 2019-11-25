@@ -342,7 +342,7 @@ AudioSource:
   m_GameObject: {fileID: 3325014971504718778}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: -8867341679238898666, guid: ab95f4241408a654aa3c6d8323415645,
+  OutputAudioMixerGroup: {fileID: -3526637724369092550, guid: ab95f4241408a654aa3c6d8323415645,
     type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
@@ -481,7 +481,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3372687052828984466}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 39aa7b17973d9be47b635dac3290e9f1, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: 0548a082de558274fbb881552d126123, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 4779515518049371725}
@@ -1099,8 +1099,8 @@ MonoBehaviour:
   m_speedFadeCinematic: 1
   m_soundDatas: {fileID: 11400000, guid: 0f1532b6b6bd9db4e9917bf5dc20602c, type: 2}
   m_vfxDatas: {fileID: 11400000, guid: 4239ec0007d6c3b438c48e39bfd99799, type: 2}
-  audioMixer: {fileID: 0}
-  m_gameMusic: {fileID: 0}
+  audioMixer: {fileID: 24100000, guid: ab95f4241408a654aa3c6d8323415645, type: 2}
+  m_gameMusic: {fileID: 8611190649106840232}
   m_audioSource: {fileID: 1034512288}
 --- !u!114 &4779515517769943198
 MonoBehaviour:
@@ -2081,10 +2081,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1083334219, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -154.99951
-      objectReference: {fileID: 0}
     - target: {fileID: 1134044651, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -2093,31 +2089,11 @@ PrefabInstance:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2037259806}
-    - target: {fileID: 1203179582825665503, guid: b3e2bb847c086334b8caaf5211d6e25d,
-        type: 3}
-      propertyPath: m_firstOverflowCharacterIndex
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1608088771717384167, guid: b3e2bb847c086334b8caaf5211d6e25d,
         type: 3}
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 4779515518049371725}
-    - target: {fileID: 4755905411888769611, guid: b3e2bb847c086334b8caaf5211d6e25d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 110
-      objectReference: {fileID: 0}
-    - target: {fileID: 7247151077524850403, guid: b3e2bb847c086334b8caaf5211d6e25d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -111.00049
-      objectReference: {fileID: 0}
-    - target: {fileID: 8893242990335501487, guid: b3e2bb847c086334b8caaf5211d6e25d,
-        type: 3}
-      propertyPath: m_firstOverflowCharacterIndex
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b3e2bb847c086334b8caaf5211d6e25d, type: 3}
 --- !u!4 &6054337898439957217 stripped

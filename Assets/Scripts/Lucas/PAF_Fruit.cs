@@ -126,7 +126,7 @@ public class PAF_Fruit : MonoBehaviour
         set
         {
             if (isGolden) value = new Vector3(Mathf.Clamp(value.x, -25, 25), Mathf.Clamp(value.y, -25, 25), Mathf.Clamp(value.z, -25, 25));
-            else value = new Vector3(Mathf.Clamp(value.x, -250, 250), Mathf.Clamp(value.y, -250, 250), Mathf.Clamp(value.z, -250, 250));
+            else value = new Vector3(Mathf.Clamp(value.x, -150, 150), Mathf.Clamp(value.y, -150, 150), Mathf.Clamp(value.z, -150, 150));
 
             velocity = value;
             autoAimCurveIndex = 0;

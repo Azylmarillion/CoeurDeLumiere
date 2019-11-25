@@ -291,7 +291,7 @@ public class PAF_UIManager : MonoBehaviour
     }
 #endregion
 
-#region Unity Methods
+    #region Unity Methods
     // Awake is called when the script instance is being loaded
     private void Awake()
     {
@@ -323,7 +323,7 @@ public class PAF_UIManager : MonoBehaviour
         PAF_GameManager.OnPlayerScored -= SetPlayerScore;
         PAF_GameManager.OnPlayerReady -= SetPlayerReady;
     }
-#endregion
+    #endregion
 
 #endregion
 }

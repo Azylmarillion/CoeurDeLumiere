@@ -38,7 +38,6 @@ public class PAF_GameManager : MonoBehaviour
 
     #region Events
     public static event Action OnStartCinematic = null;
-
     public static event Action OnEndCinematic = null; 
     /// <summary>
     /// Event called when the game Starts
@@ -242,6 +241,7 @@ public class PAF_GameManager : MonoBehaviour
                 if (Input.GetKey(KeyCode.Keypad1) && Input.GetKey(KeyCode.Keypad2) && Input.GetKey(KeyCode.Keypad3))
                 {
                     m_videoPlayer.Stop();
+                    m_gameMusic.time = 20;
                 }
                 yield return new WaitForSeconds(.1f);
             }

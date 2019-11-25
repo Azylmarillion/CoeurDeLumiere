@@ -207,9 +207,9 @@ public class PAF_UIManager : MonoBehaviour
                 m_audioMixer.SetFloat("VolumeAttenuationMusic", PlayerPrefs.GetFloat("VolumeAttenuationMusic"));
                 m_audioMixer.GetFloat("VolumeAttenuationMusic", out _value);
             }
-            if (m_volumeSlider)
+            if (m_volumeSliderMusic)
             {
-                m_volumeSlider.value = _value;
+                m_volumeSliderMusic.value = _value;
             }
         }
     }

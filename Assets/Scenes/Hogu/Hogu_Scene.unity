@@ -675,36 +675,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8647625923060208734, guid: be0edf943dfecf64d9527ff7cab508d0,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.63
-      objectReference: {fileID: 0}
-    - target: {fileID: 8647625923060208734, guid: be0edf943dfecf64d9527ff7cab508d0,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -1.99
-      objectReference: {fileID: 0}
-    - target: {fileID: 3473357426208716828, guid: be0edf943dfecf64d9527ff7cab508d0,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7663439382836057201, guid: be0edf943dfecf64d9527ff7cab508d0,
-        type: 3}
-      propertyPath: m_ReceiveShadows
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8733098650728552924, guid: be0edf943dfecf64d9527ff7cab508d0,
-        type: 3}
-      propertyPath: isShifting
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8733098650728552924, guid: be0edf943dfecf64d9527ff7cab508d0,
-        type: 3}
-      propertyPath: randomColor
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1226345954414248681, guid: be0edf943dfecf64d9527ff7cab508d0,
         type: 3}
       propertyPath: m_IsActive
@@ -800,6 +770,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3473357426208716828, guid: be0edf943dfecf64d9527ff7cab508d0,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6699657213727398058, guid: be0edf943dfecf64d9527ff7cab508d0,
         type: 3}
       propertyPath: m_RootOrder
@@ -809,6 +784,31 @@ PrefabInstance:
         type: 3}
       propertyPath: m_RootOrder
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8647625923060208734, guid: be0edf943dfecf64d9527ff7cab508d0,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.63
+      objectReference: {fileID: 0}
+    - target: {fileID: 8647625923060208734, guid: be0edf943dfecf64d9527ff7cab508d0,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.99
+      objectReference: {fileID: 0}
+    - target: {fileID: 7663439382836057201, guid: be0edf943dfecf64d9527ff7cab508d0,
+        type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8733098650728552924, guid: be0edf943dfecf64d9527ff7cab508d0,
+        type: 3}
+      propertyPath: isShifting
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8733098650728552924, guid: be0edf943dfecf64d9527ff7cab508d0,
+        type: 3}
+      propertyPath: randomColor
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be0edf943dfecf64d9527ff7cab508d0, type: 3}
@@ -1779,6 +1779,11 @@ PrefabInstance:
       propertyPath: m_LocalRotation.x
       value: -0
       objectReference: {fileID: 0}
+    - target: {fileID: 3431334871492258783, guid: b662d4460f2d1ab4e9987d1dab2a951b,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.8
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4689530492865758885, guid: b662d4460f2d1ab4e9987d1dab2a951b, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: b662d4460f2d1ab4e9987d1dab2a951b, type: 3}
@@ -2330,15 +2335,20 @@ PrefabInstance:
       propertyPath: allDallesGroups.Array.data[5]
       value: 
       objectReference: {fileID: 1169802027}
-    - target: {fileID: 4779515517133199599, guid: 2711af07241f6ae439bbe80bc3c100c4,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -154.99951
-      objectReference: {fileID: 0}
     - target: {fileID: 4779515518356734191, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: m_fontColor32.rgba
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 4779515517018320033, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4779515517133199599, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -154.99951
       objectReference: {fileID: 0}
     - target: {fileID: 23677760662645999, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
@@ -2351,11 +2361,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4779515518052966226, guid: 2711af07241f6ae439bbe80bc3c100c4,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4779515517018320033, guid: 2711af07241f6ae439bbe80bc3c100c4,
         type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -2996,6 +3001,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3431334871492258783, guid: b662d4460f2d1ab4e9987d1dab2a951b,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b662d4460f2d1ab4e9987d1dab2a951b, type: 3}

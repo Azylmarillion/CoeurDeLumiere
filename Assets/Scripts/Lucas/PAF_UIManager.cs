@@ -18,7 +18,7 @@ public class PAF_UIManager : MonoBehaviour
      * 
     */
 
-        public static PAF_UIManager Instance { get; private set; }
+    public static PAF_UIManager Instance { get; private set; }
 
     #region Fields / Properties
     [Header("Animators")]
@@ -109,6 +109,11 @@ public class PAF_UIManager : MonoBehaviour
     #region Methods
 
     #region Original Methods
+    public void QuitGame()
+    {
+        Application.Quit(); 
+    }
+
     /// <summary>
     /// Updates the score of a player.
     /// </summary>
@@ -256,7 +261,7 @@ public class PAF_UIManager : MonoBehaviour
         if (_bestPlayer == 0)
         {
             //Egalité
-            _winnerText = "Egalite : ";
+            _winnerText = "Draw : ";
             equalityPresentator.SetActive(true);
             loserScoreText.transform.parent.gameObject.SetActive(false);
         }
@@ -267,16 +272,16 @@ public class PAF_UIManager : MonoBehaviour
             if (_bestPlayer == 1)
             {
                 // P1 Gagne
-                _winnerText = "ROUGE";
-                _loserText = "BLEU ";
+                _winnerText = "RED";
+                _loserText = "BLUE ";
             }
             else
             {
                 // P2 Gagne
-                _winnerText = "BLEU";
-                _loserText = "ROUGE ";
+                _winnerText = "BLUE";
+                _loserText = "RED ";
             }
-            _winnerText += " Gagne : ";
+            _winnerText += " Wins : ";
             winnerPresentator.SetActive(true);
 
             loserScoreText.text = _loserText + _otherScore;
@@ -289,7 +294,7 @@ public class PAF_UIManager : MonoBehaviour
             newRecordFeedback.SetActive(true);
         }
     }
-#endregion
+    #endregion
 
     #region Unity Methods
     // Awake is called when the script instance is being loaded

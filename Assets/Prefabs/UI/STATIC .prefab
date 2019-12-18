@@ -1173,9 +1173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   optionPPProfile: {fileID: 11400000, guid: 65319a1011626944eab0364e73ccdb01, type: 2}
   m_contrastIntensity: 1
-  m_exposureIntensity: 1
   m_saturationIntensity: 1
-  m_exposureSlider: {fileID: 4779515518268171899}
   m_contrastSlider: {fileID: 4779515518041031245}
   m_saturationSlider: {fileID: 4779515517150651215}
 --- !u!82 &1034512288
@@ -2126,18 +2124,6 @@ MonoBehaviour:
 --- !u!114 &4779515517150651215 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1134044651, guid: b3e2bb847c086334b8caaf5211d6e25d,
-    type: 3}
-  m_PrefabInstance: {fileID: 4779515518214424228}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &4779515518268171899 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 225714399, guid: b3e2bb847c086334b8caaf5211d6e25d,
     type: 3}
   m_PrefabInstance: {fileID: 4779515518214424228}
   m_PrefabAsset: {fileID: 0}

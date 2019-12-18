@@ -310,6 +310,32 @@ public class PAF_GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Set camera aspect to 16 / 9.
+    /// </summary>
+    private void SetCameraAspect()
+    {
+        // Calculates camera rect for aspect ratio of 16/9
+        float _heightRatio = ((float)Screen.width / Screen.height) / (16f / 9f);
+
+        // If ratio is correct, the keep it
+        if (_heightRatio == 1)
+        {
+            Camera.main.rect = new Rect(0, 0, 1, 1);
+        }
+        // If ratio is inferior to one (not large enough), set black bars on top & bottom of the screen
+        else if (_heightRatio < 1)
+        {
+            Camera.main.rect = new Rect(0, (1 - _heightRatio) / 2, 1, _heightRatio);
+        }
+        // If superior to one (too large), then set black bars on left & right of the screen
+        else
+        {
+            float _widthRatio = 1 / _heightRatio;
+            Camera.main.rect = new Rect((1 - _widthRatio) / 2, 0, _widthRatio, 1);
+        }
+    }
+
+    /// <summary>
     /// Set if the player is ready
     /// If both players are ready, start the game
     /// </summary>
@@ -408,6 +434,8 @@ public class PAF_GameManager : MonoBehaviour
             Destroy(this);
             return; 
         }
+
+        SetCameraAspect();
     }
 
     private void Start()

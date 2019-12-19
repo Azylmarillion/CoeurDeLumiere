@@ -281,13 +281,13 @@ public class PAF_UIManager : MonoBehaviour
             {
                 // P1 Gagne
                 _winnerText = "RED";
-                _loserText = "BLUE ";
+                _loserText = "BLUE : ";
             }
             else
             {
                 // P2 Gagne
                 _winnerText = "BLUE";
-                _loserText = "RED ";
+                _loserText = "RED : ";
             }
             _winnerText += " Wins : ";
             winnerPresentator.SetActive(true);

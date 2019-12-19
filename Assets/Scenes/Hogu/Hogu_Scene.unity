@@ -2335,6 +2335,31 @@ PrefabInstance:
       propertyPath: allDallesGroups.Array.data[5]
       value: 
       objectReference: {fileID: 1169802027}
+    - target: {fileID: 6054337898439957219, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4779515516324102212, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -507.99988
+      objectReference: {fileID: 0}
+    - target: {fileID: 7234965933787693087, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -507.99988
+      objectReference: {fileID: 0}
+    - target: {fileID: 4779515516856584239, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4779515517032619180, guid: 2711af07241f6ae439bbe80bc3c100c4,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2711af07241f6ae439bbe80bc3c100c4, type: 3}
 --- !u!1 &1879566306

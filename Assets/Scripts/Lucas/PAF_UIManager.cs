@@ -104,6 +104,11 @@ public class PAF_UIManager : MonoBehaviour
     [SerializeField] private GameObject winnerPresentator = null;
 
     [SerializeField] private GameObject newRecordFeedback = null;
+
+    private Resolution[] m_allResolutions = null;
+    private int m_currentResolutionIndex = 0;
+    private bool m_isFullScreen = true;
+    [SerializeField] private TextMeshProUGUI m_resolutionText = null; 
     #endregion
 
     #region Methods
@@ -143,12 +148,12 @@ public class PAF_UIManager : MonoBehaviour
         if(_isPlayerOne)
         {
             m_playerOneReadyImage.color = Color.green; 
-            playerOneReadyText.text = "En attente de l'autre Joueur !"; 
+            playerOneReadyText.text = "Waiting for other player !"; 
             screenAnimator.SetTrigger("P1 Ready");
             return;
         }
         screenAnimator.SetTrigger("P2 Ready");
-        playerTwoReadyText.text = "En attente de l'autre Joueur !";
+        playerTwoReadyText.text = "Waiting for other player !";
         m_playerTwoReadyImage.color = Color.green;
     }
 
@@ -222,7 +227,7 @@ public class PAF_UIManager : MonoBehaviour
     /// <summary>
     /// Hide or show the option Menu
     /// </summary>
-    private void DisplayOptionsMenu()
+    public void DisplayOptionsMenu()
     {
         if (m_optionMenuParent == null) return;
         m_optionMenuParent.SetActive(!m_optionMenuParent.activeInHierarchy);
@@ -294,6 +299,33 @@ public class PAF_UIManager : MonoBehaviour
             newRecordFeedback.SetActive(true);
         }
     }
+
+    public void SetFullScreen(bool _isFullScreen)
+    {
+        m_isFullScreen = _isFullScreen; 
+        Screen.fullScreen = _isFullScreen; 
+    }
+
+    public void SetNextRes()
+    {
+        m_currentResolutionIndex++;
+        if (m_currentResolutionIndex >= m_allResolutions.Length) m_currentResolutionIndex = 0; 
+        SetCurrentResolution();
+    }
+
+    public void SetPreviousRes()
+    {
+        m_currentResolutionIndex--;
+        if (m_currentResolutionIndex < 0) m_currentResolutionIndex = m_allResolutions.Length-1;
+        SetCurrentResolution(); 
+    }
+
+    private void SetCurrentResolution()
+    {
+        Resolution _r = m_allResolutions[m_currentResolutionIndex];
+        Screen.SetResolution(_r.width, _r.height, m_isFullScreen);
+        m_resolutionText.text = $"{_r.width} x {_r.height}"; 
+    }
     #endregion
 
     #region Unity Methods
@@ -305,12 +337,23 @@ public class PAF_UIManager : MonoBehaviour
         PAF_GameManager.OnEndCinematic += StartCountDown; 
         PAF_GameManager.OnPlayerScored += SetPlayerScore;
         PAF_GameManager.OnPlayerReady += SetPlayerReady;
+
+        m_allResolutions = Screen.resolutions;
+        for (int i = 0; i < m_allResolutions.Length; i++)
+        {
+            if(Screen.currentResolution.width == m_allResolutions[i].width && Screen.currentResolution.height == m_allResolutions[i].height)
+            {
+                m_currentResolutionIndex = i;
+                break; 
+            }
+        }
+        m_resolutionText.text = $"{m_allResolutions[m_currentResolutionIndex].width} x {m_allResolutions[m_currentResolutionIndex].height}";
     }
 
     private void Start()
     {
         InitAudioMixer();
-        if (highScoreText) highScoreText.text = "Meilleur Score : " + (PAF_GameManager.HighScore > 0 ? PAF_GameManager.HighScore.ToString() : "-");
+        if (highScoreText) highScoreText.text = "High Score : " + (PAF_GameManager.HighScore > 0 ? PAF_GameManager.HighScore.ToString() : "-");
     }
 
     private void Update()

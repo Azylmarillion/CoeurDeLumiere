@@ -66,7 +66,6 @@ public class PAF_GameManager : MonoBehaviour
     #region Fields / Properties
     public static PAF_GameManager Instance = null;
 
-
     [SerializeField]private bool m_playerOneIsReady = false;
     [SerializeField]private bool m_playerTwoIsReady = false;
     private bool m_gameIsReadyToStart = false;
@@ -312,10 +311,10 @@ public class PAF_GameManager : MonoBehaviour
     /// <summary>
     /// Set camera aspect to 16 / 9.
     /// </summary>
-    private void SetCameraAspect()
+    public void SetCameraAspect(float _width, float _height)
     {
         // Calculates camera rect for aspect ratio of 16/9
-        float _heightRatio = ((float)Screen.width / Screen.height) / (16f / 9f);
+        float _heightRatio = (_width / _height) / (16f / 9f);
 
         // If ratio is correct, the keep it
         if (_heightRatio == 1)
@@ -435,7 +434,7 @@ public class PAF_GameManager : MonoBehaviour
             return; 
         }
 
-        SetCameraAspect();
+        SetCameraAspect(Screen.width, Screen.height);
     }
 
     private void Start()

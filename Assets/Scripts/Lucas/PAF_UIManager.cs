@@ -232,6 +232,9 @@ public class PAF_UIManager : MonoBehaviour
         if (m_optionMenuParent == null) return;
         m_optionMenuParent.SetActive(!m_optionMenuParent.activeInHierarchy);
 
+        if (m_optionMenuParent.activeInHierarchy) Time.timeScale = 0;
+        else Time.timeScale = 1;
+
         #if !UNITY_EDITOR
         // Hide cursor
         Cursor.visible = m_optionMenuParent.activeInHierarchy;
@@ -303,7 +306,9 @@ public class PAF_UIManager : MonoBehaviour
     public void SetFullScreen(bool _isFullScreen)
     {
         m_isFullScreen = _isFullScreen; 
-        Screen.fullScreen = _isFullScreen; 
+        Screen.fullScreen = _isFullScreen;
+
+        PAF_GameManager.Instance?.SetCameraAspect(m_allResolutions[m_currentResolutionIndex].width, m_allResolutions[m_currentResolutionIndex].height);
     }
 
     public void SetNextRes()
@@ -324,7 +329,9 @@ public class PAF_UIManager : MonoBehaviour
     {
         Resolution _r = m_allResolutions[m_currentResolutionIndex];
         Screen.SetResolution(_r.width, _r.height, m_isFullScreen);
-        m_resolutionText.text = $"{_r.width} x {_r.height}"; 
+        m_resolutionText.text = $"{_r.width} x {_r.height}";
+
+        PAF_GameManager.Instance?.SetCameraAspect(_r.width, _r.height);
     }
     #endregion
 

@@ -11,12 +11,6 @@ public class PAF_FruitEditor : Editor
     #region Serialized Properties
 
     #region Editor
-    /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="bool"/>.</summary>
-    SerializedProperty doDrawLastRaycastHit = null;
-
-    /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="bool"/>.</summary>
-    SerializedProperty doDrawRaycasts = null;
-
     /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="Color"/>.</summary>
     SerializedProperty gizmosColor = null;
 
@@ -31,6 +25,9 @@ public class PAF_FruitEditor : Editor
     /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="SphereCollider"/>.</summary>
     SerializedProperty collider = null;
 
+    /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="Rigidbody"/>.</summary>
+    SerializedProperty rigidbody = null;
+
     /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="bool"/>.</summary>
     SerializedProperty doFreezeXRotation = null;
 
@@ -40,9 +37,6 @@ public class PAF_FruitEditor : Editor
     /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="bool"/>.</summary>
     SerializedProperty isGolden = null;
 
-    /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="float"/>.</summary>
-    SerializedProperty weight = null;
-
     /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="int"/>.</summary>
     SerializedProperty fruitScore = null;
 
@@ -51,9 +45,6 @@ public class PAF_FruitEditor : Editor
 
     /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="LayerMask"/>.</summary>
     SerializedProperty whatIsGround = null;
-
-    /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="PAF_Player"/>.</summary>
-    SerializedProperty pointsOwner = null;
 
     /// <summary>SerializedProperty from class <see cref="PAF_Fruit"/> of type <see cref="Vector3"/>.</summary>
     SerializedProperty velocity = null;
@@ -150,11 +141,8 @@ public class PAF_FruitEditor : Editor
     {
         EditorGUILayout.LabelField("Editor", EditorStyles.boldLabel);
 
-        EditorGUILayout.PropertyField(doDrawLastRaycastHit, new GUIContent("Draw Last Raycast Hit", "Draws or not last shortest raycast hitting something."));
-
         GUILayout.Space(5);
 
-        EditorGUILayout.PropertyField(doDrawRaycasts, new GUIContent("Draw Raycasts", "Draws or not raycasts from velocity."));
         EditorGUILayout.PropertyField(gizmosColor, new GUIContent("Gizmos Color", "Color used to draw this fruit gizmos."));
     }
 
@@ -167,6 +155,7 @@ public class PAF_FruitEditor : Editor
 
         EditorGUILayout.PropertyField(audioSource, new GUIContent("Audio Source", "Audio Source of the fruit."));
         EditorGUILayout.PropertyField(renderer, new GUIContent("Renderer", "Renderer transform of the fruit."));
+        EditorGUILayout.PropertyField(rigidbody, new GUIContent("Rigidbody", "Rigidbody of the fruit."));
         EditorGUILayout.PropertyField(collider, new GUIContent("Collider", "Sphere collider of the fruit."));
         EditorGUILayout.PropertyField(whatCollide, new GUIContent("Collide Layers", "Layermask used to indicate what should the object detect or not."));
         EditorGUILayout.PropertyField(whatIsGround, new GUIContent("Ground Layers", "Layermask used to indicate what is ground."));
@@ -174,8 +163,6 @@ public class PAF_FruitEditor : Editor
 
         GUILayout.Space(5);
         GUI.enabled = false;
-
-        EditorGUILayout.PropertyField(pointsOwner, new GUIContent("Points Owner (Player)", "Last player influencing the fruit movement, who score would get increased if the fruit gets eaten."));
 
         GUI.enabled = true;
         GUILayout.Space(5);
@@ -186,7 +173,6 @@ public class PAF_FruitEditor : Editor
         GUILayout.Space(5);
 
         EditorGUILayout.PropertyField(fruitScore, new GUIContent("Fruit Score", "Amount of point this fruit gives to a player when eaten."));
-        EditorGUILayout.PropertyField(weight, new GUIContent("Weight", "weight of the object, influencing its movements."));
 
         GUILayout.Space(5);
         
@@ -204,8 +190,6 @@ public class PAF_FruitEditor : Editor
     private void OnEnable()
     {
         // Get required properties
-        doDrawLastRaycastHit = serializedObject.FindProperty("doDrawLastRaycastHit");
-        doDrawRaycasts = serializedObject.FindProperty("doDrawRaycasts");
         gizmosColor = serializedObject.FindProperty("gizmosColor");
         collisionPos = serializedObject.FindProperty("collisionPos");
 
@@ -213,14 +197,13 @@ public class PAF_FruitEditor : Editor
 
         renderer = serializedObject.FindProperty("renderer");
         collider = serializedObject.FindProperty("collider");
+        rigidbody = serializedObject.FindProperty("rigidbody");
         doFreezeXRotation = serializedObject.FindProperty("doFreezeXRotation");
         isFalling = serializedObject.FindProperty("isFalling");
         isGolden = serializedObject.FindProperty("isGolden");
-        weight = serializedObject.FindProperty("weight");
         fruitScore = serializedObject.FindProperty("fruitScore");
         whatCollide = serializedObject.FindProperty("whatCollide");
         whatIsGround = serializedObject.FindProperty("whatIsGround");
-        pointsOwner = serializedObject.FindProperty("pointsOwner");
         velocity = serializedObject.FindProperty("velocity");
     }
 

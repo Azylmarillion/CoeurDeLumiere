@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7912162767806377552}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: curve3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 1375282968640546395}
   - component: {fileID: 5865498855694461863}
   - component: {fileID: 4616527468629740908}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: pedoncule_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -79,11 +79,11 @@ MeshRenderer:
   m_GameObject: {fileID: 2313276617470754938}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -117,7 +117,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5006356789523581453}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: nurbsCircle2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 8673411791566076106}
   - component: {fileID: 7800023631441247847}
   - component: {fileID: 2129937659499315364}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: fruit_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -187,11 +187,11 @@ MeshRenderer:
   m_GameObject: {fileID: 2603660752590751728}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -225,7 +225,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8326263771196805142}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -263,6 +263,7 @@ GameObject:
   - component: {fileID: 3597960768558247005}
   - component: {fileID: 3597960768558247010}
   - component: {fileID: 3597960768558247011}
+  - component: {fileID: 9149273110918718036}
   - component: {fileID: 3597960768558247008}
   m_Layer: 11
   m_Name: fruit_03
@@ -299,11 +300,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   renderer: {fileID: 8326263771196805142}
+  rigidbody: {fileID: 9149273110918718036}
   collider: {fileID: 3597960768558247011}
+  audioSource: {fileID: 3597960768558247008}
   isGolden: 0
   doFreezeXRotation: 1
   isFalling: 0
-  weight: 1
   autoAimCurveIndex: 0
   fruitScore: 115
   whatIsGround:
@@ -312,17 +314,14 @@ MonoBehaviour:
   whatCollide:
     serializedVersion: 2
     m_Bits: 6400
-  pointsOwner: {fileID: 0}
   velocity: {x: 0, y: 0, z: 0}
-  audioSource: {fileID: 3597960768558247008}
-  doDrawLastRaycastHit: 1
-  doDrawRaycasts: 1
   gizmosColor: {r: 0, g: 1, b: 1, a: 1}
   collisionPos: []
   lastHitRay:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 0}
   sphereDebug: {x: 0, y: 0, z: 0}
+  deceleration: 7.25
 --- !u!135 &3597960768558247011
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -336,6 +335,22 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.045
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &9149273110918718036
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3597960768558247009}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!82 &3597960768558247008
 AudioSource:
   m_ObjectHideFlags: 0
@@ -444,7 +459,7 @@ GameObject:
   - component: {fileID: 9104672299596292321}
   - component: {fileID: 3764024374307398094}
   - component: {fileID: 5030196104795766551}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: feuille_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -482,11 +497,11 @@ MeshRenderer:
   m_GameObject: {fileID: 6702628077047520837}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -520,7 +535,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 550820328504831745}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: curve4
   m_TagString: Untagged
   m_Icon: {fileID: 0}

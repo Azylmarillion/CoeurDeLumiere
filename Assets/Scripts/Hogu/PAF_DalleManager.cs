@@ -1,17 +1,37 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using System;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+using Random = UnityEngine.Random;
 
 public class PAF_DalleManager : MonoBehaviour
 {
+    private class GameObjectComparer : IComparer<GameObject>
+    {
+        public static readonly GameObjectComparer Default = new GameObjectComparer();
+
+        public int Compare(GameObject _a, GameObject _b) => Random.Range(0f, .9f).CompareTo(Random.Range(0f, .9f));
+    }
+
+    private class DalleComparer : IComparer<PAF_Dalle>
+    {
+        public static readonly DalleComparer Default = new DalleComparer();
+
+        public int Compare(PAF_Dalle _a, PAF_Dalle _b) => Vector3.Distance(_a.transform.position, I.Center).CompareTo(Vector3.Distance(_b.transform.position, I.Center));
+    }
+
     public static PAF_DalleManager I { get; private set; }
 
-    [SerializeField] List<PAF_Dalle> allRespawnableDalles = new List<PAF_Dalle>();
-    [SerializeField] List<GameObject> allDallesGroups = new List<GameObject>();
-    public List<PAF_Dalle> AllRespawnableDalles { get { return allRespawnableDalles; } }
+    [SerializeField] PAF_Dalle[] allRespawnableDalles = new PAF_Dalle[] { };
+    [SerializeField] GameObject[] allDallesGroups = new GameObject[]{ };
+    public PAF_Dalle[] AllRespawnableDalles { get { return allRespawnableDalles; } }
     [SerializeField] Transform center = null;
+    public Vector3 Center => center.position;
+
     [SerializeField] float fallDelay = .25f;
     [SerializeField, Range(0,.1f)] float shift = .05f;
 
@@ -21,83 +41,114 @@ public class PAF_DalleManager : MonoBehaviour
     public Material[] DalleMaterials { get { return dalleMaterials; } }
     public float Shift { get { return shift; } }
 
-    public bool IsReady => center && allDallesGroups.Count > 0;
+    public bool IsReady => center && allDallesGroups.Length > 0;
 
     [SerializeField, Range(0.0f, 1.0f)] private float m_screenshakeDuration = .1f;
     [SerializeField, Range(0.0f, 1.0f)] private float m_screenshakeForce = .1f;
 
-    private void Awake()
+    private void Awake() => I = this;
+
+    private void Start() => cameraPosition = PAF_GameManager.Instance.Camera.transform.position;
+
+    private bool hasStarted = false;
+
+    private bool isFalling = false;
+    private bool isShaking = false;
+    private float timerVar = 0;
+
+    private Vector3 cameraPosition = new Vector3();
+
+    private int groupIndex = 0;
+    private int fallIndex = 0;
+
+    PAF_Dalle[] fallingGroup = null;
+
+    private void Update()
     {
-        I = this;
-    }
+        if (!hasStarted)
+            return;
 
-
-    private void Start()
-    {
-        InitDalle();
-    }
-
-
-    void InitDalle()
-    {
-        foreach (GameObject _go in allDallesGroups)
+        if (isFalling)
         {
-            AudioSource _source = _go.AddComponent<AudioSource>();
-            _source.outputAudioMixerGroup = PAF_GameManager.Instance?.AudioMixer.FindMatchingGroups("Global")[0];
+            if (isShaking)
+            {
+                PAF_GameManager.Instance.Camera.transform.position = cameraPosition + (Vector3)(Random.insideUnitCircle * m_screenshakeForce);
+
+                timerVar += Time.deltaTime;
+                if (timerVar >= m_screenshakeDuration)
+                {
+                    isShaking = false;
+                    timerVar = 0;
+
+                    PAF_GameManager.Instance.Camera.transform.position = cameraPosition;
+
+                    fallingGroup = allDallesGroups[groupIndex].GetComponentsInChildren<PAF_Dalle>();
+                    Array.Sort(fallingGroup, DalleComparer.Default);
+
+                    allDallesGroups[groupIndex].GetComponent<AudioSource>().PlayOneShot(PAF_GameManager.Instance.SoundDatas.GetDalleFalling(), .7f);
+                }
+            }
+            else
+            {
+                // CHUTE AU FUR ET A MESURE
+                timerVar += Time.deltaTime;
+                if (timerVar >= .05f)
+                {
+                    fallingGroup[fallIndex].Fall();
+                    Instantiate(dalleFX, fallingGroup[fallIndex].transform.position, fallingGroup[fallIndex].transform.rotation);
+
+                    timerVar = 0;
+                    fallIndex++;
+
+                    if (fallIndex == fallingGroup.Length)
+                    {
+                        isFalling = false;
+                        fallIndex = 0;
+                        groupIndex++;
+                    }
+                }
+            }
+        }
+        else if (groupIndex < allDallesGroups.Length)
+        {
+            timerVar += Time.deltaTime;
+            if (timerVar >= fallDelay)
+            {
+                isFalling = true;
+                isShaking = true;
+                timerVar = 0;
+            }
         }
     }
 
     public void StartFalling()
     {
-        if (!IsReady) return;
-        //allDallesToFall = allDallesToFall.OrderByDescending(d => Vector3.Distance(d.transform.position, center.position)).ToList(); // EXTERIEUR VERS INTERIEUR
-        allDallesGroups = allDallesGroups.OrderByDescending(i => Guid.NewGuid()).ToList(); // RANDOM
-        StartCoroutine(DelayFall());
+        if (!IsReady)
+            return;
+
+        hasStarted = true;
+        isFalling = true;
+        isShaking = true;
+        timerVar = 0;
+
+        Array.Sort(allDallesGroups, GameObjectComparer.Default);
     }
-    
-    IEnumerator DelayFall()
+
+    #if UNITY_EDITOR
+    [MenuItem("CONTEXT/PAF_DalleManager/ReReroll Ground")]
+    private static void ReRollGround(MenuCommand _command)
     {
-        Vector3 _initialPosition = Camera.main.transform.position;
-        float _timer = 0;
-        Vector2 _offset = Vector2.zero;
+        PAF_DalleManager I = FindObjectOfType<PAF_DalleManager>();
+        PAF_Dalle[] _dalles = FindObjectsOfType<PAF_Dalle>();
 
-        for (int i = 0; i < allDallesGroups.Count; i++)
+        foreach (var _dalle in _dalles)
         {
-            while (_timer < m_screenshakeDuration)
-            {
-                _offset = UnityEngine.Random.insideUnitCircle * m_screenshakeForce;
-                Camera.main.transform.position = _initialPosition + (Vector3)_offset;
-                yield return new WaitForEndOfFrame();
-                _timer += Time.deltaTime;
-            }
-            _timer = 0;
-            Camera.main.transform.position = _initialPosition;
-            List<PAF_Dalle> _allDallesToFall = allDallesGroups[i].GetComponentsInChildren<PAF_Dalle>().ToList();
+            if (_dalle.IsShifting)
+                _dalle.transform.position += Vector3.up * Random.Range(I.Shift * -2, -I.Shift);
 
-            _allDallesToFall = _allDallesToFall.OrderByDescending(d => Vector3.Distance(d.transform.position, center.position)).ToList(); // EXTERIEUR VERS INTERIEUR
-            //_allDallesToFall = _allDallesToFall.OrderByDescending(d => Guid.NewGuid()).ToList(); // RANDOM
-
-            AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetDalleFalling();
-            AudioSource _source = allDallesGroups[i].GetComponent<AudioSource>();
-            if (_source && _clip) _source.PlayOneShot(_clip, .7f);
-
-            // CHUTE AU FUR ET A MESURE
-            for (int j = 0; j < _allDallesToFall.Count; j++)
-            {
-                _allDallesToFall[j].Fall();
-                if (dalleFX) Instantiate(dalleFX, _allDallesToFall[j].transform.position, _allDallesToFall[j].transform.rotation);
-                yield return new WaitForSeconds(.05f);
-            }
-
-            //// CHUTE D'UN COUP
-            //foreach (PAF_Dalle _dalle in _allDallesToFall)
-            //{
-            //    _dalle.Fall();
-            //}
-
-
-            //allDallesToFall[i].Fall();
-            yield return new WaitForSeconds(fallDelay);
+            if (_dalle.RandomColor)
+                _dalle.GetComponent<Renderer>().material = I.DalleMaterials[Random.Range(0, I.DalleMaterials.Length)];
         }
     }
+    #endif
 }

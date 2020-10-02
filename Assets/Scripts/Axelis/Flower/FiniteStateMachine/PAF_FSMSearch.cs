@@ -1,43 +1,36 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PAF_FSMSearch : StateMachineBehaviour
 {
+    private bool isInitialized = false;
     private PAF_Flower m_owner = null;
-    private Coroutine m_behaviourCoroutine = null; 
 
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (!m_owner) m_owner = animator.GetComponent<PAF_Flower>();
-        if (!m_owner) return;
-        if (m_behaviourCoroutine != null)
+        if (!isInitialized)
         {
-            m_owner.StopCoroutine(m_owner.GetClosestFruit());
-            m_behaviourCoroutine = null;
+            isInitialized = true;
+            m_owner = animator.GetComponent<PAF_Flower>();
         }
-        m_behaviourCoroutine = m_owner.StartCoroutine(m_owner.GetClosestFruit()); 
+
+        m_owner.DoSearchFruit(true);
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
-        //if (m_behaviourCoroutine == null && !m_owner.HasFruitToFollow)
-        //{
-        //    animator.SetTrigger("ResetSearch");
-        //}
-    }
+    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    //{
+    //    //if (m_behaviourCoroutine == null && !m_owner.HasFruitToFollow)
+    //    //{
+    //    //    animator.SetTrigger("ResetSearch");
+    //    //}
+    //}
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if(m_behaviourCoroutine != null)
-        {
-            m_owner.StopCoroutine(m_owner.GetClosestFruit());
-            m_behaviourCoroutine = null;
-        }
+        m_owner.DoSearchFruit(false);
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

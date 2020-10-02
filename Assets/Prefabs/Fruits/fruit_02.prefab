@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6200867650148879165}
   - component: {fileID: 5318977620517736401}
   - component: {fileID: 278263185073204013}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: fruit_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -49,11 +49,11 @@ MeshRenderer:
   m_GameObject: {fileID: 1690599007677303753}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 1317588189167150409}
   - component: {fileID: 6462810821933852052}
   - component: {fileID: 3747359355968212213}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: test_fruit_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -127,11 +127,11 @@ MeshRenderer:
   m_GameObject: {fileID: 2167465613036691048}
   m_Enabled: 0
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -165,7 +165,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8687980502086057991}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -200,7 +200,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3848544325361882604}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: curve2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -232,7 +232,7 @@ GameObject:
   - component: {fileID: 341179914418798194}
   - component: {fileID: 5876387884476582876}
   - component: {fileID: 6983498248141700569}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: feuille_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -270,11 +270,11 @@ MeshRenderer:
   m_GameObject: {fileID: 4515373484553584946}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -310,6 +310,7 @@ GameObject:
   - component: {fileID: 5689821916381751299}
   - component: {fileID: 5689821916381751308}
   - component: {fileID: 5689821916381751309}
+  - component: {fileID: 7075163006047677861}
   - component: {fileID: 5689821916381751310}
   m_Layer: 11
   m_Name: fruit_02
@@ -346,11 +347,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   renderer: {fileID: 8687980502086057991}
+  rigidbody: {fileID: 7075163006047677861}
   collider: {fileID: 5689821916381751309}
+  audioSource: {fileID: 5689821916381751310}
   isGolden: 0
   doFreezeXRotation: 1
   isFalling: 0
-  weight: 1
   autoAimCurveIndex: 0
   fruitScore: 90
   whatIsGround:
@@ -359,17 +361,14 @@ MonoBehaviour:
   whatCollide:
     serializedVersion: 2
     m_Bits: 6400
-  pointsOwner: {fileID: 0}
   velocity: {x: 0, y: 0, z: 0}
-  audioSource: {fileID: 5689821916381751310}
-  doDrawLastRaycastHit: 1
-  doDrawRaycasts: 1
   gizmosColor: {r: 0, g: 1, b: 1, a: 1}
   collisionPos: []
   lastHitRay:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 0}
   sphereDebug: {x: 0, y: 0, z: 0}
+  deceleration: 7.25
 --- !u!135 &5689821916381751309
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -383,6 +382,22 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.055
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &7075163006047677861
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5689821916381751311}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!82 &5689821916381751310
 AudioSource:
   m_ObjectHideFlags: 0
@@ -491,7 +506,7 @@ GameObject:
   - component: {fileID: 6309503317862516123}
   - component: {fileID: 8981182071904018584}
   - component: {fileID: 6604232168340836311}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: feuille_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -529,11 +544,11 @@ MeshRenderer:
   m_GameObject: {fileID: 9071543599854719421}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

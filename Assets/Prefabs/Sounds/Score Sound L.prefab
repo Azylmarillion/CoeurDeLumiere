@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5939713925591222846}
   - component: {fileID: 5939713925591222841}
-  - component: {fileID: 5939713925591222840}
   m_Layer: 0
   m_Name: Score Sound L
   m_TagString: Untagged
@@ -129,17 +128,3 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &5939713925591222840
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5939713925591222842}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30b7c2994513df14caf40f43598f3a2f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  team1: 1
-  audioSource: {fileID: 5939713925591222841}

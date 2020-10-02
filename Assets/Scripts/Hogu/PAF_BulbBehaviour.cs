@@ -1,14 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PAF_BulbBehaviour : StateMachineBehaviour
 {
+    private bool isInitialized = false;
+    private PAF_Bulb _bulb = null;
+
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        PAF_Bulb _bulb = animator.GetComponent<PAF_Bulb>();
-        if (_bulb) _bulb.SetCanHit(true);
+        if (!isInitialized)
+        {
+            isInitialized = true;
+            _bulb = animator.GetComponent<PAF_Bulb>();
+        }
+
+        _bulb.SetCanHit(true);
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -20,8 +26,7 @@ public class PAF_BulbBehaviour : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        PAF_Bulb _bulb = animator.GetComponent<PAF_Bulb>();
-        if (_bulb) _bulb.SetCanHit(false);
+        _bulb.SetCanHit(false);
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

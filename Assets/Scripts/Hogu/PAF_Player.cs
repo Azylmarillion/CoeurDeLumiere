@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq; 
-using UnityEngine;
+﻿using UnityEngine;
+
 using Random = UnityEngine.Random;
 
 public class PAF_Player : MonoBehaviour
 {
-    #region Events
-    public static event Action<bool, int> OnFall = null;
-    #endregion
-
     #region Fields
-    public static List<PAF_Player> Players = new List<PAF_Player>(); 
+    public static readonly PAF_Player[] Players = new PAF_Player[2];
 
     [SerializeField] bool isPlayerOne = true;
-    public bool IsPlayerOne { get { return isPlayerOne; } }
-    [SerializeField] bool stunned = false;
+    public bool IsPlayerOne => isPlayerOne;
+
+    [SerializeField] bool isStunned = false;
     [SerializeField] bool canAttack = true;
     [SerializeField] bool isInvulnerable = false;
     bool idle = false;
-    bool falling = false;
+    bool isFalling = false;
     [SerializeField, Range(0, 5)] float attackDelay = .25f;
     [SerializeField, Range(0, 50)] float attackForce = 25;
     [SerializeField, Range(0, 5)] float invulnerableTime = .5f;
@@ -34,13 +28,13 @@ public class PAF_Player : MonoBehaviour
     private const int fallScoreIncrease = -10;
 
     [SerializeField] private AnimationCurve accelerationCurve = null;
-    private float accelerationTimer = 0; 
+    private float accelerationTimer = 0;
     [SerializeField, Range(0, 10)] float playerSpeed = 5;
 
     [Header("Sight")]
     [SerializeField, Range(0, 10)] float sightRange = 1.5f;
     [SerializeField, Range(0, 360)] int fieldOfView = 60;
-    [SerializeField, Range(0, 10.0f)] float closeRange = 1.0f; 
+    [SerializeField, Range(0, 10.0f)] float closeRange = 1.0f;
     #endregion
 
     #region Sounds
@@ -64,67 +58,188 @@ public class PAF_Player : MonoBehaviour
     [SerializeField] LayerMask interactLayer = 0;
 
     [Header("Leader VFX")]
-    [SerializeField] private GameObject m_leaderVFX = null; 
+    [SerializeField] private GameObject m_leaderVFX = null;
     #endregion
 
-    private void Awake()
-    {
-        Players.Add(this);
-    }
+    private void Awake() => Players[isPlayerOne ? 0 : 1] = this;
+
     private void Start()
     {
-        PAF_GameManager.OnGameEnd += EndGame;
-        PAF_GameManager.OnPlayerScored += CheckScore;
         playerAnimator.Init(playerSpeed);
+        controllerBounds = PAF_UIManager.Instance.GetPlayerBounds(isPlayerOne);
     }
 
-    private void OnDestroy()
-    {
-        Players.Remove(this); 
-        PAF_GameManager.OnGameEnd -= EndGame;
-        PAF_GameManager.OnPlayerScored -= CheckScore;
-    }
+    private void OnDestroy() => Players[isPlayerOne ? 0 : 1] = null;
+
+    private Vector3 recoilStart = new Vector3();
+    private Vector3 recoilEnd = new Vector3();
+
+    private bool doRecoil = false;
+    [SerializeField] private float recoilTime = 0;
+    private float recoilVar = 0;
+
+    private float invulnerableVar = 0;
+
+    private bool isFlashing = false;
+    private float flashVar = 0;
+    private int flashAmount = 0;
+
+    private float stunVar = 0;
+    private float canAttackVar = 0;
+
+    private bool doRespawn = false;
+    private float respawnVar = 0;
+
+    private RectTransform controllerBounds = null;
+    private Touch touch = new Touch();
+
+    private bool wasTouch = false;
+    private float touchDuration = 0;
 
     private void Update()
     {
-        if(PAF_GameManager.Instance && !PAF_GameManager.Instance.GameIsReadyToStart)
+        // Respawn.
+        if (doRespawn)
         {
-            if (PAF_GameManager.Instance.PlayersAreReadyToStart) return;
+            respawnVar += Time.deltaTime;
+            if (respawnVar >= .5f)
+            {
+                doRespawn = false;
+                Respawn();
+            }
+        }
 
-            #if UNITY_EDITOR
-            // * DEBUG POUR UNE SEULE MANETTE
-            if(Input.GetKeyDown(KeyCode.A))
-                PAF_GameManager.Instance?.SetPlayerReady(isPlayerOne);
-            #endif
+        // Invulnerability.
+        if (isInvulnerable)
+        {
+            invulnerableVar += Time.deltaTime;
+            if (invulnerableVar >= invulnerableTime)
+                isInvulnerable = false;
+        }
+
+        // Flash.
+        if (isFlashing)
+        {
+            flashVar += Time.deltaTime;
+            if (flashVar >= .1f)
+            {
+                flashVar = 0;
+                flashAmount--;
+
+                if (flashAmount <= 0)
+                {
+                    isFlashing = false;
+                    playerRenderer.enabled = true;
+                    stickRend.enabled = true;
+                }
+                else
+                {
+                    playerRenderer.enabled = !playerRenderer.enabled;
+                    stickRend.enabled = !stickRend.enabled;
+                }
+            }
+        }
+
+        // Stun.
+        if (isStunned)
+        {
+            stunVar += Time.deltaTime;
+            if (stunVar >= stunTime)
+                isStunned = false;
+        }
+
+        // Recoil.
+        if (doRecoil)
+        {
+            recoilVar += Time.deltaTime;
+            if (recoilVar >= recoilTime)
+            {
+                doRecoil = false;
+                recoilVar = recoilTime;
+            }
+
+            transform.position = Vector3.Lerp(recoilStart, recoilEnd, recoilVar / recoilTime);
+        }
+
+        // Attack cooldown.
+        if (!canAttack)
+        {
+            canAttackVar += Time.deltaTime;
+            if (canAttackVar >= attackDelay)
+                canAttack = true;
+        }
+
+        if (!PAF_GameManager.Instance.GameIsReadyToStart)
+        {
+            if (PAF_GameManager.Instance.PlayersAreReadyToStart)
+                return;
 
             if (Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button0 : KeyCode.Joystick2Button0) ||
                 Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button1 : KeyCode.Joystick2Button1) ||
                 Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button2 : KeyCode.Joystick2Button2) ||
-                Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button3 : KeyCode.Joystick2Button3) ||
-                Input.GetKeyDown(IsPlayerOne ? KeyCode.LeftControl : KeyCode.RightControl) ||
-                Input.GetKeyDown(IsPlayerOne ? KeyCode.Space : KeyCode.Return))
-                PAF_GameManager.Instance?.SetPlayerReady(isPlayerOne);
-            return; 
+                Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button3 : KeyCode.Joystick2Button3))
+                PAF_GameManager.Instance.SetPlayerReady(isPlayerOne);
         }
-        Move();
-        if (Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button0 : KeyCode.Joystick2Button0) ||
-            Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button1 : KeyCode.Joystick2Button1) ||
-            Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button2 : KeyCode.Joystick2Button2) ||
-            Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button3 : KeyCode.Joystick2Button3) ||
-            Input.GetKeyDown(IsPlayerOne ? KeyCode.LeftControl : KeyCode.RightControl) ||
-            Input.GetKeyDown(IsPlayerOne ? KeyCode.Space : KeyCode.Return) &&
-            canAttack && !stunned) playerAnimator.SetAttack();
+        else
+        {
+            bool _isTouch = false;
+            
+            #if UNITY_EDITOR
+            if (Input.GetKey(KeyCode.Mouse0))
+            {
+                if (RectTransformUtility.RectangleContainsScreenPoint(controllerBounds, Input.mousePosition, PAF_GameManager.Instance.Camera))
+                {
+                    _isTouch = true;
+                    touch.position = Input.mousePosition;
+                }
+            }
+            #else
+            int _amount = Input.touchCount;
+            for (int _i = 0; _i < _amount; _i++)
+            {
+                Touch _touch = Input.GetTouch(_i);
+                if (RectTransformUtility.RectangleContainsScreenPoint(controllerBounds, _touch.position, PAF_GameManager.Instance.Camera))
+                {
+                    _isTouch = true;
+                    touch = _touch;
+                    break;
+                }
+            }
+            #endif
+
+            if (IsReady && !isFalling)
+                Move(_isTouch);
+
+            if (canAttack && !isStunned)
+            {
+                if (Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button0 : KeyCode.Joystick2Button0) ||
+                Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button1 : KeyCode.Joystick2Button1) ||
+                Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button2 : KeyCode.Joystick2Button2) ||
+                Input.GetKeyDown(isPlayerOne ? KeyCode.Joystick1Button3 : KeyCode.Joystick2Button3))
+                    playerAnimator.SetAttack();
+
+                if (wasTouch && !_isTouch && touchDuration < .1f)
+                    playerAnimator.SetAttack();
+            }
+
+            wasTouch = _isTouch;
+            if (_isTouch)
+                touchDuration += Time.deltaTime;
+            else
+                touchDuration = 0;
+    }
     }
 
-    void Move()
+    void Move(bool _isTouch)
     {
-        if (!IsReady || falling) return;
-        if (!stunned)
+        if (!isStunned)
         {
-            Vector3 _dir = new Vector3(Input.GetAxis(isPlayerOne ? "Horizontal1" : "Horizontal2"), 0, Input.GetAxis(isPlayerOne ? "Vertical1" : "Vertical2"));
-            if (idle = _dir.magnitude < .1f)
+            if (!_isTouch || (touchDuration < .1f) || !RectTransformUtility.ScreenPointToLocalPointInRectangle(controllerBounds, touch.position, PAF_GameManager.Instance.Camera, out Vector2 _local))
             {
+                idle = true;
                 resetMoveTimer += Time.deltaTime;
+
+                PAF_UIManager.Instance.UpdatePlayerJoystick(isPlayerOne, Vector2.zero);
 
                 if (resetMoveTimer > .1f)
                 {
@@ -134,8 +249,13 @@ public class PAF_Player : MonoBehaviour
                 }
                 return;
             }
-            else if (resetMoveTimer > 0) resetMoveTimer = 0;
+            else if (resetMoveTimer > 0)
+                resetMoveTimer = 0;
 
+            PAF_UIManager.Instance.UpdatePlayerJoystick(isPlayerOne, _local);
+
+            idle = false;
+            Vector3 _dir = new Vector3(_local.x, 0, _local.y).normalized;
             transform.rotation = Quaternion.LookRotation(_dir);
             accelerationTimer += Time.deltaTime;
             accelerationTimer = Mathf.Clamp(accelerationTimer, 0, 1);
@@ -168,185 +288,158 @@ public class PAF_Player : MonoBehaviour
                 return;
             }
         }
-        else idle = true;
+        else
+            idle = true;
+
         playerAnimator.SetMoving(idle);
     }
 
-    private void Fall()
-    {
-        falling = true;
-        AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetFallPlayer();
-        if (_clip) audioPlayer.PlayOneShot(_clip, .8f);
-        playerAnimator.SetFalling();
-        playerAnimator.SetMoving(false);
-        OnFall?.Invoke(isPlayerOne, fallScoreIncrease);
-    }
+    private static readonly Collider[] overlapBuffer = new Collider[6];
 
     public void Interact()
     {
-        if (!canAttack || !IsReady) return; 
-        List<PAF_Fruit> _fruitsHit = new List<PAF_Fruit>();
-        Collider[] _hitItems = Physics.OverlapSphere(transform.position, sightRange, interactLayer);
-        foreach (Collider _hit in _hitItems)
+        if (!canAttack || !IsReady)
+            return;
+
+        int _amount = Physics.OverlapSphereNonAlloc(transform.position, sightRange, overlapBuffer, interactLayer);
+        for (int _i = 0; _i < _amount; _i++)
         {
-            if (Vector3.Angle(transform.forward, (_hit.transform.position - transform.position).normalized) > (fieldOfView / 2) && Vector3.Distance(_hit.transform.position, transform.position) > closeRange)
+            Collider _collider = overlapBuffer[_i];
+
+            if (Vector3.Angle(transform.forward, (_collider.transform.position - transform.position).normalized) > (fieldOfView / 2) && Vector3.Distance(_collider.transform.position, transform.position) > closeRange)
                 continue;
-            PAF_Fruit _item = _hit.transform.GetComponent<PAF_Fruit>();
-            if (_item)
+
+            if (_collider.TryGetComponent(out PAF_Fruit _fruit))
             {
-                if (_fruitsHit.Contains(_item)) continue;
-                _fruitsHit.Add(_item);
-                _item.AddForce(transform.forward * attackForce, this);
-                AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetHitFruit();
-                if (_clip) audioPlayer.PlayOneShot(_clip, .9f);
-                InstantiateHitFX(_hit);
+                _fruit.AddForce(transform.forward * attackForce, this);
+
+                InstantiateHitFX(_collider);
+                audioPlayer.PlayOneShot(PAF_GameManager.Instance.SoundDatas.GetHitFruit(), .9f);
             }
-            PAF_Bulb _bulb = _hit.transform.GetComponent<PAF_Bulb>();
-            if(_bulb)
+            else if (_collider.TryGetComponent(out PAF_Bulb _bulb))
             {
                 _bulb.Hit(this);
-                InstantiateHitFX(_hit);
+                InstantiateHitFX(_collider);
             }
-            PAF_Player _player = _hit.transform.GetComponent<PAF_Player>();
-            if (_player && _player != this)
+            else if (_collider.TryGetComponent(out PAF_Player _player) && (_player != this))
             {
                 _player.Stun(transform.position);
-                InstantiateHitFX(_hit);
+                InstantiateHitFX(_collider);
             }
-            if(_hit.gameObject.layer == LayerMask.NameToLayer("Wall"))
+            else if (_collider.gameObject.layer == LayerMask.NameToLayer("Wall"))
             {
-                AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetHitWall();
-                if (_clip) audioPlayer.PlayOneShot(_clip);
+                audioPlayer.PlayOneShot(PAF_GameManager.Instance.SoundDatas.GetHitWall());
             }
         }
-        AudioClip _clipSwipe = PAF_GameManager.Instance?.SoundDatas.GetHitNone();
-        if (_clipSwipe) audioPlayer.PlayOneShot(_clipSwipe);
-        
-        StartCoroutine(InvertBoolDelay((state) => { canAttack = state; }, attackDelay));
+
+        audioPlayer.PlayOneShot(PAF_GameManager.Instance.SoundDatas.GetHitNone());
+
+        canAttack = false;
+        canAttackVar = 0;
     }
 
     void InstantiateHitFX(Collider _collider)
     {
-        ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.HitFX;
-        if (_system) Instantiate(_system.gameObject, _collider.ClosestPointOnBounds(transform.position), Quaternion.identity);
+        ParticleSystem _system = PAF_GameManager.Instance.VFXDatas.HitFX;
+        Instantiate(_system.gameObject, _collider.ClosestPointOnBounds(transform.position), Quaternion.identity);
     }
 
-    public void Stun(Vector3 _from)
+    private void Fall()
     {
-        if (!IsReady || isInvulnerable) return;
+        isFalling = true;
+        audioPlayer.PlayOneShot(PAF_GameManager.Instance.SoundDatas.GetFallPlayer(), .8f);
+
+        playerAnimator.SetFalling();
+        playerAnimator.SetMoving(false);
+
+        PAF_GameManager.Instance.IncreasePlayerScore(isPlayerOne, fallScoreIncrease);
+    }
+
+    public void DoRespawn()
+    {
+        doRespawn = true;
+        respawnVar = 0;
+    }
+
+    private void Respawn()
+    {
+        if (!isFalling)
+            return;
+
         isInvulnerable = true;
-        transform.rotation = Quaternion.LookRotation(_from - transform.position);
-        StartCoroutine(StunFlashTimer());
-        InvokeRepeating("Flash", 0, .1f);
-        AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetHitPlayer();
-        if (_clip) audioPlayer.PlayOneShot(_clip);
-        playerAnimator.SetStunned();
+        invulnerableVar = 0;
 
-        // Confused FX
-        GameObject _system = PAF_GameManager.Instance?.VFXDatas?.ConfusedFX;
-        if (_system) Instantiate(_system, new Vector3(transform.position.x - (transform.forward.x * .75f), transform.position.y + 1, transform.position.z - (transform.forward.z * .75f)), Quaternion.identity, transform);
-    }
+        isFlashing = true;
+        flashAmount = (int)(invulnerableTime / .1f);
+        flashVar = 0;
 
-    IEnumerator FallInvulnerable()
-    {
-        isInvulnerable = true;
-        InvokeRepeating("Flash", 0, .1f);
-        yield return new WaitForSeconds(invulnerableTime);
-        isInvulnerable = false;
-        CancelInvoke("Flash");
-        if (playerRenderer) playerRenderer.enabled = true;
-        if (stickRend) stickRend.enabled = true;
-    }
-
-    void Flash()
-    {
-        playerRenderer.enabled = !playerRenderer.enabled;
-        if (stickRend) stickRend.enabled = !stickRend.enabled;
-    }
-
-    IEnumerator StunFlashTimer()
-    {
-        stunned = true;
-        StartCoroutine(InvertBoolDelay((state) => { isInvulnerable = !state; }, invulnerableTime + stunTime));
-        yield return new WaitForSeconds(stunTime );
-         stunned = false;
-        yield return new WaitForSeconds(invulnerableTime);
-        CancelInvoke("Flash");
-        if (playerRenderer) playerRenderer.enabled = true;
-        if (stickRend) stickRend.enabled = true;
-    }
-
-    private IEnumerator ApplyRecoil(Vector3 _from)
-    {
-        Vector3 _basePosition = transform.position;
-        Vector3 _endPosition = transform.position + Vector3.ClampMagnitude((transform.position - _from), recoilDistance);
-        float _timer = 0;
-        float _totalTimer = stunTime + invulnerableTime;
-        float _delta = 0; 
-        while (stunned)
-        {
-            transform.position = Vector3.Lerp(_basePosition, _endPosition, _delta); 
-            yield return new WaitForEndOfFrame();
-            _timer += Time.deltaTime;
-            _delta = (_timer / _totalTimer); 
-        }
-    }
-
-    public static IEnumerator InvertBoolDelay(System.Action<bool> _callBack, float _time)
-    {
-        bool _state = false;
-        _callBack(_state);
-        yield return new WaitForSeconds(_time);
-        _state = true;
-        _callBack(_state);
-    }
-
-    public void Respawn()
-    {
-        if (!falling) return;
-        StartCoroutine(FallInvulnerable());
         transform.GetChild(0).localScale = Vector3.one;
 
         // Spash FX
-        ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.SplashFX;
-        if (_system) Instantiate(_system.gameObject, new Vector3(transform.position.x, transform.position.y - 5, transform.position.z + 5), Quaternion.identity);
+        GameObject _system = PAF_GameManager.Instance.VFXDatas.SplashFX.gameObject;
+        Instantiate(_system, new Vector3(transform.position.x, transform.position.y - 5, transform.position.z + 5), Quaternion.identity);
 
-        if (PAF_DalleManager.I.AllRespawnableDalles.Count <= 0)
+        if (PAF_DalleManager.I.AllRespawnableDalles.Length <= 0)
         {
             transform.position = Vector3.zero;
-            falling = false;
-            return;
         }
-        MeshCollider _dalle = PAF_DalleManager.I.AllRespawnableDalles[Random.Range(0, PAF_DalleManager.I.AllRespawnableDalles.Count)].GetComponent<MeshCollider>();
-        Vector3 _spawnPos = new Vector3(Random.Range(_dalle.bounds.min.x, _dalle.bounds.max.x), 0, Random.Range(_dalle.bounds.min.z, _dalle.bounds.max.z));
-        transform.position = _spawnPos;
-        falling = false;
-    }
+        else
+        {
+            Bounds _dalle = PAF_DalleManager.I.AllRespawnableDalles[Random.Range(0,
+                        PAF_DalleManager.I.AllRespawnableDalles.Length)].GetComponent<MeshCollider>().bounds;
 
-    public void EndGame(int _one, int _two)
-    {
-        playerAnimator.SetMoving(true); 
+            Vector3 _spawnPos = new Vector3(Random.Range(_dalle.min.x, _dalle.max.x), 0, Random.Range(_dalle.min.z, _dalle.max.z));
+            transform.position = _spawnPos;
+        }
+
+        isFalling = false;
     }
 
     public void Recoil(Vector3 _from)
     {
         Stun(_from);
-        StartCoroutine(ApplyRecoil(_from)); 
+
+        doRecoil = true;
+        recoilVar = 0;
+
+        recoilStart = transform.position;
+        recoilEnd = recoilStart + ((transform.position - _from).normalized * recoilDistance);
     }
 
-    private void CheckScore(bool _isPlayerOne, int _score)
+    public void Stun(Vector3 _from)
     {
-        if (!m_leaderVFX) return; 
-        if(_isPlayerOne == isPlayerOne)
+        if (IsReady && !isInvulnerable)
         {
-            if(_isPlayerOne)
-            {
-                m_leaderVFX.SetActive(PAF_GameManager.Instance.PlayerOneIsLeading);
-            }
-            else
-            {
-                m_leaderVFX.SetActive(!PAF_GameManager.Instance.PlayerOneIsLeading);
-            }
+            isInvulnerable = true;
+            transform.rotation = Quaternion.LookRotation(_from - transform.position);
+
+            isStunned = true;
+            stunVar = 0;
+
+            isFlashing = true;
+            flashAmount = (int)((invulnerableTime + stunTime) / .1f);
+            flashVar = 0;
+
+            audioPlayer.PlayOneShot(PAF_GameManager.Instance.SoundDatas.GetHitPlayer());
+            playerAnimator.SetStunned();
+
+            // Confused FX
+            GameObject _system = PAF_GameManager.Instance.VFXDatas.ConfusedFX;
+            Instantiate(_system, new Vector3(transform.position.x - (transform.forward.x * .75f), transform.position.y + 1, transform.position.z - (transform.forward.z * .75f)), Quaternion.identity, transform);
+        }
+    }
+
+    public void EndGame() => playerAnimator.SetMoving(true);
+
+    public void CheckScore(bool _isPlayerOne, int _score)
+    {
+        if (_isPlayerOne == isPlayerOne)
+        {
+            bool _value = PAF_GameManager.Instance.PlayerOneIsLeading;
+            if (!_isPlayerOne)
+                _value = !_value;
+
+            m_leaderVFX.SetActive(_value);
         }
     }
 
@@ -356,5 +449,11 @@ public class PAF_Player : MonoBehaviour
         Gizmos.DrawSphere(transform.position + (transform.forward * .5f), .25f);
         Gizmos.DrawSphere(transform.position + ((transform.forward * .5f) + transform.right * .5f), .25f);
         Gizmos.DrawSphere(transform.position + ((transform.forward * .5f) - transform.right * .5f), .25f);
+    }
+
+    private void OnGUI()
+    {
+        GUI.color = Color.red;
+        GUI.Label(new Rect(0, 0, 100, 100), (1f / Time.deltaTime).ToString());
     }
 }

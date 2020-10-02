@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
+
 using Random = UnityEngine.Random;
 
 public class PAF_Bulb : MonoBehaviour
 {
-    public event Action OnBulbDestroyed; 
-
     #region Object
     [SerializeField] Animator bulbAnimator = null;
-    [SerializeField] GameObject[] items = null;
     [SerializeField] AudioSource soundSource = null;
     [SerializeField] PAF_FruitData m_fruitData = null;
     #endregion
@@ -42,6 +37,16 @@ public class PAF_Bulb : MonoBehaviour
     bool animateBigBulb = false;
     #endregion
 
+    private readonly int spawn_Hash = Animator.StringToHash("spawn");
+    private readonly int spit_Hash = Animator.StringToHash("spit");
+    private readonly int hit_Hash = Animator.StringToHash("hit");
+    private readonly int explode_Hash = Animator.StringToHash("explode");
+
+    private WaitForSeconds waitShort = new WaitForSeconds(.5f);
+    private WaitForSeconds waitLong = new WaitForSeconds(.75f);
+
+    private float bigBulbTimer = 0;
+    private int bigBulbGrow = 0;
 
     private void Start()
     {
@@ -51,13 +56,46 @@ public class PAF_Bulb : MonoBehaviour
         if (maxHitForce <= minHitForce) maxHitForce = minHitForce + 1;
         if (maxHeightForce <= minHeightForce) maxHeightForce = minHeightForce + 1;
         canHit = false;
-        if (isBigBulb) SetBigBulb();
+
+        if (isBigBulb)
+            SetBigBulb();
     }
 
     private void Update()
     {
-        if(animateBigBulb) AnimateBigger();
+        if (animateBigBulb)
+        {
+            transform.localScale = Vector3.Slerp(transform.localScale, initScale + Vector3.one * .5f, Time.deltaTime * 20);
+
+            bigBulbTimer += Time.deltaTime;
+            if (bigBulbTimer > .5f)
+            {
+                bigBulbTimer = 0;
+                animateBigBulb = false;
+                initScale = transform.localScale;
+            }
+        }
+        else if (isBigBulb && (bigBulbGrow < 2))
+        {
+            bigBulbTimer += Time.deltaTime;
+            if (bigBulbTimer > .75f)
+            {
+                bigBulbTimer = 0;
+                animateBigBulb = true;
+                bulbAnimator.SetTrigger(spawn_Hash);
+
+                soundSource.PlayOneShot(PAF_GameManager.Instance.SoundDatas.GetBulbExploding());
+
+                bigBulbGrow++;
+                if (bigBulbGrow > 1)
+                {
+                    canHit = true;
+                }
+            }
+        }
     }
+
+    private void OnDestroy() => PAF_BulbManager.Instance.RemoveBulb(this);
 
     public static void InitGoldenAmount()
     {
@@ -66,111 +104,69 @@ public class PAF_Bulb : MonoBehaviour
 
     public void SetBigBulb()
     {
-        if (!bulbAnimator) return;
         isBigBulb = true;
         bulbAnimator.enabled = true;
         canHit = false;
-        StartCoroutine(BigBulbAnimation());
-    }
 
-    void AnimateBigger()
-    {
-        transform.localScale = Vector3.Slerp(transform.localScale, initScale + Vector3.one * .5f, Time.deltaTime * 20);
-    }
-
-    IEnumerator BigBulbAnimation()
-    {
         animateBigBulb = true;
-        bulbAnimator.SetTrigger("spawn");
-        yield return new WaitForSeconds(.5f);
-        animateBigBulb = false;
-        initScale = transform.localScale;
-        yield return new WaitForSeconds(.75f);
-        if (soundSource)
-        {
-            AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetBulbExploding();
-            if (_clip) soundSource.PlayOneShot(_clip);
-        }
-        animateBigBulb = true;
-        bulbAnimator.SetTrigger("spawn");
-        yield return new WaitForSeconds(.5f);
-        animateBigBulb = false;
-        initScale = transform.localScale;
-        yield return new WaitForSeconds(.75f);
-        if (soundSource)
-        {
-            AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetBulbExploding();
-            if (_clip) soundSource.PlayOneShot(_clip);
-        }
-        animateBigBulb = true;
-        bulbAnimator.SetTrigger("spawn");
-        canHit = true;
-        yield return new WaitForSeconds(.5f);
-        animateBigBulb = false;
-        initScale = transform.localScale;
+        bulbAnimator.SetTrigger(spawn_Hash);
     }
     
     public void Hit(PAF_Player _player)
     {
-        if (!bulbAnimator) return;
-        m_lastHitPlayer = _player; 
-        if (soundSource)
+        m_lastHitPlayer = _player;
+        soundSource.PlayOneShot(PAF_GameManager.Instance.SoundDatas.GetHitBulb());
+
+        if (canHit)
         {
-            AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetHitBulb();
-            if (_clip) soundSource.PlayOneShot(_clip);
-        }
-        if (isBigBulb && canHit)
-        {
-            hits++;
-            if (hits >= bigBulbHitNeeded)
+            if (isBigBulb)
             {
-                bulbAnimator.SetTrigger("spit");
+                hits++;
+
+                if (hits >= bigBulbHitNeeded)
+                    bulbAnimator.SetTrigger(spit_Hash);
+                else
+                    bulbAnimator.SetTrigger(hit_Hash);
             }
             else
-            {
-                bulbAnimator.SetTrigger("hit");
-            }
-        }
-        else if (canHit)
-        {
-            bulbAnimator.SetTrigger("spit");
+                bulbAnimator.SetTrigger(spit_Hash);
         }
         else
-        {
-            bulbAnimator.SetTrigger("hit");
-        }
+            bulbAnimator.SetTrigger(hit_Hash);
 
         // Bulb FX
-        ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.BulbFX;
-        if (_system) Instantiate(_system.gameObject, transform.position + Vector3.up, Quaternion.identity);
+        Instantiate(PAF_GameManager.Instance.VFXDatas.BulbFX.gameObject, transform.position + Vector3.up, Quaternion.identity);
     }
 
     public void Explode(bool _spawnItems)
     {
-        if (items.Length < 0 || !bulbAnimator || !m_fruitData) return;
-        int _itemsToSpawn = 0;
-
         if (_spawnItems)
         {
+            GameObject[] _items;
+            int _itemsToSpawn;
+
             if (isBigBulb)
             {
                 _itemsToSpawn = Random.Range(minItemsInBigBulb, maxItemsInBigBulb + 1);
+                _items = m_fruitData.GetRandomFruit(_itemsToSpawn);
+                
                 if (goldenFruitsRemaining > 0)
                 {
-                    items = new GameObject[] { m_fruitData.GetGoldenFruit };
                     goldenFruitsRemaining--;
-                    _itemsToSpawn--;
+
+                    _items[_itemsToSpawn] = m_fruitData.GetGoldenFruit;
+                    _itemsToSpawn++;
                 }
-                
-                items = items.Concat(m_fruitData.GetRandomFruit(_itemsToSpawn)).ToArray();
             }
             else
             {
                 _itemsToSpawn = Random.Range(minItemsInBulb, maxItemsInBulb + 1);
+                _items = m_fruitData.GetRandomFruit(_itemsToSpawn);
+
                 if ((goldenFruitsRemaining > 0) && (goldenFruitsAmount > 1))
                 {
                     int _goldenFruitPercent = 0;
-                    if (PAF_GameManager.Instance?.CurrentGameTimePercent < .4f)
+                    if (PAF_GameManager.Instance.CurrentGameTimePercent < .4f)
                     {
                         if ((goldenFruitsAmount - goldenFruitsRemaining) < ((goldenFruitsAmount - 1) % 2))
                         {
@@ -195,50 +191,44 @@ public class PAF_Bulb : MonoBehaviour
 
                     if (Random.Range(0, 100) < _goldenFruitPercent)
                     {
-                        items = new GameObject[] { m_fruitData.GetGoldenFruit };
                         goldenFruitsRemaining--;
-                        _itemsToSpawn--;
+
+                        _items[_itemsToSpawn] = m_fruitData.GetGoldenFruit;
+                        _itemsToSpawn++;
                     }
                 }
-                items = items.Concat(m_fruitData.GetRandomFruit(_itemsToSpawn)).ToArray();
             }
-        }
 
-        for (int i = 0; i < _itemsToSpawn; i++)
-        {
-            if (soundSource)
+            for (int i = 0; i < _itemsToSpawn; i++)
             {
-                AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetFruitSpawn();
-                if (_clip) soundSource.PlayOneShot(_clip);
+                soundSource.PlayOneShot(PAF_GameManager.Instance.SoundDatas.GetFruitSpawn());
+
+                float _range = isBigBulb ? 20 : 15;
+                float _height = isBigBulb ? 5 : 3;
+
+                Vector3 _force = new Vector3(Random.Range(-_range, _range), Random.Range(.25f, _height), Random.Range(_range, _range));
+                Instantiate(_items[i], transform.position, transform.rotation).GetComponent<PAF_Fruit>().AddForce(_force, m_lastHitPlayer);
             }
-
-            float _range = isBigBulb ? 20 : 15;
-            float _height = isBigBulb ? 5 : 3;
-
-            PAF_Fruit _fruit = Instantiate(items[i], transform.position, transform.rotation).GetComponent<PAF_Fruit>();
-            Vector3 _force = new Vector3(Random.Range(-_range, _range), Random.Range(.25f, _height), Random.Range(_range, _range));
-            if (_fruit) _fruit.AddForce(_force, m_lastHitPlayer);
         }
-        bulbAnimator.SetTrigger("explode");
+
+        bulbAnimator.SetTrigger(explode_Hash);
     }
     
     public void ExplodeWithoutBool() => Explode(true);
 
-
     public void SetCanHit(bool _state)
     {
-        if (isBigBulb) return;
+        if (isBigBulb)
+            return;
+
         canHit = _state;
     }
 
     public void DestroyBulb()
     {
-        OnBulbDestroyed?.Invoke();
-        OnBulbDestroyed = null; 
-        if (soundSource)
-        {
-            AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetBulbExploding();
-            if (_clip) soundSource.PlayOneShot(_clip);
-        }
+        if (isBigBulb)
+            PAF_BulbManager.Instance.OnBigBulbExplode();
+
+        soundSource.PlayOneShot(PAF_GameManager.Instance.SoundDatas.GetBulbExploding());
     }
 }

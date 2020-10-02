@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Hogu/Hogu_Scene.unity
-    guid: 25cb3a08116b1694b9da08719d579898
+    path: Assets/Scenes/Lucas/MobileScene.unity
+    guid: 8f07152d56a2ba24b936ea31f4755a3d
   m_configObjects: {}

@@ -1,15 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PAF_BulbBehaviourDeath : StateMachineBehaviour
 {
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        PAF_Bulb _bulb = animator.GetComponent<PAF_Bulb>();
-        if (_bulb) _bulb.DestroyBulb();
-
+        animator.GetComponent<PAF_Bulb>().DestroyBulb();
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

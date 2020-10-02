@@ -1,176 +1,60 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class PAF_Fruit : MonoBehaviour
 {
-    /*
-     * TO DO :
-     *      • Améliorer l'accélération / décélération
-    */
-
-    #region Events
-    /// <summary>
-    /// Event called when a fruit is eaten, with as parameters :
-    /// • Boolean indicating player increasing score, true if it's the player #1, false if #2 ;
-    /// • Int of the fruit points value, by how many the player score is increased.
-    /// </summary>
-    public static event Action<bool, int> OnFruitEaten = null;
-    #endregion
-
     #region Fields / Properties
-
-    #region Static & Constants
     /// <summary>
     /// Reference list of all fruits currently on the arena.
     /// </summary>
-    private static List<PAF_Fruit> arenaFruits = new List<PAF_Fruit>();
-
-    /// <summary>
-    /// All fruits currently on the arena !
-    /// </summary>
-    public static PAF_Fruit[] ArenaFruits { get { return arenaFruits.ToArray(); } }
-    #endregion
+    public static List<PAF_Fruit> ArenaFruits = new List<PAF_Fruit>();
 
     #region Parameters
-    /// <summary>
-    /// Transform of the fruit renderer.
-    /// </summary>
     [SerializeField] private new Transform renderer = null;
 
-    /// <summary>
-    /// Collider of the object.
-    /// </summary>
+    [SerializeField] private new Rigidbody rigidbody = null;
     [SerializeField] private new SphereCollider collider = null;
 
-    /// <summary>
-    /// Indicates if the object is doomed or still interactable.
-    /// </summary>
+    [SerializeField] private AudioSource audioSource = null;
+
     private bool isDoomed = false;
 
-    /// <summary>
-    /// Indicates if it's a golden fruit or not.
-    /// </summary>
     [SerializeField] private bool isGolden = false;
-
-    /// <summary>
-    /// Indicates if freezing object rotation around the X axis.
-    /// </summary>
     [SerializeField] private bool doFreezeXRotation = false;
-
-    /// <summary>
-    /// Is the fruit above ground or falling down ?
-    /// </summary>
     [SerializeField] private bool isFalling = false;
 
-    /// <summary>
-    /// Original height of the renderer pivot.
-    /// </summary>
     private float originalPivotHeight = 0;
 
-    /// <summary>
-    /// Weight of the fruit, influencing its movement force.
-    /// </summary>
-    [SerializeField, Min(.01f)] private float weight = 1;
-
-    /// <summary>
-    /// Get the fruit weight.
-    /// </summary>
-    public float Weight { get { return weight; } }
-
-    /// <summary>
-    /// Index of the autom aim curve array indicating current progress (0 is no curve used).
-    /// </summary>
     [SerializeField] private int autoAimCurveIndex = 0;
-
-    /// <summary>
-    /// Score value of the fruit, determining by how many a players score is increased when this fruit is eaten.
-    /// </summary>
     [SerializeField] private int fruitScore = 100;
 
-    /// <summary>
-    /// Ground layer mask.
-    /// </summary>
     [SerializeField] private LayerMask whatIsGround = new LayerMask();
-
-    /// <summary>
-    /// Layer mask of what the fruits should collide on.
-    /// </summary>
     [SerializeField] private LayerMask whatCollide = new LayerMask();
 
-    /// <summary>
-    /// Indicates to which player this fruit should increases score points when ate.
-    /// </summary>
-    [SerializeField] private PAF_Player pointsOwner = null;
-
-    /// <summary>
-    /// Velocity without y axis.
-    /// </summary>
     private Vector3 flatVelocity { get { return new Vector3(velocity.x, 0, velocity.z); } }
-
-    /// <summary>
-    /// Original size of the fruit, before modification.
-    /// </summary>
     private Vector3 originalSize = Vector3.one;
 
-    /// <summary>Backing field for <see cref="Velocity"/>.</summary>
     [SerializeField] private Vector3 velocity = new Vector3();
-
-    /// <summary>
-    /// Velocity vector of the fruit movement.
-    /// </summary>
     public Vector3 Velocity
     {
         get { return velocity; }
         set
         {
-            if (isGolden) value = new Vector3(Mathf.Clamp(value.x, -25, 25), Mathf.Clamp(value.y, -25, 25), Mathf.Clamp(value.z, -25, 25));
-            else value = new Vector3(Mathf.Clamp(value.x, -150, 150), Mathf.Clamp(value.y, -150, 150), Mathf.Clamp(value.z, -150, 150));
+            if (isGolden)
+                value = new Vector3(Mathf.Clamp(value.x, -25, 25), Mathf.Clamp(value.y, -25, 25), Mathf.Clamp(value.z, -25, 25));
+            else
+                value = new Vector3(Mathf.Clamp(value.x, -150, 150), Mathf.Clamp(value.y, -150, 150), Mathf.Clamp(value.z, -150, 150));
 
             velocity = value;
             autoAimCurveIndex = 0;
-
-            if (applyForceCoroutine != null) StopCoroutine(applyForceCoroutine);
-            if (value != Vector3.zero)
-            {
-                applyForceCoroutine = StartCoroutine(ApplyForce());
-            }
         }
     }
 
-    /// <summary>
-    /// All positions used for the auto aim Bézier curve.
-    /// </summary>
     private Vector3[] autoAimCurve = new Vector3[16];
-    #endregion
-
-    #region Sounds
-    /// <summary>
-    /// Audio source of the object.
-    /// </summary>
-    [SerializeField] AudioSource audioSource = null;
-    #endregion
-
-    #region Coroutines
-    /// <summary>
-    /// Current reference of <see cref="ApplyForce(Vector3)"/> coroutine.
-    /// </summary>
-    private Coroutine applyForceCoroutine = null;
     #endregion
 
     #region Editor
     #if UNITY_EDITOR
-    /// <summary>
-    /// Indicates if drawing the last shortest raycast hitting something or not.
-    /// </summary>
-    [SerializeField] private bool doDrawLastRaycastHit = true;
-
-    /// <summary>
-    /// Indicates if drawing raycasts points and direction or not.
-    /// </summary>
-    [SerializeField] private bool doDrawRaycasts = true;
-
     /// <summary>
     /// Color used to draw gizmos on this script.
     /// </summary>
@@ -193,19 +77,22 @@ public class PAF_Fruit : MonoBehaviour
     #endif
     #endregion
 
+    private int ownerID = -1;
     #endregion
 
     #region Methods
 
     #region Original Methods
+
     #if UNITY_EDITOR
     /// <summary>
     /// Adds a new collision point for debug & gizmos purpose.
     /// </summary>
     private void AddCollisionPoint()
     {
-        Physics.SyncTransforms();
-        if (collisionPos.Count > 15) collisionPos.RemoveAt(0);
+        if (collisionPos.Count > 15)
+            collisionPos.RemoveAt(0);
+
         collisionPos.Add(collider.bounds.center);
     }
     #endif
@@ -214,10 +101,7 @@ public class PAF_Fruit : MonoBehaviour
     /// Adds a force to the fruit, making it go in this direction.
     /// </summary>
     /// <param name="_force">Force to apply.</param>
-    public void AddForce(Vector3 _force)
-    {
-        Velocity += _force;
-    }
+    public void AddForce(Vector3 _force) => Velocity += _force;
 
     /// <summary>
     /// Adds a force to the fruit, making it go in this direction.
@@ -225,20 +109,22 @@ public class PAF_Fruit : MonoBehaviour
     /// <param name="_force">Force to apply.</param>
     public void AddForce(Vector3 _force, PAF_Player _player)
     {
-        if (isDoomed) return;
+        if (isDoomed)
+            return;
 
-        pointsOwner = _player;
         AddForce(_force);
+        ownerID = _player.IsPlayerOne ? 1 : 2;
 
         // Auto aim closest flower in near enough
         foreach (PAF_Flower _flower in PAF_Flower.Flowers)
         {
             Vector3 _direction = _flower.MouthTransform.position - collider.bounds.center;
+            float _magnitude = _direction.magnitude;
             float _angle = Vector3.Angle(collider.bounds.center + flatVelocity, collider.bounds.center + _direction);
 
-            if ((_angle < 15) || ((_angle < 30) && (_direction.magnitude < 12)) || (_direction.magnitude < 1))
+            if ((_angle < 15) || ((_angle < 30) && (_magnitude < 12)) || (_magnitude < 1))
             {
-                if (!Physics.Raycast(collider.bounds.center, _direction, _direction.magnitude, whatCollide))
+                if (!Physics.Raycast(collider.bounds.center, _direction, _magnitude, whatCollide))
                 {
                     TargetPosition(_flower.MouthTransform.position);
                     break;
@@ -247,171 +133,162 @@ public class PAF_Fruit : MonoBehaviour
         }
     }
 
+    private static readonly Vector3[] raycastPos = new Vector3[3];
+    private static readonly RaycastHit[] hits = new RaycastHit[3];
+
+    private static readonly Collider[] overlapBuffer = new Collider[8];
+    private static readonly Vector3[] raycastDir = new Vector3[] { Vector3.forward, Vector3.right, Vector3.back, Vector3.left };
+
+    private float doomTimer = 0;
+
+    [SerializeField] private float deceleration = 5;
+
     /// <summary>
     /// Apply a force to the fruit.
     /// </summary>
-    /// <returns></returns>
-    private IEnumerator ApplyForce()
+    private void ApplyForce()
     {
-        Vector3 _newPosition;
-        Vector3 _newScale;
-        Vector3 _flatVelocity;
-        Vector3 _normal;
-        Vector3 _nFlatVelocity;
-        Vector3[] _raycastPos = new Vector3[3];
-        RaycastHit[] _hits = new RaycastHit[3];
-        RaycastHit _finalHit = new RaycastHit();
+        if (velocity == Vector3.zero)
+            return;
+
         int _nearestHitIndex = 0;
+        RaycastHit _finalHit = new RaycastHit();
 
-        while (velocity != Vector3.zero)
+        Vector3 _flatVelocity = flatVelocity * Time.deltaTime;
+        if (_flatVelocity != Vector3.zero)
         {
-            yield return new WaitForFixedUpdate();
-
-            _flatVelocity = flatVelocity * Time.fixedDeltaTime;
-
-            if (_flatVelocity != Vector3.zero)
+            // If following a curve, recalculate path
+            if (autoAimCurveIndex > 0)
             {
-                // If following a curve, recalculate path
+                Vector3 _lastPos = collider.bounds.center;
+                float _force = _flatVelocity.magnitude;
+                float _distance;
+                
+                while (autoAimCurveIndex > 0)
+                {
+                    _distance = (autoAimCurve[autoAimCurveIndex] - _lastPos).magnitude;
+                    if (_distance < _force)
+                    {
+                        if (autoAimCurveIndex < 15)
+                        {
+                            _force -= _distance;
+                            _lastPos = autoAimCurve[autoAimCurveIndex];
+
+                            autoAimCurveIndex++;
+                        }
+                        else autoAimCurveIndex = 0;
+                    }
+                    else
+                        break;
+                }
+
                 if (autoAimCurveIndex > 0)
                 {
-                    //Debug.Log("Curve => " + autoAimCurveIndex);
-                    float _force = _flatVelocity.magnitude;
-                    float _distance;
-                    Vector3 _lastPos = collider.bounds.center;
-                    while (autoAimCurveIndex > 0)
-                    {
-                        _distance = (autoAimCurve[autoAimCurveIndex] - _lastPos).magnitude;
-                        if (_distance < _force)
-                        {
-                            if (autoAimCurveIndex < 15)
-                            {
-                                _force -= _distance;
-                                _lastPos = autoAimCurve[autoAimCurveIndex];
+                    // Set new velocity
+                    Vector3 _newVelocity = (autoAimCurve[autoAimCurveIndex] - collider.bounds.center).normalized * flatVelocity.magnitude;
+                    velocity.Set(_newVelocity.x, velocity.y, _newVelocity.z);
 
-                                autoAimCurveIndex++;
-                            }
-                            else autoAimCurveIndex = 0;
-                        }
-                        else break;
-                    }
-
-                    if (autoAimCurveIndex > 0)
-                    {
-                        // Set new velocity
-                        Vector3 _newVelocity = (autoAimCurve[autoAimCurveIndex] - collider.bounds.center).normalized * flatVelocity.magnitude;
-                        velocity = new Vector3(_newVelocity.x, velocity.y, _newVelocity.z);
-
-                        _flatVelocity = _newVelocity * Time.fixedDeltaTime;
-                    }
+                    _flatVelocity = _newVelocity * Time.deltaTime;
                 }
+            }
 
-                // Calculate normal & raycasts position
-                _nFlatVelocity = _flatVelocity.normalized;
-                _normal = new Vector3(_nFlatVelocity.z, 0, -_nFlatVelocity.x);
-                _raycastPos = new Vector3[] { collider.bounds.center + (_nFlatVelocity * (collider.bounds.extents.x - .01f)), collider.bounds.center + (_normal * (collider.bounds.extents.x - .01f)), collider.bounds.center - (_normal * (collider.bounds.extents.x - .01f)) };
+            // Calculate normal & raycasts position
+            Vector3 _nFlatVelocity = _flatVelocity.normalized;
+            Vector3 _normal = new Vector3(_nFlatVelocity.z, 0, -_nFlatVelocity.x);
 
-                // Raycast from side extrem points and front center, and get closest touched object if one
-                _nearestHitIndex = 0;
-                if (!Physics.Raycast(_raycastPos[0], _nFlatVelocity, out _hits[0], _flatVelocity.magnitude + .01f, whatCollide, QueryTriggerInteraction.Ignore))
+            raycastPos[0] = collider.bounds.center + (_nFlatVelocity * (collider.bounds.extents.x - .01f));
+            raycastPos[1] = collider.bounds.center + (_normal * (collider.bounds.extents.x - .01f));
+            raycastPos[2] = collider.bounds.center - (_normal * (collider.bounds.extents.x - .01f));
+
+            // Raycast from side extrem points and front center, and get closest touched object if one
+            _nearestHitIndex = 0;
+            if (!Physics.Raycast(raycastPos[0], _nFlatVelocity, out hits[0], _flatVelocity.magnitude + .01f, whatCollide, QueryTriggerInteraction.Ignore))
+            {
+                hits[0].distance = _flatVelocity.magnitude + collider.bounds.extents.x + .01f;
+            }
+            else
+            if (hits[0].collider is BoxCollider) hits[0].distance += collider.bounds.extents.x;
+
+            for (int _i = 1; _i < 3; _i++)
+            {
+                if (Physics.Raycast(raycastPos[_i], _nFlatVelocity, out hits[_i], _flatVelocity.magnitude + collider.bounds.extents.x + .01f, whatCollide, QueryTriggerInteraction.Ignore))
                 {
-                    _hits[0].distance = _flatVelocity.magnitude + collider.bounds.extents.x + .01f;
+                    if (hits[_i].distance < hits[_nearestHitIndex].distance)
+                        _nearestHitIndex = _i;
                 }
-                else if (_hits[0].collider is BoxCollider) _hits[0].distance += collider.bounds.extents.x;
+            }
 
-                for (int _i = 1; _i < 3; _i++)
+            // If hit something, bounce on it and recalculate trajectory
+            if (hits[_nearestHitIndex].collider)
+            {
+                // Play bounce Sound
+                audioSource.PlayOneShot(PAF_GameManager.Instance.SoundDatas.GetFruitBounce());
+
+                // Bounce on a Sphere collider
+                if (hits[_nearestHitIndex].collider is SphereCollider _sphere)
                 {
-                    if (Physics.Raycast(_raycastPos[_i], _nFlatVelocity, out _hits[_i], _flatVelocity.magnitude + collider.bounds.extents.x + .01f, whatCollide, QueryTriggerInteraction.Ignore))
+                    int _side = ((hits[_nearestHitIndex].point - (_sphere.bounds.center + (_sphere.bounds.extents.x * _normal))).magnitude < (hits[_nearestHitIndex].point - (_sphere.bounds.center - (_sphere.bounds.extents.x * _normal))).magnitude) ? 1 : -1;
+
+                    Vector3 _edge;
+                    if (_nearestHitIndex == 0)
                     {
-                        //Debug.Log("HIIIIT => Distance : " + _hits[_i].distance + " | 0 : " + _hits[0].distance);
-                        if (_hits[_i].distance < _hits[_nearestHitIndex].distance)
-                        {
-                            //Debug.Log("Good");
-                            _nearestHitIndex = _i;
-                        }
+                        _edge = _sphere.bounds.center;
                     }
-                }
-
-                // If hit something, bounce on it and recalculate trajectory
-                if (_hits[_nearestHitIndex].collider)
-                {
-                    //Debug.Log("Hit => " + _hits[_nearestHitIndex].transform.name + " | From => " + (_nearestHitIndex == 0 ? "Center" : _nearestHitIndex == 1 ? "Right" : "Left"));
-
-                    // Play bounce Sound
-                    if (audioSource)
-                    {
-                        AudioClip _clip = PAF_GameManager.Instance?.SoundDatas?.GetFruitBounce();
-                        if (_clip) audioSource.PlayOneShot(_clip);
-                    }
-
-                    // Bounce on a Sphere collider
-                    if (_hits[_nearestHitIndex].collider is SphereCollider _sphere)
-                    {
-                        int _side = ((_hits[_nearestHitIndex].point - (_sphere.bounds.center + (_sphere.bounds.extents.x * _normal))).magnitude < (_hits[_nearestHitIndex].point - (_sphere.bounds.center - (_sphere.bounds.extents.x * _normal))).magnitude) ? 1 : -1;
-
-                        Vector3 _edge;
-                        if (_nearestHitIndex == 0)
-                        {
-                            _edge = _sphere.bounds.center;
-                        }
-                        else
-                        {
-                            _edge = _sphere.bounds.center + (_normal * _side * _sphere.bounds.extents.x);
-                        }
-
-                        Vector3 _intersection = _sphere.bounds.center + (Mathf.Abs(Mathf.Cos(Vector3.Angle(-_normal, (_hits[_nearestHitIndex].point - _sphere.bounds.center).normalized) * Mathf.Deg2Rad)) * _normal * _side * _sphere.bounds.extents.x);
-                        Vector3 _rayPos = _edge - ((_edge - _intersection) / 2);
-
-                        #if UNITY_EDITOR
-                        sphereDebug = _rayPos;
-                        #endif
-
-                        if (!Physics.Raycast(_rayPos, -_nFlatVelocity, out _finalHit, _hits[_nearestHitIndex].distance + _sphere.bounds.extents.x, whatCollide, QueryTriggerInteraction.Ignore) || !Physics.Raycast(_finalHit.point, _nFlatVelocity, out _finalHit, _hits[_nearestHitIndex].distance, whatCollide, QueryTriggerInteraction.Ignore))
-                        {
-                            //Debug.Log("Lost Sphere " + _side);
-                            _finalHit = _hits[_nearestHitIndex];
-                            _finalHit.distance = 0;
-                        }
-                        //else Debug.Log("Bounce Sphere " + _side);
-                    }
-                    // Bounce on a Box Collider
                     else
                     {
-                        // Raycast from the point that should hit other collider to get distance between
-                        if (!Physics.Raycast(new Vector3(collider.bounds.center.x - (_hits[_nearestHitIndex].normal.normalized.x * (collider.bounds.extents.x - .01f)), collider.bounds.center.y, collider.bounds.center.z - (_hits[_nearestHitIndex].normal.normalized.z * (collider.bounds.extents.x - .01f))), _nFlatVelocity, out _finalHit, collider.bounds.extents.x + _flatVelocity.magnitude + .01f, whatCollide, QueryTriggerInteraction.Ignore))
-                        {
-                            //Debug.Log("Lost Box");
-                            _finalHit = _hits[_nearestHitIndex];
-                            _finalHit.distance = 0;
-                        }
-                        #if UNITY_EDITOR
-                        else
-                        {
-                            _raycastPos[_nearestHitIndex] = new Vector3(collider.bounds.center.x - (_hits[_nearestHitIndex].normal.normalized.x * (collider.bounds.extents.x - .01f)), collider.bounds.center.y, collider.bounds.center.z - (_hits[_nearestHitIndex].normal.normalized.z * (collider.bounds.extents.x - .01f)));
-                        }
-                        #endif
+                        _edge = _sphere.bounds.center + (_normal * _side * _sphere.bounds.extents.x);
                     }
 
+                    Vector3 _intersection = _sphere.bounds.center + (Mathf.Abs(Mathf.Cos(Vector3.Angle(-_normal, (hits[_nearestHitIndex].point - _sphere.bounds.center).normalized) * Mathf.Deg2Rad)) * _normal * _side * _sphere.bounds.extents.x);
+                    Vector3 _rayPos = _edge - ((_edge - _intersection) / 2);
+
                     #if UNITY_EDITOR
-                    yield return new WaitForFixedUpdate();
+                    sphereDebug = _rayPos;
                     #endif
 
-                    // Interact with touched collider
-                    InteractWith(_finalHit.collider);
-
-                    // Calculate new position
-                    _newPosition = transform.position + _nFlatVelocity * (Mathf.Min(_finalHit.distance, _flatVelocity.magnitude) - .015f);
-
-                    Collider[] _obstacles = Physics.OverlapSphere(_newPosition, collider.bounds.extents.x, whatCollide);
-                    if (_obstacles.Length > 0)
+                    if (!Physics.Raycast(_rayPos, -_nFlatVelocity, out _finalHit, hits[_nearestHitIndex].distance + _sphere.bounds.extents.x, whatCollide, QueryTriggerInteraction.Ignore) ||
+                        !Physics.Raycast(_finalHit.point, _nFlatVelocity, out _finalHit, hits[_nearestHitIndex].distance, whatCollide, QueryTriggerInteraction.Ignore))
                     {
-                        RaycastHit _otherHit;
-                        Vector3 _direction;
-                        Vector3 _distance;
+                        _finalHit = hits[_nearestHitIndex];
+                        _finalHit.distance = 0;
+                    }
+                }
+                // Bounce on a Box Collider
+                else
+                {
+                    // Raycast from the point that should hit other collider to get distance between
+                    if (!Physics.Raycast(new Vector3(collider.bounds.center.x - (hits[_nearestHitIndex].normal.normalized.x * (collider.bounds.extents.x - .01f)), collider.bounds.center.y, collider.bounds.center.z - (hits[_nearestHitIndex].normal.normalized.z * (collider.bounds.extents.x - .01f))), _nFlatVelocity, out _finalHit, collider.bounds.extents.x + _flatVelocity.magnitude + .01f, whatCollide, QueryTriggerInteraction.Ignore))
+                    {
+                        _finalHit = hits[_nearestHitIndex];
+                        _finalHit.distance = 0;
+                    }
+                    #if UNITY_EDITOR
+                    else
+                    {
+                        raycastPos[_nearestHitIndex] = new Vector3(collider.bounds.center.x - (hits[_nearestHitIndex].normal.normalized.x * (collider.bounds.extents.x - .01f)), collider.bounds.center.y, collider.bounds.center.z - (hits[_nearestHitIndex].normal.normalized.z * (collider.bounds.extents.x - .01f)));
+                    }
+                    #endif
+                }
 
-                        foreach (Collider _collider in _obstacles)
+                // Interact with touched collider
+                InteractWith(_finalHit.collider);
+
+                // Calculate new position
+                Vector3 _newPosition = transform.position + _nFlatVelocity * (Mathf.Min(_finalHit.distance, _flatVelocity.magnitude) - .015f);
+
+                int _amount = Physics.OverlapSphereNonAlloc(_newPosition, collider.bounds.extents.x, overlapBuffer, whatCollide);
+                if (_amount > 0)
+                {
+                    RaycastHit _otherHit;
+                    Vector3 _direction;
+                    Vector3 _distance;
+
+                    for (int _i = 0; _i < _amount; _i++)
+                    {
+                        Collider _collider = overlapBuffer[_i];
+
+                        if (_collider != collider)
                         {
-                            if (_collider == collider) continue;
-
                             _direction = _collider.bounds.center - _newPosition;
                             if (Physics.Raycast(_newPosition, _direction, out _otherHit, collider.bounds.extents.x + Mathf.Max(_collider.bounds.extents.x, _collider.bounds.extents.z), whatCollide, QueryTriggerInteraction.Ignore))
                             {
@@ -421,90 +298,100 @@ public class PAF_Fruit : MonoBehaviour
                                 _newPosition += Vector3.Scale(_otherHit.normal, new Vector3(collider.bounds.extents.x - _distance.x, 0, collider.bounds.extents.z - _distance.z));
                             }
 
-                            if (_collider != _finalHit.collider) InteractWith(_collider);
+                            if (_collider != _finalHit.collider)
+                                InteractWith(_collider);
                         }
                     }
-
-                    // Set new position & velocity
-                    transform.position = _newPosition;
-
-                    _flatVelocity = Vector3.Reflect(_flatVelocity, _finalHit.normal) * .8f;
-                    velocity = new Vector3(_flatVelocity.x / Time.fixedDeltaTime, velocity.y, _flatVelocity.z / Time.fixedDeltaTime);
-
-                    // Stop following curve if doing so
-                    autoAimCurveIndex = 0;
-
-                    #if UNITY_EDITOR
-                    AddCollisionPoint();
-
-                    Physics.SyncTransforms();
-                    lastHitRay[0] = _raycastPos[_nearestHitIndex];
-                    lastHitRay[1] = _raycastPos[_nearestHitIndex] + (_nFlatVelocity * (Mathf.Min(_finalHit.distance, _flatVelocity.magnitude) - .015f));
-                    #endif
                 }
-                else
-                {
-                    transform.position += _flatVelocity;
 
-                    if (_flatVelocity.magnitude < .5f) _flatVelocity *= .975f;
-                    velocity = new Vector3((_flatVelocity.x * .99f) / Time.fixedDeltaTime, velocity.y, (_flatVelocity.z * .99f) / Time.fixedDeltaTime);
+                // Set new position & velocity
+                rigidbody.position = _newPosition;
+                transform.position = _newPosition;
 
-                    renderer.Rotate(_normal, Time.fixedDeltaTime * (_flatVelocity.magnitude / Time.fixedDeltaTime) * 75);
+                _flatVelocity = Vector3.Reflect(_flatVelocity, _finalHit.normal) * .8f;
+                velocity = new Vector3(_flatVelocity.x / Time.deltaTime, velocity.y, _flatVelocity.z / Time.deltaTime);
 
-                    if (doFreezeXRotation)
-                    {
-                        renderer.rotation = Quaternion.Euler(90, renderer.eulerAngles.y, renderer.eulerAngles.z);
-                    }
-                }
+                // Stop following curve if doing so
+                autoAimCurveIndex = 0;
+
+                #if UNITY_EDITOR
+                AddCollisionPoint();
+
+                lastHitRay[0] = raycastPos[_nearestHitIndex];
+                lastHitRay[1] = raycastPos[_nearestHitIndex] + (_nFlatVelocity * (Mathf.Min(_finalHit.distance, _flatVelocity.magnitude) - .015f));
+                #endif
             }
-            // Verticality calculs
-            if (velocity.y != 0)
+            else
             {
-                renderer.position = new Vector3(renderer.position.x, renderer.position.y + (velocity.y * Time.fixedDeltaTime * 5), renderer.position.z);
+                rigidbody.position += _flatVelocity;
+                transform.position += _flatVelocity;
 
-                if (velocity.y > 0)
+                if (velocity.magnitude < .5f)
+                    _flatVelocity.Set(Mathf.MoveTowards(_flatVelocity.x, 0, deceleration * Time.deltaTime * .1f),
+                                      Mathf.MoveTowards(_flatVelocity.y, 0, deceleration * Time.deltaTime * .1f),
+                                      Mathf.MoveTowards(_flatVelocity.z, 0, deceleration * Time.deltaTime * .1f));
+
+                velocity.Set(Mathf.MoveTowards(_flatVelocity.x / Time.deltaTime, 0, deceleration * Time.deltaTime), velocity.y, Mathf.MoveTowards(_flatVelocity.z / Time.deltaTime, 0, deceleration * Time.deltaTime));
+
+                renderer.Rotate(_normal, Time.deltaTime * (_flatVelocity.magnitude / Time.deltaTime) * 75);
+                if (doFreezeXRotation)
                 {
-                    if (renderer.position.y > 10f)
-                    {
-                        // This is the sky
-                        velocity.y *= -.75f;
-                        continue;
-                    }
-                    _newScale = renderer.localScale * (1 + (velocity.y / 100));
-                    if (velocity.y < .5f) velocity.y *= .875f;
-                    else velocity.y *= .925f;
-
-                    if (velocity.y < .2f) velocity.y *= -1;
+                    renderer.rotation = Quaternion.Euler(90, renderer.eulerAngles.y, renderer.eulerAngles.z);
                 }
-                else
-                {
-                    if (renderer.position.y < -7.5f)
-                    {
-                        // Instantiate plouf FX
-                        Destroy(gameObject);
-                        yield break;
-                    }
-                    if (!isFalling && (renderer.position.y < originalPivotHeight))
-                    {
-                        renderer.position = new Vector3(renderer.position.x, renderer.position.y + (originalPivotHeight - renderer.position.y), renderer.position.z);
-                        renderer.localScale = originalSize;
-                        velocity.y = 0;
-
-                        continue;
-                    }
-
-                    _newScale = renderer.localScale / (-1 + (velocity.y / 100));
-                    if (velocity.y > -100)
-                    {
-                        if (velocity.y > -1) velocity.y *= 1.1f;
-                        else velocity.y *= 1.05f;
-                    }
-                }
-                renderer.localScale = new Vector3(Mathf.Abs(_newScale.x), Mathf.Abs(_newScale.y), Mathf.Abs(_newScale.z));
             }
         }
 
-        applyForceCoroutine = null;
+        // Verticality calculs
+        Vector3 _newScale;
+        if (velocity.y != 0)
+        {
+            renderer.position = new Vector3(renderer.position.x, renderer.position.y + (velocity.y * Time.deltaTime * 5), renderer.position.z);
+
+            if (velocity.y > 0)
+            {
+                if (renderer.position.y > 10f)
+                {
+                    // This is the sky
+                    velocity.y *= -.75f;
+                    return;
+                }
+
+                _newScale = renderer.localScale * (1 + (velocity.y / 100));
+
+                if (velocity.y < .5f)
+                    velocity.y *= .875f;
+                else
+                    velocity.y *= .925f;
+
+                if (velocity.y < .2f)
+                    velocity.y *= -1;
+            }
+            else
+            {
+                if (renderer.position.y < -7.5f)
+                {
+                    // Instantiate plouf FX
+                    Destroy(gameObject);
+                    return;
+                }
+
+                if (!isFalling && (renderer.position.y < originalPivotHeight))
+                {
+                    renderer.position += new Vector3(0, originalPivotHeight - renderer.position.y, 0);
+
+                    renderer.localScale = originalSize;
+                    velocity.y = 0;
+                    return;
+                }
+
+                _newScale = renderer.localScale / (-1 + (velocity.y / 100));
+
+                if (velocity.y > -100)
+                    velocity.y *= (velocity.y > -1) ? 1.1f : 1.05f;
+            }
+
+            renderer.localScale = new Vector3(Mathf.Abs(_newScale.x), Mathf.Abs(_newScale.y), Mathf.Abs(_newScale.z));
+        }
     }
 
     /// <summary>
@@ -512,11 +399,9 @@ public class PAF_Fruit : MonoBehaviour
     /// </summary>
     public void CheckGround()
     {
-        Vector3[] _raycastPos = new Vector3[] { Vector3.forward, Vector3.right, Vector3.back, Vector3.left };
-
         for (int _i = 0; _i < 4; _i++)
         {
-            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + .05f, transform.position.z) + (_raycastPos[_i] * collider.bounds.extents.x * .8f), Vector3.down, 1, whatIsGround, QueryTriggerInteraction.Ignore))
+            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + .05f, transform.position.z) + (raycastDir[_i] * collider.bounds.extents.x * .8f), Vector3.down, 1, whatIsGround, QueryTriggerInteraction.Ignore))
             {
                 if (isFalling)
                 {
@@ -525,7 +410,7 @@ public class PAF_Fruit : MonoBehaviour
                     renderer.localScale = originalSize;
 
                     isFalling = false;
-                    CancelInvoke("DoomFruit");
+                    doomTimer = 0;
                 }
                 return;
             }
@@ -539,7 +424,7 @@ public class PAF_Fruit : MonoBehaviour
         if (!isFalling)
         {
             isFalling = true;
-            Invoke("DoomFruit", 1f);
+            doomTimer = 1f;
 
             if (velocity.y == 0) Velocity -= new Vector3(0, .0001f, 0);
         }
@@ -547,7 +432,7 @@ public class PAF_Fruit : MonoBehaviour
         {
             Velocity -= new Vector3(0, .01f, 0);
 
-            CancelInvoke("DoomFruit");
+            doomTimer = 0;
             DoomFruit();
         }
     }
@@ -568,37 +453,33 @@ public class PAF_Fruit : MonoBehaviour
     public void Eat()
     {
         // Eat FX
-        ParticleSystem _system = PAF_GameManager.Instance?.VFXDatas?.FruitFX;
-        if (_system) Instantiate(_system.gameObject, new Vector3(collider.bounds.center.x, renderer.position.y, collider.bounds.center.z), Quaternion.identity);
+        Instantiate(PAF_GameManager.Instance.VFXDatas.FruitFX.gameObject,
+                    new Vector3(collider.bounds.center.x, renderer.position.y, collider.bounds.center.z), Quaternion.identity);
 
-        if (pointsOwner) OnFruitEaten?.Invoke(pointsOwner.IsPlayerOne, fruitScore);
+        if (ownerID > 0)
+            PAF_GameManager.Instance.IncreasePlayerScore(ownerID == 1 ? true : false, fruitScore);
+
         Destroy(gameObject);
     }
+
+    private Transform plantTransform = null;
+    private bool isFollowingPlant = false;
 
     /// <summary>
     /// Follows a given transform.
     /// </summary>
     /// <param name="_toFollow">Transform of to follow.</param>
-    /// <returns>IEnumerator, baby.</returns>
-    private IEnumerator FollowPlant(Transform _toFollow)
+    private void FollowPlant()
     {
-        if (velocity.y > 0) velocity.y = -1;
-        while (true)
-        {
-            if (transform.localScale.x > .5f)
-            {
-                transform.localScale *= .95f;
-            }
+        if (transform.localScale.x > .5f)
+            transform.localScale *= .95f;
 
-            Vector3 _newVelocity = _toFollow.position - renderer.position;
-            float _magnitude = flatVelocity.magnitude;
-            if (_magnitude > 25) _magnitude *= .975f;
-            else if ((_magnitude < 5f) && (_newVelocity.magnitude > .25f)) _magnitude = 5f;
+        Vector3 _newVelocity = plantTransform.position - renderer.position;
+        float _magnitude = flatVelocity.magnitude;
+        if (_magnitude > 25) _magnitude *= .975f;
+        else if ((_magnitude < 5f) && (_newVelocity.magnitude > .25f)) _magnitude = 5f;
 
-            Velocity = _newVelocity.normalized * _magnitude;
-
-            yield return null;
-        }
+        Velocity = _newVelocity.normalized * _magnitude;
     }
 
     /// <summary>
@@ -607,16 +488,8 @@ public class PAF_Fruit : MonoBehaviour
     /// <param name="_collider"></param>
     private void InteractWith(Collider _collider)
     {
-        if (!_collider) return;
-
-        // Push the touched fruit if one, or stun a player if hit one
-        PAF_Fruit _fruit = _collider.GetComponent<PAF_Fruit>();
-        if (_fruit) _fruit.AddForce(flatVelocity * .8f);
-        /*else if (velocity.magnitude > 10f)
-        {
-            PAF_Player _player = _collider.GetComponent<PAF_Player>();
-            if (_player && !_player.Equals(pointsOwner)) _player.Stun(transform.position);
-        }*/
+        if (_collider.TryGetComponent(out PAF_Fruit _fruit))
+            _fruit.AddForce(flatVelocity * .8f);
     }
 
     /// <summary>
@@ -625,10 +498,15 @@ public class PAF_Fruit : MonoBehaviour
     /// <param name="_toFollow">Transform of the plant mouth to follow.</param>
     public void StartToEat(Transform _toFollow)
     {
-        if (isDoomed) return;
+        if (isDoomed)
+            return;
 
         DoomFruit();
-        StartCoroutine(FollowPlant(_toFollow));
+        isFollowingPlant = true;
+        plantTransform = _toFollow;
+
+        if (velocity.y > 0)
+            velocity.y = -1;
     }
 
     /// <summary>
@@ -638,7 +516,7 @@ public class PAF_Fruit : MonoBehaviour
     {
         Vector3 _p0 = collider.bounds.center;
         Vector3 _p2 = _position;
-        Vector3 _p1 = _p0 + (flatVelocity.normalized * ((_p2 - _p0).magnitude / 1.25f) * (1 + (flatVelocity.magnitude * Time.fixedDeltaTime * .5f)));
+        Vector3 _p1 = _p0 + (flatVelocity.normalized * ((_p2 - _p0).magnitude / 1.25f) * (1 + (flatVelocity.magnitude * Time.deltaTime * .5f)));
         float _t;
 
         autoAimCurve[0] = _p0;
@@ -678,9 +556,8 @@ public class PAF_Fruit : MonoBehaviour
         originalSize = renderer.localScale;
         originalPivotHeight = renderer.position.y;
 
-
-    // Add this fruit to the arena list on start !
-        arenaFruits.Add(this);
+        // Add this fruit to the arena list on start !
+        ArenaFruits.Add(this);
 
         #if UNITY_EDITOR
         collisionPos.Add(collider.bounds.center);
@@ -691,7 +568,6 @@ public class PAF_Fruit : MonoBehaviour
     // Implement OnDrawGizmos if you want to draw gizmos that are also pickable and always drawn
     private void OnDrawGizmos()
     {
-        Physics.SyncTransforms();
         Gizmos.color = gizmosColor;
 
         // Draw gizmos tracking the fruit collisions path
@@ -735,14 +611,14 @@ public class PAF_Fruit : MonoBehaviour
             Gizmos.DrawSphere(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), .1f);
 
             Gizmos.color = Color.blue;
-            Gizmos.DrawSphere(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x) + (flatVelocity * Time.fixedDeltaTime), .1f);
-            Gizmos.DrawLine(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x), collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x) + (flatVelocity * Time.fixedDeltaTime));
+            Gizmos.DrawSphere(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x) + (flatVelocity * Time.deltaTime), .1f);
+            Gizmos.DrawLine(collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x), collider.bounds.center + (flatVelocity.normalized * collider.bounds.extents.x) + (flatVelocity * Time.deltaTime));
 
-            Gizmos.DrawSphere(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity * Time.fixedDeltaTime) + (flatVelocity.normalized * collider.bounds.extents.x), .1f);
-            Gizmos.DrawLine(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity * Time.fixedDeltaTime) + (flatVelocity.normalized * collider.bounds.extents.x));
+            Gizmos.DrawSphere(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity * Time.deltaTime) + (flatVelocity.normalized * collider.bounds.extents.x), .1f);
+            Gizmos.DrawLine(collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center + (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity * Time.deltaTime) + (flatVelocity.normalized * collider.bounds.extents.x));
 
-            Gizmos.DrawSphere(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity * Time.fixedDeltaTime) + (flatVelocity.normalized * collider.bounds.extents.x), .1f);
-            Gizmos.DrawLine(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity * Time.fixedDeltaTime) + (flatVelocity.normalized * collider.bounds.extents.x));
+            Gizmos.DrawSphere(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity * Time.deltaTime) + (flatVelocity.normalized * collider.bounds.extents.x), .1f);
+            Gizmos.DrawLine(collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x), collider.bounds.center - (new Vector3(velocity.z, 0, -velocity.x).normalized * collider.bounds.extents.x) + (flatVelocity * Time.deltaTime) + (flatVelocity.normalized * collider.bounds.extents.x));
         }
     }
     #endif
@@ -750,14 +626,27 @@ public class PAF_Fruit : MonoBehaviour
     // Destroying the attached Behaviour will result in the game or Scene receiving OnDestroy
     private void OnDestroy()
     {
-        // Remove this fruit from the arena list when destroyed
-        if (arenaFruits.Contains(this)) arenaFruits.Remove(this);
+        ArenaFruits.Remove(this);
+        PAF_Flower.RemoveFruit(this);
     }
 
     // Update is called every frame, if the MonoBehaviour is enabled
     private void Update()
     {
-        if (!isDoomed) CheckGround();
+        ApplyForce();
+
+        if (!isDoomed)
+        {
+            CheckGround();
+            if (doomTimer > 0)
+            {
+                doomTimer -= Time.deltaTime;
+                if (doomTimer <= 0)
+                    DoomFruit();
+            }
+        }
+        else if (isFollowingPlant)
+            FollowPlant();
     }
     #endregion
 

@@ -1,10 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PAF_PlayerAnimator : MonoBehaviour
 {
     [SerializeField] Animator playerAnimator = null;
+
+    private readonly int startSpeed_Hash = Animator.StringToHash("start speed");
+    private readonly int move_Hash = Animator.StringToHash("move");
+    private readonly int stun_Hash = Animator.StringToHash("stun");
+    private readonly int attack_Hash = Animator.StringToHash("attack");
+    private readonly int fall_Hash = Animator.StringToHash("fall");
 
     private void Start()
     {
@@ -12,29 +16,13 @@ public class PAF_PlayerAnimator : MonoBehaviour
         playerAnimator.Play(state.fullPathHash, -1, Random.Range(0f, 1f));
     }
 
-    public void Init(float _speed) => playerAnimator.SetFloat("start speed", _speed);
+    public void Init(float _speed) => playerAnimator.SetFloat(startSpeed_Hash, _speed);
 
-    public void SetMoving(bool _state)
-    {
-        if (!playerAnimator) return;
-        playerAnimator.SetBool("move", !_state);
-    }
+    public void SetMoving(bool _state) => playerAnimator.SetBool(move_Hash, !_state);
 
-    public void SetStunned()
-    {
-        if (!playerAnimator) return;
-        playerAnimator.SetTrigger("stun");
-    }
+    public void SetStunned() => playerAnimator.SetTrigger(stun_Hash);
 
-    public void SetAttack()
-    {
-        if (!playerAnimator) return;
-        playerAnimator.SetTrigger("attack");
-    }
+    public void SetAttack() => playerAnimator.SetTrigger(attack_Hash);
 
-    public void SetFalling()
-    {
-        if (!playerAnimator) return;
-        playerAnimator.SetTrigger("fall");
-    }
+    public void SetFalling() => playerAnimator.SetTrigger(fall_Hash);
 }

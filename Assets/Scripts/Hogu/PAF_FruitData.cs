@@ -1,28 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "FruitData", menuName = "ScriptableObjects/FruitDataScriptableObject", order = 1)]
 public class PAF_FruitData : ScriptableObject
 {
-    [SerializeField] GameObject[] fruits;
-    [SerializeField] GameObject[] goldenFruits;
-    public GameObject GetGoldenFruit
-    {
-        get
-        {
-            if ((goldenFruits == null) || (goldenFruits.Length == 0)) return null;
-            return goldenFruits[Random.Range(0, goldenFruits.Length)];
-        }
-    }
+    [SerializeField] private GameObject[] fruits = null;
+    [SerializeField] private GameObject[] goldenFruits = null;
+
+    private static readonly GameObject[] spawnFruits = new GameObject[16];
+
+    public GameObject GetGoldenFruit => goldenFruits[Random.Range(0, goldenFruits.Length)];
 
     public GameObject[] GetRandomFruit(int _number)
     {
-        List<GameObject> _fruits = new List<GameObject>();
-        for (int i = 0; i < _number; i++)
-        {
-            _fruits.Add(fruits[Random.Range(0, fruits.Length)]);
-        }
-        return _fruits.ToArray();
+        for (int _i = 0; _i < _number; _i++)
+            spawnFruits[_i] = fruits[Random.Range(0, fruits.Length)];
+
+        return spawnFruits;
     }
 }

@@ -10,10 +10,10 @@ public class PAF_VFXData : ScriptableObject
     [SerializeField] private GameObject m_confusedFX = null;
     [SerializeField] private ParticleSystem m_stepSmokeFX = null;
 
-    public ParticleSystem HitFX { get { return m_hitFX; } }
-    public ParticleSystem SplashFX { get { return m_splashFX; } }
-    public ParticleSystem FruitFX { get { return m_fruitFX; } }
-    public ParticleSystem BulbFX { get { return m_bulbFX; } }
-    public GameObject ConfusedFX { get { return m_confusedFX; } }
-    public ParticleSystem StepSmokeFX { get { return m_stepSmokeFX; } }
+    public ParticleSystem HitFX => m_hitFX;
+    public ParticleSystem SplashFX => m_splashFX;
+    public ParticleSystem FruitFX => m_fruitFX;
+    public ParticleSystem BulbFX => m_bulbFX;
+    public GameObject ConfusedFX => m_confusedFX;
+    public ParticleSystem StepSmokeFX => m_stepSmokeFX;
 }

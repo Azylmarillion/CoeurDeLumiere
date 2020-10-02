@@ -3,50 +3,22 @@ using TMPro;
 
 public class PAF_Timer : MonoBehaviour 
 {
-    /* PAF_Timer :
-	 *
-	 *	#####################
-	 *	###### PURPOSE ######
-	 *	#####################
-	 *
-	 *	[PURPOSE]
-	 *
-	 *	#####################
-	 *	####### TO DO #######
-	 *	#####################
-	 *
-	 *	[TO DO]
-	 *
-	 *	#####################
-	 *	### MODIFICATIONS ###
-	 *	#####################
-	 *
-	 *	Date :			[DATE]
-	 *	Author :		[NAME]
-	 *
-	 *	Changes :
-	 *
-	 *	[CHANGES]
-	 *
-	 *	-----------------------------------
-	*/
-
-    #region Events
-
-    #endregion
-
     #region Fields / Properties
     [SerializeField] private Animator m_animator    = null;
     [SerializeField] private TMP_Text m_unitText    = null;
     [SerializeField] private TMP_Text m_tenText     = null;
     [SerializeField] private TMP_Text m_hundredText = null;
 
-    private string m_displayedText = string.Empty; 
-	#endregion
+    private string m_displayedText = string.Empty;
 
-	#region Methods
+    private readonly int hundred_Hash = Animator.StringToHash("Hundred");
+    private readonly int ten_Hash = Animator.StringToHash("Ten");
+    private readonly int unit_Hash = Animator.StringToHash("Unit");
+    #endregion
 
-	#region Original Methods
+    #region Methods
+
+    #region Original Methods
     /// <summary>
     /// Change the displayedText and call the animation according to the modulo 
     /// </summary>
@@ -54,18 +26,17 @@ public class PAF_Timer : MonoBehaviour
     private void IncreaseTime(int _remainingTime)
     {
         m_displayedText = _remainingTime.ToString(); 
-        if (!m_animator) return; 
         if((_remainingTime+1) % 100 == 0)
         {
-            m_animator.SetTrigger("Hundred"); 
+            m_animator.SetTrigger(hundred_Hash); 
             return; 
         }
         if((_remainingTime+1) % 10 == 0)
         {
-            m_animator.SetTrigger("Ten"); 
+            m_animator.SetTrigger(ten_Hash); 
             return; 
         }
-        m_animator.SetTrigger("Unit"); 
+        m_animator.SetTrigger(unit_Hash); 
     }
 
     /// <summary>
@@ -73,9 +44,9 @@ public class PAF_Timer : MonoBehaviour
     /// </summary>
     public void ApplyNewText()
     {
-        if (m_unitText) m_unitText.text = m_displayedText.Length < 1 ? "0" : m_displayedText[m_displayedText.Length - 1].ToString();
-        if(m_tenText) m_tenText.text = m_displayedText.Length < 2 ? "0" : m_displayedText[m_displayedText.Length - 2].ToString();
-        if (m_hundredText) m_hundredText.text = m_displayedText.Length < 3 ? "0" : m_displayedText[m_displayedText.Length - 3].ToString();
+        m_unitText.text = m_displayedText.Length < 1 ? "0" : m_displayedText[m_displayedText.Length - 1].ToString();
+        m_tenText.text = m_displayedText.Length < 2 ? "0" : m_displayedText[m_displayedText.Length - 2].ToString();
+        m_hundredText.text = m_displayedText.Length < 3 ? "0" : m_displayedText[m_displayedText.Length - 3].ToString();
     }
 	#endregion
 
@@ -85,7 +56,12 @@ public class PAF_Timer : MonoBehaviour
     {
         PAF_GameManager.OnNextSecond += IncreaseTime; 
     }
-	#endregion
 
-	#endregion
+    private void OnDestroy()
+    {
+        PAF_GameManager.OnNextSecond -= IncreaseTime;
+    }
+    #endregion
+
+    #endregion
 }

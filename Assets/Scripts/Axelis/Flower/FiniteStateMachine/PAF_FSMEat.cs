@@ -1,16 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PAF_FSMEat : StateMachineBehaviour
 {
+    private bool isInitialized = false;
     private PAF_Flower m_owner = null;
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (!m_owner) m_owner = animator.GetComponent<PAF_Flower>();
-        if (!m_owner) return;
+        if (!isInitialized)
+        {
+            isInitialized = true;
+            m_owner = animator.GetComponent<PAF_Flower>();
+        }
+
         m_owner.EatFruit(); 
     }
 
@@ -21,10 +24,10 @@ public class PAF_FSMEat : StateMachineBehaviour
     //}
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
-    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    {
+    //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    //{
 
-    }
+    //}
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
     //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

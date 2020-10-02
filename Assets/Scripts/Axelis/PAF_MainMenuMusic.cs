@@ -3,22 +3,17 @@
 [RequireComponent(typeof(AudioSource))]
 public class PAF_MainMenuMusic : MonoBehaviour
 {
+    public static PAF_MainMenuMusic Instance = null;
+
     private AudioSource m_audioSource = null; 
 
     private void Awake()
     {
+        Instance = this;
         m_audioSource = GetComponent<AudioSource>();
-        PAF_GameManager.OnStartCinematic += StopMusic; 
-        PAF_GameManager.OnGameEnd += StartMusic;
     }
 
-    private void OnDestroy()
-    {
-        PAF_GameManager.OnStartCinematic -= StopMusic;
-        PAF_GameManager.OnGameEnd -= StartMusic;
-    }
+    public void StartMusic() => m_audioSource.Play();
 
-    private void StartMusic(int _scoreP1, int _scoreP2) => m_audioSource.Play();
-
-    private void StopMusic() => m_audioSource.Stop();
+    public void StopMusic() => m_audioSource.Stop();
 }

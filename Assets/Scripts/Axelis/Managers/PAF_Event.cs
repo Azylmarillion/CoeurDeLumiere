@@ -5,34 +5,6 @@ using UnityEngine.Events;
 [Serializable]
 public class PAF_Event 
 {
-	/* PAF_Event :
-	 *
-	 *	#####################
-	 *	###### PURPOSE ######
-	 *	#####################
-	 *
-	 *	[PURPOSE]
-	 *
-	 *	#####################
-	 *	####### TO DO #######
-	 *	#####################
-	 *
-	 *	[TO DO]
-	 *
-	 *	#####################
-	 *	### MODIFICATIONS ###
-	 *	#####################
-	 *
-	 *	Date :			[DATE]
-	 *	Author :		[NAME]
-	 *
-	 *	Changes :
-	 *
-	 *	[CHANGES]
-	 *
-	 *	-----------------------------------
-	*/
-
 	#region Events
     [SerializeField] private UnityEvent m_event = null;
     #endregion
@@ -49,7 +21,7 @@ public class PAF_Event
     public void CallEvent()
     {
         HasBeenCalled = true;
-        m_event?.Invoke(); 
+        m_event.Invoke(); 
     }
 	#endregion
 

@@ -1,19 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PAF_FSMFollow : StateMachineBehaviour
 {
+    private bool isInitialized = false;
     private PAF_Flower m_owner = null;
-    private Coroutine m_behaviourCoroutine = null;
-
 
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (!m_owner) m_owner = animator.GetComponent<PAF_Flower>();
-        if (!m_owner) return;
-        m_behaviourCoroutine = m_owner.StartCoroutine(m_owner.FollowTarget());
+        if (!isInitialized)
+        {
+            isInitialized = true;
+            m_owner = animator.GetComponent<PAF_Flower>();
+        }
+
+        m_owner.DoFollowFruit(true);
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -25,11 +26,7 @@ public class PAF_FSMFollow : StateMachineBehaviour
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (m_behaviourCoroutine != null)
-        {
-            m_owner.StopCoroutine(m_owner.FollowTarget());
-            m_behaviourCoroutine = null;
-        }
+        m_owner.DoFollowFruit(false);
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

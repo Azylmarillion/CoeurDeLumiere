@@ -4,28 +4,18 @@ using TMPro;
 
 public class PAF_UIManager : MonoBehaviour
 {
-    /* UI :
-     * 
-     *  On pourrait faire tout le jeu dans un seul niveau :
-     * on met tout le LD en enfant d'un GameObject,
-     * et lorsqu'on recommence une partie, on détruit juste
-     * tous les objets enfants du-dit GameObject, et on instancie
-     * le prefab de "base" du niveau.
-     * 
-     * Gérer l'UI via UnityEvent & Animations
-     * 
-     * --> UIManager ?
-     * 
-    */
-
     public static PAF_UIManager Instance { get; private set; }
 
     #region Fields / Properties
     [Header("Animators")]
-    /// <summary>
-    /// Screen UI animator, making all different menus and sub-menus transitions.
-    /// </summary>
-    [SerializeField] private Animator screenAnimator = null;
+
+    [SerializeField] private Animator p1ScoreAnim = null;
+    [SerializeField] private Animator p2ScoreAnim = null;
+
+    [SerializeField] private Animator p1ReadyAnim = null;
+    [SerializeField] private Animator p2ReadyAnim = null;
+
+    [SerializeField] private Animator countdownAnim = null;
 
     [Header("Texts")]
     /// <summary>
@@ -42,6 +32,12 @@ public class PAF_UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playerTwoScore = null;
     [SerializeField] private TextMeshProUGUI playerTwoReadyText = null;
 
+    [Header("Controllers")]
+    [SerializeField] private RectTransform controllerOneArea = null;
+    [SerializeField] private RectTransform controllerOneJoystick = null;
+    [SerializeField] private RectTransform controllerTwoArea = null;
+    [SerializeField] private RectTransform controllerTwoJoystick = null;
+
     [Header("Score")]
     [SerializeField] private GameObject playersScoreAnchor = null;
     [SerializeField] private TextMeshProUGUI playerOneTotalScore = null;
@@ -50,13 +46,14 @@ public class PAF_UIManager : MonoBehaviour
     [SerializeField] private Animator playerTwoTotalScoreAnimator = null;
 
     [Header("Images")]
-    [SerializeField] private Image m_playerOneReadyImage = null; 
-    [SerializeField] private Image m_playerTwoReadyImage = null; 
+    [SerializeField] private Image m_playerOneReadyImage = null;
+    [SerializeField] private Button m_playerOneReadyButton = null;
+
+    [SerializeField] private Image m_playerTwoReadyImage = null;
+    [SerializeField] private Button m_playerTwoReadyButton = null;
 
     [Header("Parents")]
-    /// <summary>
-    /// Parent Object of the main menu 
-    /// </summary>
+
     [SerializeField] private GameObject m_mainMenuObject = null;
     [SerializeField] private GameObject m_optionMenuParent = null;
 
@@ -73,7 +70,7 @@ public class PAF_UIManager : MonoBehaviour
         {
             m_volumeIntensity = value;
             PlayerPrefs.SetFloat("VolumeAttenuation", value);
-            if (m_audioMixer) m_audioMixer.SetFloat("VolumeAttenuation", value); 
+            m_audioMixer.SetFloat("VolumeAttenuation", value); 
         }
 
     }
@@ -90,7 +87,7 @@ public class PAF_UIManager : MonoBehaviour
         {
             m_volumeIntensityMusic = value;
             PlayerPrefs.SetFloat("VolumeAttenuationMusic", value);
-            if (m_audioMixer) m_audioMixer.SetFloat("VolumeAttenuationMusic", value);
+            m_audioMixer.SetFloat("VolumeAttenuationMusic", value);
         }
 
     }
@@ -104,20 +101,17 @@ public class PAF_UIManager : MonoBehaviour
     [SerializeField] private GameObject winnerPresentator = null;
 
     [SerializeField] private GameObject newRecordFeedback = null;
-
-    private Resolution[] m_allResolutions = null;
-    private int m_currentResolutionIndex = 0;
-    private bool m_isFullScreen = true;
-    [SerializeField] private TextMeshProUGUI m_resolutionText = null; 
     #endregion
+
+    private readonly int score_Hash = Animator.StringToHash("Score");
+    private readonly int trigger_Hash = Animator.StringToHash("Trigger");
+
+    private readonly int state_Hash = Animator.StringToHash("State");
 
     #region Methods
 
     #region Original Methods
-    public void QuitGame()
-    {
-        Application.Quit(); 
-    }
+    public void QuitGame() => Application.Quit();
 
     /// <summary>
     /// Updates the score of a player.
@@ -127,62 +121,47 @@ public class PAF_UIManager : MonoBehaviour
     public void SetPlayerScore(bool _isPlayerOne, int _score)
     {
         string _text = _score > 0 ? "+" : string.Empty;
+
         if (_isPlayerOne)
         {
             playerOneTotalScore.text = (int.Parse(playerOneTotalScore.text) + _score).ToString();
-            playerOneTotalScoreAnimator.SetTrigger("Score");
+            playerOneTotalScoreAnimator.SetTrigger(score_Hash);
             playerOneScore.text = _text + _score.ToString();
-            //worldAnimator.SetTrigger("Score P1");
-            screenAnimator.SetTrigger("P1 Score");
-            return;
+            p1ScoreAnim.SetTrigger(trigger_Hash);
         }
-        playerTwoTotalScore.text = (int.Parse(playerTwoTotalScore.text) + _score).ToString();
-        playerTwoTotalScoreAnimator.SetTrigger("Score");
-        playerTwoScore.text = _text + _score.ToString();
-        //worldAnimator.SetTrigger("Score P2");
-        screenAnimator.SetTrigger("P2 Score");
+        else
+        {
+            playerTwoTotalScore.text = (int.Parse(playerTwoTotalScore.text) + _score).ToString();
+            playerTwoTotalScoreAnimator.SetTrigger(score_Hash);
+            playerTwoScore.text = _text + _score.ToString();
+            p2ScoreAnim.SetTrigger(trigger_Hash);
+        }
     }
 
     public void SetPlayerReady(bool _isPlayerOne)
     {
         if(_isPlayerOne)
         {
+            m_playerOneReadyButton.interactable = false;
             m_playerOneReadyImage.color = Color.green; 
             playerOneReadyText.text = "Waiting for other player !"; 
-            screenAnimator.SetTrigger("P1 Ready");
-            return;
+            p1ReadyAnim.SetTrigger(trigger_Hash);
         }
-        screenAnimator.SetTrigger("P2 Ready");
-        playerTwoReadyText.text = "Waiting for other player !";
-        m_playerTwoReadyImage.color = Color.green;
-    }
+        else
+        {
+            m_playerTwoReadyButton.interactable = false;
+            p2ReadyAnim.SetTrigger(trigger_Hash);
+            playerTwoReadyText.text = "Waiting for other player !";
+            m_playerTwoReadyImage.color = Color.green;
+        }
 
-    /// <summary>
-    /// Set game UI for a given state.
-    /// </summary>
-    /// <param name="_state">New UI state.</param>
-    public void SetUIState(UIState _state)
-    {
-        SetUIState((int)_state);
-    }
-
-    /// <summary>
-    /// Set game UI for a given state.
-    /// </summary>
-    /// <param name="_state">New UI state.</param>
-    public void SetUIState(int _state)
-    {
-        screenAnimator.SetInteger("State", _state);
+        PAF_GameManager.Instance.SetPlayerReady(_isPlayerOne);
     }
 
     /// <summary>
     /// Hide the main menu object if it exists
     /// </summary>
-    public void HideMainMenu()
-    {
-        if (!m_mainMenuObject) return;
-        m_mainMenuObject.SetActive(false); 
-    }
+    public void HideMainMenu() => m_mainMenuObject.SetActive(false);
 
     /// <summary>
     /// Init the audio mixer
@@ -190,38 +169,30 @@ public class PAF_UIManager : MonoBehaviour
     /// </summary>
     private void InitAudioMixer()
     {
-        if (m_audioMixer)
+        float _value = 0;
+        if (!PlayerPrefs.HasKey("VolumeAttenuation"))
         {
-            float _value = 0;
-            if (!PlayerPrefs.HasKey("VolumeAttenuation"))
-            {
-                m_audioMixer.GetFloat("VolumeAttenuation", out _value);
-                PlayerPrefs.SetFloat("VolumeAttenuation", _value);
-            }
-            else
-            {
-                m_audioMixer.SetFloat("VolumeAttenuation", PlayerPrefs.GetFloat("VolumeAttenuation"));
-                m_audioMixer.GetFloat("VolumeAttenuation", out _value);
-            }
-            if(m_volumeSlider)
-            {
-                m_volumeSlider.value = _value; 
-            }
-            if (!PlayerPrefs.HasKey("VolumeAttenuationMusic"))
-            {
-                m_audioMixer.GetFloat("VolumeAttenuationMusic", out _value);
-                PlayerPrefs.SetFloat("VolumeAttenuationMusic", _value);
-            }
-            else
-            {
-                m_audioMixer.SetFloat("VolumeAttenuationMusic", PlayerPrefs.GetFloat("VolumeAttenuationMusic"));
-                m_audioMixer.GetFloat("VolumeAttenuationMusic", out _value);
-            }
-            if (m_volumeSliderMusic)
-            {
-                m_volumeSliderMusic.value = _value;
-            }
+            m_audioMixer.GetFloat("VolumeAttenuation", out _value);
+            PlayerPrefs.SetFloat("VolumeAttenuation", _value);
         }
+        else
+        {
+            m_audioMixer.SetFloat("VolumeAttenuation", PlayerPrefs.GetFloat("VolumeAttenuation"));
+            m_audioMixer.GetFloat("VolumeAttenuation", out _value);
+        }
+        m_volumeSlider.value = _value;
+
+        if (!PlayerPrefs.HasKey("VolumeAttenuationMusic"))
+        {
+            m_audioMixer.GetFloat("VolumeAttenuationMusic", out _value);
+            PlayerPrefs.SetFloat("VolumeAttenuationMusic", _value);
+        }
+        else
+        {
+            m_audioMixer.SetFloat("VolumeAttenuationMusic", PlayerPrefs.GetFloat("VolumeAttenuationMusic"));
+            m_audioMixer.GetFloat("VolumeAttenuationMusic", out _value);
+        }
+        m_volumeSliderMusic.value = _value;
     }
 
     /// <summary>
@@ -229,11 +200,8 @@ public class PAF_UIManager : MonoBehaviour
     /// </summary>
     public void DisplayOptionsMenu()
     {
-        if (m_optionMenuParent == null) return;
         m_optionMenuParent.SetActive(!m_optionMenuParent.activeInHierarchy);
-
-        if (m_optionMenuParent.activeInHierarchy) Time.timeScale = 0;
-        else Time.timeScale = 1;
+        Time.timeScale = m_optionMenuParent.activeInHierarchy ? 0 : 1;
 
         #if !UNITY_EDITOR
         // Hide cursor
@@ -245,16 +213,10 @@ public class PAF_UIManager : MonoBehaviour
     /// <summary>
     /// Start the countdown animation 
     /// </summary>
-    private void StartCountDown()
+    public void StartCountDown()
     {
-        if(screenAnimator)
-        {
-            playersScoreAnchor.SetActive(true);
-
-            screenAnimator.SetTrigger("StartCountDown"); 
-            return; 
-        }
-        PAF_GameManager.Instance.StartGame(); 
+        playersScoreAnchor.SetActive(true);
+        countdownAnim.SetTrigger(trigger_Hash);
     }
 
     /// <summary>
@@ -303,35 +265,17 @@ public class PAF_UIManager : MonoBehaviour
         }
     }
 
-    public void SetFullScreen(bool _isFullScreen)
+    public RectTransform GetPlayerBounds(bool _isPlayerOne)
     {
-        m_isFullScreen = _isFullScreen; 
-        Screen.fullScreen = _isFullScreen;
-
-        PAF_GameManager.Instance?.SetCameraAspect(m_allResolutions[m_currentResolutionIndex].width, m_allResolutions[m_currentResolutionIndex].height);
+        return _isPlayerOne ? controllerOneArea : controllerTwoArea;
     }
 
-    public void SetNextRes()
+    public void UpdatePlayerJoystick (bool _isPlayerOne, Vector2 _position)
     {
-        m_currentResolutionIndex++;
-        if (m_currentResolutionIndex >= m_allResolutions.Length) m_currentResolutionIndex = 0; 
-        SetCurrentResolution();
-    }
-
-    public void SetPreviousRes()
-    {
-        m_currentResolutionIndex--;
-        if (m_currentResolutionIndex < 0) m_currentResolutionIndex = m_allResolutions.Length-1;
-        SetCurrentResolution(); 
-    }
-
-    private void SetCurrentResolution()
-    {
-        Resolution _r = m_allResolutions[m_currentResolutionIndex];
-        Screen.SetResolution(_r.width, _r.height, m_isFullScreen);
-        m_resolutionText.text = $"{_r.width} x {_r.height}";
-
-        PAF_GameManager.Instance?.SetCameraAspect(_r.width, _r.height);
+        if (_isPlayerOne)
+            controllerOneJoystick.localPosition = _position.normalized * controllerOneArea.sizeDelta / 4;
+        else
+            controllerTwoJoystick.localPosition = _position.normalized * controllerTwoArea.sizeDelta / 4;
     }
     #endregion
 
@@ -340,45 +284,14 @@ public class PAF_UIManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        PAF_GameManager.OnEndCinematic += HideMainMenu;
-        PAF_GameManager.OnEndCinematic += StartCountDown; 
-        PAF_GameManager.OnPlayerScored += SetPlayerScore;
-        PAF_GameManager.OnPlayerReady += SetPlayerReady;
-
-        m_allResolutions = Screen.resolutions;
-        for (int i = 0; i < m_allResolutions.Length; i++)
-        {
-            if(Screen.currentResolution.width == m_allResolutions[i].width && Screen.currentResolution.height == m_allResolutions[i].height)
-            {
-                m_currentResolutionIndex = i;
-                break; 
-            }
-        }
-        m_resolutionText.text = $"{m_allResolutions[m_currentResolutionIndex].width} x {m_allResolutions[m_currentResolutionIndex].height}";
     }
 
     private void Start()
     {
         InitAudioMixer();
-        if (highScoreText) highScoreText.text = "High Score : " + (PAF_GameManager.HighScore > 0 ? PAF_GameManager.HighScore.ToString() : "-");
-    }
-
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Escape))
-        {
-            DisplayOptionsMenu(); 
-        }
-    }
-
-    private void OnDestroy()
-    {
-        PAF_GameManager.OnEndCinematic -= HideMainMenu;
-        PAF_GameManager.OnEndCinematic -= StartCountDown;
-        PAF_GameManager.OnPlayerScored -= SetPlayerScore;
-        PAF_GameManager.OnPlayerReady -= SetPlayerReady;
+        highScoreText.text = "High Score : " + (PAF_GameManager.HighScore > 0 ? PAF_GameManager.HighScore.ToString() : "-");
     }
     #endregion
 
-#endregion
+    #endregion
 }

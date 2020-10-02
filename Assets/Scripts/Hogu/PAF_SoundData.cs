@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "SoundData", menuName = "ScriptableObjects/SoundDataScriptableObject", order = 1)]
 public class PAF_SoundData : ScriptableObject
@@ -24,98 +22,39 @@ public class PAF_SoundData : ScriptableObject
     [SerializeField] AudioClip whistle = null; 
     [SerializeField] AudioClip ticTic = null; 
 
+    public AudioClip GetHitPlayer() => hitPlayer[Random.Range(0, hitPlayer.Length)];
 
+    public AudioClip GetFallPlayer() => fallPlayer[Random.Range(0, fallPlayer.Length)];
 
-    public AudioClip GetHitPlayer()
-    {
-        if (hitPlayer.Length > 0) return hitPlayer[Random.Range(0, hitPlayer.Length)];
-        return null;
-    }
-    public AudioClip GetFallPlayer()
-    {
-        if (fallPlayer.Length > 0) return fallPlayer[Random.Range(0, fallPlayer.Length)];
-        return null;
-    }
-    public AudioClip GetStepsPlayer()
-    {
-        if (steps.Length > 0) return steps[Random.Range(0, steps.Length)];
-        return null;
-    }
-    public AudioClip GetHitWall()
-    {
-        if (hitWall.Length > 0) return hitWall[Random.Range(0, hitWall.Length)];
-        return null;
-    }
-    public AudioClip GetHitFruit()
-    {
-        if (hitFruit.Length > 0) return hitFruit[Random.Range(0, hitFruit.Length)];
-        return null;
-    }
-    public AudioClip GetHitBulb()
-    {
-        if (hitBulb.Length > 0) return hitBulb[Random.Range(0, hitBulb.Length)];
-        return null;
-    }
-    public AudioClip GetHitNone()
-    {
-        if (hitNone.Length > 0) return hitNone[Random.Range(0, hitNone.Length)];
-        return null;
-    }
-    public AudioClip GetFruitBounce()
-    {
-        if (fruitBounce.Length > 0) return fruitBounce[Random.Range(0, fruitBounce.Length)];
-        return null;
-    }
-    public AudioClip GetBulbExploding()
-    {
-        if (bulbExplode.Length > 0) return bulbExplode[Random.Range(0, bulbExplode.Length)];
-        return null;
-    }
-    public AudioClip GetDalleFalling()
-    {
-        if (dalleFalling.Length > 0) return dalleFalling[Random.Range(0, dalleFalling.Length)];
-        return null;
-    }
-    public AudioClip GetPlantEating()
-    {
-        if (plantEating.Length > 0) return plantEating[Random.Range(0, plantEating.Length)];
-        return null;
-    }
-    public AudioClip GetSelectMenu()
-    {
-        if (selectMenu) return selectMenu;
-        return null;
-    }
-    public AudioClip GetCrowdCheer()
-    {
-        if (crowdCheer) return crowdCheer;
-        return null;
-    }
-    public AudioClip GetFruitSpawn()
-    {
-        if (fruitSpawn.Length > 0) return fruitSpawn[Random.Range(0, fruitSpawn.Length)];
-        return null;
-    } 
-    public AudioClip GetflowerGloups()
-    {
-        if (plantGloups.Length > 0) return plantGloups[Random.Range(0, plantGloups.Length)];
-        return null;
-    } 
-    public AudioClip GetHighscoreSound()
-    {
-        if (highScore) return highScore;
-        return null;
-    }
-    public AudioClip GetTicTic()
-    {
-        if (ticTic) return ticTic;
-        return null;
-    }
+    public AudioClip GetStepsPlayer() => steps[Random.Range(0, steps.Length)];
 
+    public AudioClip GetHitWall() => hitWall[Random.Range(0, hitWall.Length)];
 
+    public AudioClip GetHitFruit() => hitFruit[Random.Range(0, hitFruit.Length)];
 
-    public AudioClip Whistle
-    {
-        get { return whistle;  }
-    }
+    public AudioClip GetHitBulb() => hitBulb[Random.Range(0, hitBulb.Length)];
+
+    public AudioClip GetHitNone() => hitNone[Random.Range(0, hitNone.Length)];
+
+    public AudioClip GetFruitBounce() => fruitBounce[Random.Range(0, fruitBounce.Length)];
+
+    public AudioClip GetBulbExploding() => bulbExplode[Random.Range(0, bulbExplode.Length)];
+
+    public AudioClip GetDalleFalling() => dalleFalling[Random.Range(0, dalleFalling.Length)];
+
+    public AudioClip GetPlantEating() => plantEating[Random.Range(0, plantEating.Length)];
+
+    public AudioClip GetSelectMenu() => selectMenu;
+
+    public AudioClip GetCrowdCheer() => crowdCheer;
+
+    public AudioClip GetFruitSpawn() => fruitSpawn[Random.Range(0, fruitSpawn.Length)];
+
+    public AudioClip GetflowerGloups() => plantGloups[Random.Range(0, plantGloups.Length)];
+
+    public AudioClip GetHighscoreSound() => highScore;
+
+    public AudioClip GetTicTic() => ticTic;
+
+    public AudioClip GetWhistle() => whistle;
 }

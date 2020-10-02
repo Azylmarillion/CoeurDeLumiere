@@ -1,10 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PAF_FallBehaviour : StateMachineBehaviour
 {
-    private Transform m_parentTransform;  
+    private bool isInitialized = false;
+    private Transform m_parentTransform;
+    private PAF_Player player = null;
+
     private float m_time = 0;
     private Vector3 m_targetedPosition;
     private Vector3 m_basePosition;
@@ -16,28 +17,31 @@ public class PAF_FallBehaviour : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (!m_parentTransform) m_parentTransform = animator.transform.parent;
-        m_time = 0;
-        if (m_parentTransform)
+        if (!isInitialized)
         {
-            m_targetedPosition = m_parentTransform.position + new Vector3(0, -10f, 5f);
-            m_basePosition = m_parentTransform.position; 
+            isInitialized = true;
+            m_parentTransform = animator.transform.parent;
+            player = animator.GetComponentInParent<PAF_Player>();
         }
+
+        m_time = 0;
+        m_targetedPosition = m_parentTransform.position + new Vector3(0, -10f, 5f);
+        m_basePosition = m_parentTransform.position;
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (!m_parentTransform) return;
         m_time += Time.deltaTime;
-        m_parentTransform.transform.position = new Vector3(m_basePosition.x, Mathf.Lerp(m_basePosition.y, m_targetedPosition.y, m_fallingCurve.Evaluate(m_time)), Mathf.Lerp(m_basePosition.z, m_targetedPosition.z, m_zCurve.Evaluate(m_time)));
+
+        m_parentTransform.position = new Vector3(m_basePosition.x, Mathf.Lerp(m_basePosition.y, m_targetedPosition.y, m_fallingCurve.Evaluate(m_time)), Mathf.Lerp(m_basePosition.z, m_targetedPosition.z, m_zCurve.Evaluate(m_time)));
         animator.transform.localScale = Vector3.Lerp(Vector3.one, Vector3.one * .5f, m_scaleCurve.Evaluate(m_time)); 
     }
 
     // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        animator.GetComponentInParent<PAF_Player>().Invoke("Respawn", .5f);
+        player.DoRespawn();
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

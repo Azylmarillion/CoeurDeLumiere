@@ -1,48 +1,13 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq; 
 
 public class PAF_BulbManager : MonoBehaviour 
 {
-    /* PAF_BulbManager :
-	 *
-	 *	#####################
-	 *	###### PURPOSE ######
-	 *	#####################
-	 *
-	 *	[PURPOSE]
-	 *
-	 *	#####################
-	 *	####### TO DO #######
-	 *	#####################
-	 *
-	 *	[TO DO]
-	 *
-	 *	#####################
-	 *	### MODIFICATIONS ###
-	 *	#####################
-	 *
-	 *	Date :			[DATE]
-	 *	Author :		[NAME]
-	 *
-	 *	Changes :
-	 *
-	 *	[CHANGES]
-	 *
-	 *	-----------------------------------
-	*/
-
-    #region Events
-
-    #endregion
-
     #region Fields / Properties
     public static PAF_BulbManager Instance = null;
 
     [SerializeField]
     private Vector3[] m_bulbsPositions = new Vector3[] { };
-    private Vector3[] m_usedBulbsPosition = new Vector3[] { };
 
     [SerializeField]
     private Vector3 m_centerPosition = Vector3.zero; 
@@ -55,109 +20,111 @@ public class PAF_BulbManager : MonoBehaviour
     [SerializeField]
     private PAF_Bulb m_bulbPrefab = null;
 
-    private Coroutine m_checkBulbsCoroutine = null;
     private List<PAF_Bulb> m_spawnedBulbs = new List<PAF_Bulb>();
 
-    private bool m_bigBulbIsCalled = false; 
+    private bool m_bigBulbIsCalled = false;
     #endregion
 
     #region Methods
 
     #region Original Methods
+    private bool doSpawn = false;
+    private int spawnAmount = 0;
+    private float spawnVar = 0;
 
-    #region IEnumerator
-    private IEnumerator WaitBulbsDestruction()
+    private readonly Vector3[] spawningPos = new Vector3[9];
+
+    private bool isStarted = false;
+
+    private void Update()
     {
-        if(!m_bulbPrefab)
-        {
-            m_checkBulbsCoroutine = null; 
-            yield break; 
-        }
-        PAF_Bulb _bulb = null; 
-        m_spawnedBulbs = new List<PAF_Bulb>();
-        for (int i = 0; i < m_usedBulbsPosition.Length; i++)
-        {
-            _bulb = Instantiate(m_bulbPrefab, m_usedBulbsPosition[i], Quaternion.identity).GetComponent<PAF_Bulb>();
-            m_spawnedBulbs.Add(_bulb);
-            yield return new WaitForSeconds(Random.Range(.1f, .5f)); 
-        }
-        while (m_spawnedBulbs.Any(b => b != null))
-        {
-            yield return new WaitForSeconds(Mathf.Clamp(m_bulbDelay, .1f, 1.0f)); 
-        }
-        while (m_bigBulbIsCalled)
-        {
-            yield return new WaitForSeconds(Mathf.Clamp(m_bulbDelay, .1f, 1.0f));
-        }
-        yield return new WaitForSeconds(m_bulbDelay);
+        if (!isStarted)
+            return;
 
-        m_spawnedBulbs.Clear(); 
-        SelectNewBulbs();
-        m_checkBulbsCoroutine = null; 
-    }
-    #endregion 
+        if (doSpawn)
+        {
+            spawnVar -= Time.deltaTime;
+            if (spawnVar <= 0)
+            {
+                m_spawnedBulbs.Add(Instantiate(m_bulbPrefab, spawningPos[spawnAmount - 1], Quaternion.identity).GetComponent<PAF_Bulb>());
 
-    #region void
-    public void CallBigBulb()
-    {
-        m_bigBulbIsCalled = true;
-        DestroyAllBulbs();
-        PAF_Bulb _bigBulb = Instantiate(m_bulbPrefab, m_centerPosition, Quaternion.identity).GetComponent<PAF_Bulb>();
-        _bigBulb.SetBigBulb();
-        _bigBulb.OnBulbDestroyed += () => m_bigBulbIsCalled = false; 
+                spawnAmount--;
+                if (spawnAmount == 0)
+                {
+                    doSpawn = false;
+                    spawnVar = m_bulbDelay;
+                }
+                else
+                {
+                    spawnVar = Random.Range(.1f, .5f);
+                }
+            }
+        }
+        else if (m_spawnedBulbs.Count == 0)
+        {
+            spawnVar -= Time.deltaTime;
+            if (spawnVar <= 0)
+            {
+                doSpawn = true;
+                spawnVar = spawnVar = Random.Range(.1f, .5f);
+
+                GetRandomBulbs();
+            }
+        }
     }
 
     public void SelectFirstBulb()
     {
-        if (m_checkBulbsCoroutine != null) return;  
-        m_usedBulbsPosition = new Vector3[1] { m_centerPosition };
-        m_checkBulbsCoroutine = StartCoroutine(WaitBulbsDestruction()); 
+        isStarted = true;
+        doSpawn = true;
+        spawnVar = spawnVar = Random.Range(.1f, .5f);
+
+        spawnAmount = 1;
+        spawningPos[0] = m_centerPosition;
     }
 
-    private void SelectNewBulbs()
+    public void CallBigBulb()
     {
-        m_usedBulbsPosition = GetRandomBulbs(); 
+        m_bigBulbIsCalled = true;
 
-        if(m_checkBulbsCoroutine != null)
-        {
-            StopCoroutine(m_checkBulbsCoroutine);
-            m_checkBulbsCoroutine = null; 
-        }
-        m_checkBulbsCoroutine = StartCoroutine(WaitBulbsDestruction());
+        DestroyAllBulbs();
 
+        PAF_Bulb _bulb = Instantiate(m_bulbPrefab, m_centerPosition, Quaternion.identity).GetComponent<PAF_Bulb>();
+        _bulb.SetBigBulb();
+
+        m_spawnedBulbs.Add(_bulb);
     }
 
-    public void DestroyAllBulbs() => m_spawnedBulbs.ForEach(b => b.Explode(false)); 
-    #endregion
+    public void OnBigBulbExplode() => m_bigBulbIsCalled = false;
 
-    #region Vector3
-    private Vector3[] GetRandomBulbs()
+    public void RemoveBulb(PAF_Bulb _bulb) => m_spawnedBulbs.Remove(_bulb);
+
+    public void DestroyAllBulbs()
     {
-        List<Vector3> _availablesPositions = m_bulbsPositions.ToList();
-        for (int i = 0; i < _availablesPositions.Count; i++)
+        for (int _i = 0; _i < m_spawnedBulbs.Count; _i++)
+            m_spawnedBulbs[_i].Explode(false);
+
+        m_spawnedBulbs.Clear();
+    }
+
+    private void GetRandomBulbs()
+    {
+        spawnAmount = m_bulbLimit;
+        for (int _i = 0; _i < spawnAmount; _i++)
         {
-            if (m_usedBulbsPosition.ToList().Any(b => b == _availablesPositions[i]))
+            int _index = Random.Range(0, m_bulbsPositions.Length);
+            for (int _j = 0; _j < _i; _j++)
             {
-                _availablesPositions.RemoveAt(i);
-                i--;
+                if (spawningPos[_j] == m_bulbsPositions[_index])
+                {
+                    _index = Random.Range(0, m_bulbsPositions.Length);
+                    _j = 0;
+                }
             }
-        }
-        int _index = 0;
-        List<Vector3> _positions = new List<Vector3>();
-        if(_availablesPositions.Count < m_bulbLimit)
-        {
-            m_bulbLimit = _availablesPositions.Count; 
-        }
-        for (int i = 0; i < m_bulbLimit; i++)
-        {
-            _index = (int)Random.Range((int)0, (int)_availablesPositions.Count);
-            _positions.Add(_availablesPositions[_index]);
-            _availablesPositions.RemoveAt(_index);
-        }
-        return _positions.ToArray();
-    }
-    #endregion
 
+            spawningPos[_i] = m_bulbsPositions[_index];
+        }
+    }
     #endregion
 
     #region Unity Methods
@@ -168,6 +135,7 @@ public class PAF_BulbManager : MonoBehaviour
             Destroy(this);
             return; 
         }
+
         Instance = this;
         PAF_Bulb.InitGoldenAmount();
     }

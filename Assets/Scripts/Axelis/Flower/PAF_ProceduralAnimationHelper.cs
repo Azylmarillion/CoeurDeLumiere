@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Linq; 
-using UnityEngine; 
+﻿using UnityEngine; 
+
 public static class PAF_ProceduralAnimationHelper
 {
     public const float SAMPLING_DISTANCE = .1f;
@@ -29,7 +28,6 @@ public static class PAF_ProceduralAnimationHelper
     public static float PartialGradiant(Vector3 _target, PAF_FlowerJoint[] _joints, float[] _angles, int _i)
     {
         float _angle = _angles[_i];
-        // Gradiant = [F(x+samplingDistance) - F(x)] / h
         float f_x = DistanceFromTarget(_target, _joints, _angles);
 
         _angles[_i] += SAMPLING_DISTANCE;
@@ -49,9 +47,7 @@ public static class PAF_ProceduralAnimationHelper
     public static void InverseKinematics (Vector3 _target, PAF_FlowerJoint[] _joints, float [] _angles, float _distanceThreshold)
     {
         if (DistanceFromTarget(_target, _joints, _angles) < _distanceThreshold)
-        {
             return;
-        }
 
         for (int i = _joints.Length -1; i >= 0; i --)
         {

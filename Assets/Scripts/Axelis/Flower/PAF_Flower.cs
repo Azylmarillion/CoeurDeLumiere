@@ -1,42 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic; 
-using System.Linq; 
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class PAF_Flower : MonoBehaviour 
 {
-    /* PAF_Flower :
-	 *
-	 *	#####################
-	 *	###### PURPOSE ######
-	 *	#####################
-	 *
-	 *	[PURPOSE]
-	 *
-	 *	#####################
-	 *	####### TO DO #######
-	 *	#####################
-	 *
-	 *	[TO DO]
-	 *
-	 *	#####################
-	 *	### MODIFICATIONS ###
-	 *	#####################
-	 *
-	 *	Date :			[DATE]
-	 *	Author :		[NAME]
-	 *
-	 *	Changes :
-	 *
-	 *	[CHANGES]
-	 *
-	 *	-----------------------------------
-	*/
-
-    #region Events
-
-    #endregion
-
     #region Fields / Properties
     [SerializeField] private Animator m_animator = null; 
 
@@ -51,137 +17,202 @@ public class PAF_Flower : MonoBehaviour
     private int m_fieldOfView = 60;
 
     [SerializeField] private PAF_FlowerJoint[] m_joints = new PAF_FlowerJoint[] { };
+    private float[] jointsAngle = new float[] { };
 
     [SerializeField] private Transform m_mouthTransform = null; 
     public Transform MouthTransform { get { return m_mouthTransform; } }
 
     private FlowerState m_currentState = FlowerState.Searching; 
-    private PAF_Fruit m_followedFruit = null;
-    public bool HasFruitToFollow { get { return m_followedFruit != null;  } }
+    [SerializeField] private PAF_Fruit m_followedFruit = null;
+
+    private bool doFollowFruit = false;
 
     [SerializeField] AudioSource audiosource = null;
 
-    public static List<PAF_Flower> Flowers = new List<PAF_Flower>();
+    [SerializeField]  private bool isLeft = true;
+    public static PAF_Flower[] Flowers = new PAF_Flower[2];
 
-    private bool m_hasEat = false;
+    private readonly int behaviour_Hash = Animator.StringToHash("BehaviourState");
+    private readonly int reset_Hash = Animator.StringToHash("ResetSearch");
     #endregion
 
     #region Methods
 
     #region Original Methods
+    private bool doPlaySound = false;
+    private float playSoundVar = 0;
 
-    #region IEnumerator
-    public IEnumerator FollowTarget()
+    private bool doSearchFruit = false;
+
+    private void Update()
     {
-        Vector3 _targetedPosition = Vector3.zero; 
-        while (m_followedFruit != null)
+        // Sound delay.
+        if (doPlaySound)
         {
-            if(Vector3.Angle(transform.forward, m_followedFruit.transform.position - transform.position) > (m_fieldOfView/2))
+            playSoundVar -= Time.deltaTime;
+            if (playSoundVar <= 0)
+            {
+                doPlaySound = false;
+                audiosource.PlayOneShot(PAF_GameManager.Instance.SoundDatas.GetflowerGloups(), .8f);
+            }
+        }
+
+        // Try get fruit.
+        if (doSearchFruit)
+        {
+            // Player hit.
+            bool _doHit = false;
+            for (int _i = 0; _i < 2; _i++)
+            {
+                if (Vector3.Distance(m_mouthTransform.position, PAF_Player.Players[_i].transform.position) <= m_eatingPlayerRange)
+                {
+                    _doHit = true;
+                    PAF_Player.Players[_i].Recoil(transform.position);
+                }
+            }
+            if (_doHit)
+            {
+                doSearchFruit = false;
+
+                doFollowFruit = false;
+                m_followedFruit = null;
+                m_currentState = FlowerState.Eating;
+                m_animator.SetInteger(behaviour_Hash, (int)m_currentState);
+            }
+            // Try to eat fruits.
+            else if (PAF_Fruit.ArenaFruits.Count > 0)
+            {
+                List<PAF_Fruit> _fruits = PAF_Fruit.ArenaFruits;
+
+                int _index = 0;
+                float _distance = Vector3.Distance(transform.position, _fruits[0].transform.position);
+
+                for (int _i = 1; _i < _fruits.Count; _i++)
+                {
+                    float _otherDistance = Vector3.Distance(transform.position, _fruits[_i].transform.position);
+                    if (_otherDistance < _distance)
+                    {
+                        _distance = _otherDistance;
+                        _index = _i;
+                    }
+                }
+
+                if ((_distance <= m_detectionRange) &&
+                    (Vector3.Angle(transform.forward, _fruits[_index].transform.position - transform.position) < (m_fieldOfView / 2)))
+                {
+                    doFollowFruit = true;
+                    m_followedFruit = _fruits[_index];
+
+                    if (Vector3.Distance(transform.position, m_followedFruit.transform.position) <= m_eatingRange)
+                    {
+                        doSearchFruit = false;
+                        EatFruit();
+                    }
+                    else
+                    {
+                        m_currentState = FlowerState.Following;
+                        m_animator.SetInteger(behaviour_Hash, (int)m_currentState);
+                    }
+                }
+            }
+        }
+
+        // Follow fruit.
+        if (doFollowFruit)
+        {
+            if (Vector3.Angle(transform.forward, m_followedFruit.transform.position - transform.position) > (m_fieldOfView / 2))
+            {
+                doFollowFruit = false;
+                m_followedFruit = null;
+
+                m_currentState = FlowerState.Searching;
+                m_animator.SetInteger(behaviour_Hash, (int)m_currentState);
+            }
+            else if (Vector3.Distance(transform.position, m_followedFruit.transform.position) <= m_eatingRange)
             {
                 m_currentState = FlowerState.Searching;
-                m_animator.SetInteger("BehaviourState", (int)m_currentState);
-                m_followedFruit = null;
-                yield break; 
-            }
+                m_animator.SetInteger(behaviour_Hash, (int)m_currentState);
 
-            if(Vector3.Distance(transform.position, m_followedFruit.transform.position) <= m_eatingRange)
-            {
-                EatFruit(); 
-                yield break;
-            }
-
-            if (PAF_Fruit.ArenaFruits.Length > 0)
-            {
-                PAF_Fruit[] _fruits = PAF_Fruit.ArenaFruits.ToList().Where(f => Vector3.Distance(transform.position, f.transform.position) <= m_detectionRange
-                                                             && Vector3.Angle(transform.forward, f.transform.position - transform.position) < (m_fieldOfView / 2)).ToArray();
-
-                if (_fruits.Length > 0)
-                    m_followedFruit = _fruits.OrderBy(f => Vector3.Distance(transform.position, f.transform.position)).FirstOrDefault();
-            }
-
-            if(PAF_Player.Players.Any(p => Vector3.Distance(m_mouthTransform.position, p.transform.position) <= m_eatingPlayerRange))
-            {
-                PAF_Player.Players.Where(p => Vector3.Distance(transform.position, p.transform.position) <= m_eatingRange).ToList().ForEach(p => p.Recoil(transform.position)); 
-                m_followedFruit = null;
-                m_currentState = FlowerState.Eating;
-                m_animator.SetInteger("BehaviourState", (int)m_currentState);
-                yield break; 
-            }
-
-            _targetedPosition = transform.position + (m_followedFruit.transform.position - transform.position).normalized * m_eatingRange;
-            if(m_joints != null && m_joints.Length > 0)
-            {
-                float[] _angles = m_joints.ToList().Select(j => j.BaseTransform.localRotation.eulerAngles.y).ToArray();
-                PAF_ProceduralAnimationHelper.InverseKinematics(_targetedPosition, m_joints, _angles, .1f);
-            }
-            yield return null; 
-        }
-        m_currentState = FlowerState.Searching;
-        m_animator.SetInteger("BehaviourState", (int)m_currentState);
-        yield break;
-    }
-
-    public IEnumerator GetClosestFruit()
-    {
-        while (m_followedFruit == null)
-        {
-            yield return null;
-            if (PAF_Player.Players.Any(p => Vector3.Distance(m_mouthTransform.position, p.transform.position) <= m_eatingPlayerRange))
-            {
-                PAF_Player.Players.Where(p => Vector3.Distance(transform.position, p.transform.position) <= m_eatingRange).ToList().ForEach(p => p.Recoil(transform.position));
-                m_followedFruit = null;
-                m_currentState = FlowerState.Eating;
-                m_animator.SetInteger("BehaviourState", (int)m_currentState);
-                yield break;
-            }
-            if (PAF_Fruit.ArenaFruits.Length == 0)
-            {
-                continue;
-            }
-            PAF_Fruit[] _fruits = PAF_Fruit.ArenaFruits.ToList().Where(f => Vector3.Distance(transform.position, f.transform.position) <= m_detectionRange
-                                                                         && Vector3.Angle(transform.forward, f.transform.position - transform.position) < (m_fieldOfView / 2)).ToArray();
-            if (_fruits.Length == 0)
-            {
-                continue;
-            }
-            m_followedFruit = _fruits.OrderBy(f => Vector3.Distance(transform.position, f.transform.position)).FirstOrDefault(); 
-            if(Vector3.Distance(transform.position, m_followedFruit.transform.position) <= m_eatingRange)
-            {
                 EatFruit();
-                yield break; 
+            }
+            else if (PAF_Fruit.ArenaFruits.Count > 0)
+            {
+                List<PAF_Fruit> _fruits = PAF_Fruit.ArenaFruits;
+
+                int _index = 0;
+                float _distance = Vector3.Distance(transform.position, _fruits[0].transform.position);
+
+                for (int _i = 1; _i < _fruits.Count; _i++)
+                {
+                    float _otherDistance = Vector3.Distance(transform.position, _fruits[_i].transform.position);
+                    if (_otherDistance < _distance)
+                    {
+                        _distance = _otherDistance;
+                        _index = _i;
+                    }
+                }
+
+                if ((_distance <= m_detectionRange) &&
+                    (Vector3.Angle(transform.forward, _fruits[_index].transform.position - transform.position) < (m_fieldOfView / 2)))
+                {
+                    m_followedFruit = _fruits[_index];
+
+                    Vector3 _targetedPosition = transform.position + (m_followedFruit.transform.position - transform.position).normalized * m_eatingRange;
+
+                    for (int _i = 0; _i < m_joints.Length; _i++)
+                        jointsAngle[_i] = m_joints[_i].BaseTransform.localRotation.eulerAngles.y;
+
+                    PAF_ProceduralAnimationHelper.InverseKinematics(_targetedPosition, m_joints, jointsAngle, .1f);
+                }
+            }
+            else
+            {
+                doFollowFruit = false;
+                m_followedFruit = null;
+
+                m_currentState = FlowerState.Searching;
+                m_animator.SetInteger(behaviour_Hash, (int)m_currentState);
+            }
+
+            // Player hit.
+            bool _doHit = false;
+            for (int _i = 0; _i < 2; _i++)
+            {
+                if (Vector3.Distance(m_mouthTransform.position, PAF_Player.Players[_i].transform.position) <= m_eatingPlayerRange)
+                {
+                    _doHit = true;
+                    PAF_Player.Players[_i].Recoil(transform.position);
+                }
+            }
+            if (_doHit)
+            {
+                doFollowFruit = false;
+                m_followedFruit = null;
+
+                m_currentState = FlowerState.Eating;
+                m_animator.SetInteger(behaviour_Hash, (int)m_currentState);
             }
         }
-        m_currentState = FlowerState.Following;
-        m_animator.SetInteger("BehaviourState", (int)m_currentState);
     }
+    
+    public void DoFollowFruit(bool _doFollow) => doFollowFruit = _doFollow;
 
-    IEnumerator DelayGloupsSound()
-    {
-        if (m_hasEat) yield break;
-        m_hasEat = true;
-        yield return new WaitForSeconds(.5f);
-        AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetflowerGloups();
-        if (_clip) audiosource.PlayOneShot(_clip, .8f);
-        m_hasEat = false;
-    }
-    #endregion
+    public void DoSearchFruit(bool _doSearch) => doSearchFruit = _doSearch;
 
-    #region Void
     /// <summary>
     /// Set to the eating state
     /// </summary>
     public void EatFruit()
     {
-        if (m_followedFruit != null)
+        if (doFollowFruit)
         {
             m_followedFruit.StartToEat(m_mouthTransform);
 
             m_currentState = FlowerState.Eating;
-            m_animator.SetInteger("BehaviourState", (int)m_currentState);
+            m_animator.SetInteger(behaviour_Hash, (int)m_currentState);
 
-            StartCoroutine(DelayGloupsSound());
-
-            return; 
+            doPlaySound = true;
+            playSoundVar = .5f;
         }
     }
 
@@ -190,16 +221,16 @@ public class PAF_Flower : MonoBehaviour
     /// </summary>
     public void Chomp()
     {
-        if(m_followedFruit != null)
+        if (m_followedFruit)
         {
             // EAT THE FRUIT
             m_followedFruit.Eat();
-            if (audiosource)
-            {
-                AudioClip _clip = PAF_GameManager.Instance?.SoundDatas.GetPlantEating();
-                if (_clip) audiosource.PlayOneShot(_clip);
-            }
+            audiosource.PlayOneShot(PAF_GameManager.Instance.SoundDatas.GetPlantEating());
+
+            doFollowFruit = false;
+            m_followedFruit = null;
         }
+
         //RESET THE STATE
         ResetState(); 
     }
@@ -210,23 +241,50 @@ public class PAF_Flower : MonoBehaviour
     public void ResetState()
     {
         m_currentState = FlowerState.Searching;
-        m_animator.SetTrigger("ResetSearch");
-        m_animator.SetInteger("BehaviourState", (int)m_currentState);
+        m_animator.SetTrigger(reset_Hash);
+        m_animator.SetInteger(behaviour_Hash, (int)m_currentState);
+    }
+
+    public static void RemoveFruit(PAF_Fruit _fruit)
+    {
+        if (!areFlowers)
+            return;
+
+        for (int _i = 0; _i < 2; _i++)
+        {
+            if (Flowers[_i].m_followedFruit && Flowers[_i].m_followedFruit.GetInstanceID() == _fruit.GetInstanceID())
+            {
+                if (Flowers[_i].doFollowFruit)
+                {
+                    Flowers[_i].doFollowFruit = false;
+                    Flowers[_i].m_followedFruit = null;
+
+                    Flowers[_i].m_currentState = FlowerState.Searching;
+                    Flowers[_i].m_animator.SetInteger(Flowers[_i].behaviour_Hash, (int)Flowers[_i].m_currentState);
+                }
+            }
+        }
     }
     #endregion
 
-    #endregion
-
     #region Unity Methods
+    private static bool areFlowers = false;
+
     private void Awake()
     {
-        m_joints.ToList().ForEach(j => j.Init());
-        Flowers.Add(this); 
+        areFlowers = true;
+        Flowers[isLeft ? 0 : 1] = this;
+
+        for (int _i = 0; _i < m_joints.Length; _i++)
+            m_joints[_i].Init();
+
+        jointsAngle = new float[m_joints.Length];
     }
 
     private void OnDestroy()
     {
-        Flowers.Remove(this); 
+        areFlowers = false;
+        Flowers[isLeft ? 0 : 1] = null;
     }
 
     private void OnDrawGizmos()

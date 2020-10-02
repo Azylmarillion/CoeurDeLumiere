@@ -4,41 +4,41 @@
 public class WILL_CartoonWaterShaEdit : MonoBehaviour
 {
     #region F/P
-    [SerializeField] Renderer[] waterRenderers;
+    [SerializeField] Renderer[] waterRenderers = new Renderer[] { };
 
         [Space]
         [SerializeField] 
-            Color waterColor;
+            Color waterColor = new Color();
         [SerializeField] 
-            Texture waterTex;
+            Texture waterTex = null;
         [SerializeField]
-            Vector2 waterTile;
+            Vector2 waterTile = new Vector2();
         [SerializeField, Range(0, 1)]
-            float textureVisibility;
+            float textureVisibility = 0;
         [Space]
         [SerializeField] 
-            Texture distortionTex;
+            Texture distortionTex = null;
         [SerializeField]
-            Vector2 distortionTile;
+            Vector2 distortionTile = new Vector2();
 
         [Space]
         [SerializeField] 
-            float waterHeight;
+            float waterHeight = 0;
         [SerializeField]
-            float waterDeep;
+            float waterDeep = 0;
         [SerializeField,Range(0, 0.1f)]
-            float waterDepthParam;
+            float waterDepthParam = 0;
         [SerializeField, Range(0, 1)]
-            float waterMinAlpha;
+            float waterMinAlpha = 0;
         [Space]
         [SerializeField]
-            Color borderColor;
+            Color borderColor = new Color();
         [SerializeField, Range(0,1)]
-            float borderWidth;
+            float borderWidth = 0;
 
         [Space]
         [SerializeField]
-            Vector2 moveDirection;
+            Vector2 moveDirection = new Vector2();
 
         MaterialPropertyBlock materialPropertyBlock;
 
